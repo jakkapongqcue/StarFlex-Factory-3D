@@ -1,4 +1,6 @@
-# Starflex Factory 3D (บมจ. สตาร์เฟล็กซ์) (URLhttps://jakkapongqcue.github.io/StarFlex-Factory-3D/)
+# Starflex Factory 3D (บมจ. สตาร์เฟล็กซ์)
+
+🌐 **Live Web Demo (GitHub Pages):** [https://jakkapongqcue.github.io/StarFlex-Factory-3D/](https://jakkapongqcue.github.io/StarFlex-Factory-3D/)
 
 แบบจำลองโรงงานผลิตบรรจุภัณฑ์ **บริษัท สตาร์เฟล็กซ์ จำกัด (มหาชน) (Starflex PCL)** ในรูปแบบ **3D Cutaway Interactive Model** อ้างอิงสัดส่วนพิกัด 1:1 จากผังโรงงานจริง (`Starflex Plant Layout.jpeg`) และโครงสร้างหลังคาโซลาร์เซลล์/ตัวอาคารจากภาพถ่ายดาวเทียม Google Maps
 
