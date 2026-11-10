@@ -76,7 +76,7 @@ window.Starflex3D.Builders.Architecture = {
     // 1. BACK & OUTER SIDE STRUCTURAL WALLS (Always visible in Cutaway Mode)
     // ========================================================================
     addWallSegment(200, 247, 1062, 247, 10.5, backWallsGroup, mats.wallSolid, true, 65);
-    addWallSegment(1062, 247, 1498, 247, 11.2, backWallsGroup, mats.wallSolid, true, 65);
+    addWallSegment(1062, 247, 1498, 247, 8.8, backWallsGroup, mats.wallSolid, true, 65);
     addWallSegment(1498, 247, 1895, 247, 12.8, backWallsGroup, mats.wallSolid, true, 65);
 
     // West Outer Wall of Hall 1
@@ -136,23 +136,51 @@ window.Starflex3D.Builders.Architecture = {
     // East outer wall of Hall 2 facing the central loading courtyard (px = 1062, py: 815..1098)
     addWallSegment(1062, 247, 1062, 1098, 10.5, frontWallsGroup, mats.wallCutawayFront, true, 65);
 
-    // Circle 3: Full-height South wall of Hall 3 High-Bay Warehouse (px: 1062..1498, py = 815)
-    addWallSegment(1062, 815, 1498, 815, 11.2, frontWallsGroup, mats.wallCutawayFront, true, 65);
-    addWallSegment(1062, 247, 1062, 815, 11.2, frontWallsGroup, mats.wallCutawayFront, false);
-    addWallSegment(1498, 247, 1498, 815, 11.2, frontWallsGroup, mats.wallCutawayFront, false);
-
-    // Covered Loading Dock Canopy Roof & Side Enclosure (px: 1062..1402, py: 712..898)
-    addFlatRoofCap(1062, 712, 1402, 898, 8.5, roofShellGroup, mats.roofSheet);
-    addWallSegment(1062, 898, 1402, 898, 8.5, frontWallsGroup, mats.wallCutawayFront, true, 65);
+    // Circle 3: Full-height South wall of Hall 3 High-Bay Warehouse at py = 815 (px: 1062..1498)
+    // Note: Keep py > 815 open for the raised Loading Dock platform & cantilevered canopy!
+    addWallSegment(1062, 815, 1498, 815, 8.8, frontWallsGroup, mats.wallCutawayFront, true, 48);
+    addWallSegment(1062, 247, 1062, 815, 9.4, frontWallsGroup, mats.wallCutawayFront, false);
+    addWallSegment(1498, 247, 1498, 815, 9.4, frontWallsGroup, mats.wallCutawayFront, false);
 
     // Circle 4: Full-height South & West walls of Hall 4 East Plant (px: 1498..1895, py = 1100)
     addWallSegment(1498, 1100, 1895, 1100, 12.8, frontWallsGroup, mats.wallCutawayFront, true, 65);
     addWallSegment(1498, 247, 1498, 1100, 12.8, frontWallsGroup, mats.wallCutawayFront, true, 65);
 
-    // West Ramp Annex Enclosure of Hall 4 (px: 1395..1498, py: 765..1100)
-    addWallSegment(1395, 765, 1498, 765, 8.4, frontWallsGroup, mats.wallCutawayFront, false);
-    addWallSegment(1395, 765, 1395, 1100, 8.4, frontWallsGroup, mats.wallCutawayFront, true, 65);
-    addFlatRoofCap(1395, 765, 1498, 1100, 8.4, roofShellGroup, mats.roofSheet);
+    // West Courtyard Wall & Sloped Solar Roof Extension of Hall 4 (px: 1395..1498, py: 765..1100)
+    // Matches the right side of Loading_Dock_2_CloseUp.jpg where Hall 4's solar roof slopes down to px = 1395!
+    addWallSegment(1395, 765, 1498, 765, 10.5, frontWallsGroup, mats.wallCutawayFront, false);
+    addWallSegment(1395, 765, 1395, 1100, 10.5, frontWallsGroup, mats.wallCutawayFront, true, 55);
+    addWallSegment(1395, 1100, 1498, 1100, 10.5, frontWallsGroup, mats.wallCutawayFront, false);
+    {
+      const westSlopeR = rect([1395, 765, 1498, 1100]);
+      const slopeW = Math.hypot(westSlopeR.w, 2.3);
+      const slopeAng = Math.atan2(2.3, westSlopeR.w);
+      const slopeRoof = new THREE.Mesh(
+        new THREE.BoxGeometry(slopeW + 0.6, 0.22, westSlopeR.d + 0.4),
+        mats.roofSheet
+      );
+      slopeRoof.position.set(westSlopeR.x, 11.65, westSlopeR.z);
+      slopeRoof.rotation.z = slopeAng;
+      roofShellGroup.add(slopeRoof);
+
+      const slopeSolar = new THREE.Mesh(
+        new THREE.BoxGeometry(slopeW * 0.88, 0.1, westSlopeR.d * 0.9),
+        mats.solarPanel
+      );
+      slopeSolar.position.set(westSlopeR.x, 11.82, westSlopeR.z);
+      slopeSolar.rotation.z = slopeAng;
+      roofShellGroup.add(slopeSolar);
+
+      // Seal triangular front & back gables under the sloped roof extension
+      [westSlopeR.z1, westSlopeR.z2].forEach(gz => {
+        const triFill = new THREE.Mesh(
+          new THREE.BoxGeometry(westSlopeR.w, 2.3, 0.3),
+          mats.wallCutawayFront
+        );
+        triFill.position.set(westSlopeR.x, 10.5 + 1.15, gz);
+        frontWallsGroup.add(triFill);
+      });
+    }
 
     // East MDB & East Oven Room Roof Caps
     addFlatRoofCap(1895, 490, 1950, 545, 4.5, roofShellGroup, mats.roofSheet);
@@ -289,7 +317,7 @@ window.Starflex3D.Builders.Architecture = {
     // Build all 4 Hall Curved Barrel-Arch Roofs + Sealed Gable Tympanums
     buildCurvedArchSpan(200, 632, 247, 1098, 10.5, 2.5, 2, false);
     buildCurvedArchSpan(632, 1062, 247, 1098, 10.5, 2.5, 2, false);
-    buildCurvedArchSpan(1062, 1498, 247, 815, 11.2, 1.6, 2, false);
+    buildCurvedArchSpan(1062, 1498, 247, 815, 8.8, 0.55, 2, false);
     buildCurvedArchSpan(1498, 1895, 247, 1100, 12.8, 2.8, 2, true);
 
     // ========================================================================
