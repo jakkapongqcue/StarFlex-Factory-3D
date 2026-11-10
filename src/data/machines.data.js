@@ -380,15 +380,15 @@ window.Starflex3D.Data.items = [
   {
     id: "admin_vip_office",
     code: "OFFICE-HQ",
-    name: "สำนักงานใหญ่ ห้องแล็ปนวัตกรรม (INNO) และห้องประชุม VIP",
+    name: "สำนักงานใหญ่ 2 ชั้น (หลังคาโค้ง Arch Roof + ซุ้มทางเข้าเสาหินปั้นหยา)",
     category: "office_utility",
     hall: "office_front",
     type: "hq_office",
     bounds: [674, 1020, 1018, 1190],
     height: 7.8,
     orientation: "EW",
-    specs: "Image · INNO · LAB INNO · Training · MKT · HR · IT · PUR · VIP",
-    description: "อาคารสำนักงานหน้าและศูนย์พัฒนานวัตกรรมบรรจุภัณฑ์ (INNO Lab) ห้องฝึกอบรม และห้องรับรองผู้บริหาร VIP"
+    specs: "หลังคาโค้งติดโลโก้ STARFLEX · ซุ้มปั้นหยาเสาหิน · สนามหญ้า & เสาธง 3 ต้น",
+    description: "อาคารสำนักงานหน้า 2 ชั้น โทนสีเทา-อมฟ้าคาดกรอบขาว หลังคาทรงโค้งมนพร้อมตราสัญลักษณ์ STARFLEX ด้านหน้ามีซุ้มทางเข้าหลังคาทรงปั้นหยารองรับด้วยเสาหินประดับคู่ ศาลพระภูมิ และสนามหญ้าพร้อมเสาธง 3 ต้น"
   },
 
   // ================= HALL 3: HIGH-BAY WAREHOUSE & LOADING DOCK =================
@@ -591,16 +591,16 @@ window.Starflex3D.Data.items = [
   },
   {
     id: "east_ramps_shipping",
-    code: "RAMP 2–5",
-    name: "ทางขึ้นลง #2–#5 และโถงขนถ่ายสินค้าฝั่งตะวันออก",
-    category: "warehouse",
+    code: "EAST-FACADE",
+    name: "โถงด้านหน้าอาคารตะวันออก (ผนังกระจกสีฟ้า 2 ชั้น & เสาเฉียง V-Column)",
+    category: "office_utility",
     hall: "hall_4",
     type: "ramp_group",
     bounds: [1420, 755, 1605, 1290],
-    height: 3.5,
+    height: 8.4,
     orientation: "NS",
-    specs: "ทางลาดสีฟ้า 4 จุด + กันสาดโหลดสินค้าคู่ด้านทิศใต้",
-    description: "ระบบทางลาดขึ้นลงระหว่างระดับพื้นอาคารคลังสินค้าและอาคารผลิตตะวันออก พร้อมจุดรับ-ส่งสินค้าด้านหน้า"
+    specs: "ผนังกระจกสีฟ้าสะท้อนแสง · ชายคาสีเทาเข้ม · เสาเฉียงรูปตัว V สีขาว 5 คู่",
+    description: "ส่วนหน้าอาคารผลิตฝั่งตะวันออก (อาคาร 4) ดีไซน์โมเดิร์น 2 ชั้น โดดเด่นด้วยผนังกระจกสีฟ้าสะท้อนแสง เสาโครงสร้างเฉียงรูปตัว V สีขาว ชายคายื่นสีเทาเข้ม ผนังฟินสีน้ำเงินเข้ม และเต็นท์โค้งเก็บสินค้าด้านข้าง"
   },
 
   // ================= AUXILIARY BUILDINGS =================
@@ -619,15 +619,15 @@ window.Starflex3D.Data.items = [
   },
   {
     id: "guardhouse_item",
-    code: "GUARD",
-    name: "ป้อม รปภ. (จุดรักษาความปลอดภัยหน้าโรงงาน)",
+    code: "GATE / GUARD",
+    name: "ป้อม รปภ. หลังคาปั้นหยา, ตู้ ATM ttb & ป้ายหน้าบริษัท STARFLEX",
     category: "office_utility",
     hall: "guardhouse",
     type: "guard_station",
     bounds: [1185, 1430, 1292, 1560],
-    height: 3.8,
+    height: 4.8,
     orientation: "NS",
-    specs: "Security Checkpoint (HUB 11)",
-    description: "ป้อม รปภ. ตรวจสอบรถขนส่งและผู้มาติดต่อบริเวณทางเข้าหลักด้านถนน"
+    specs: "ป้ายรั้วสีน้ำเงิน STARFLEX · ประตูเลื่อน · ตู้ ATM ttb · ป้อม รปภ. หลังคาปั้นหยา",
+    description: "โซนทางเข้าหลักด้านถนน ประกอบด้วยรั้วคอนกรีตพร้อมโคมไฟหัวเสาสีทอง ป้ายชื่อบริษัท STARFLEX PUBLIC COMPANY LIMITED สีน้ำเงินเข้ม ประตูรั้วเลื่อน ตู้ ATM ttb สีน้ำเงิน-ขาว และอาคารป้อม รปภ. หลังคาทรงปั้นหยาสีเทาพร้อมกันสาดยื่น"
   }
 ];

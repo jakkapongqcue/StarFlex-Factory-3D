@@ -37,6 +37,7 @@
   // 3. Build 3D Factory World
   App.Builders.Site.build(scene, mats, state);
   App.Builders.Architecture.build(scene, mats, state);
+  App.Builders.FrontFacade.build(scene, mats, state);
   App.Builders.Machines.build(scene, mats, state);
   App.Builders.Flows.build(scene, state);
 

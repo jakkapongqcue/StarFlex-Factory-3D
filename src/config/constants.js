@@ -31,9 +31,21 @@ window.Starflex3D.Config = {
   cameraPresets: [
     {
       id: "isometric",
-      target: [5, 2, 4],
-      pos: [-18, 108, 142],
+      target: [5, 2, 10],
+      pos: [-18, 102, 148],
       label: "มุมมอง 3D Isometric Cutaway (เริ่มต้น)"
+    },
+    {
+      id: "front_street",
+      target: [12, 5, 42],
+      pos: [-8, 16, 118],
+      label: "มุมมองด้านหน้าบริษัท (Street View ตามสถานที่จริง)"
+    },
+    {
+      id: "east_v_facade",
+      target: [58, 5, 38],
+      pos: [85, 18, 108],
+      label: "มุมมองอาคารฝั่งขวา (เสา V-Column & ผนังกระจกโมเดิร์น)"
     },
     {
       id: "top_down",

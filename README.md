@@ -37,7 +37,8 @@ StarFlex-FactoryLayout3D/
     │   └── scene-manager.js          # จัดการ Scene, Camera, Renderer, แสงเงา และการเคลื่อนที่ของกล้อง
     ├── builders/
     │   ├── site.builder.js           # สร้างตารางพื้น, เส้นขอบเขตโรงงาน, แผ่นพื้นคอนกรีต, ทางลาดสีฟ้า, กันสาด และต้นไม้
-    │   ├── architecture.builder.js   # สร้างผนังแบบมองทะลุ (Cutaway), เสา H-Beam, โครงถักหลังคาโซลาร์เซลล์ และเครนเหนือศีรษะ
+    │   ├── architecture.builder.js   # สร้างผนังแบบมองทะลุ (Cutaway), เสา H-Beam, โครงหลังคาโค้ง (Curved Arch Roof) & โซลาร์เซลล์ และเครนเหนือศีรษะ
+    │   ├── front-facade.builder.js   # สร้างสถาปัตยกรรมหน้าบริษัทตามสถานที่จริง (สำนักงานหลังคาโค้ง+ซุ้มปั้นหยาเสาหิน, อาคารขวาผนังกระจกสีฟ้า+เสา V-Column, รั้วโคมไฟทอง, ป้าย STARFLEX สีน้ำเงิน, เสาธง 3 ต้น, ตู้ ATM ttb และป้อม รปภ. หลังคาปั้นหยา)
     │   ├── machines.builder.js       # สร้างโมเดล 3D เครื่องจักรแยกตามประเภท (Gravure, Blow Film, Extrusion, Laminator, BM, Racks)
     │   └── flows.builder.js          # สร้างท่อลำเลียงและแอนิเมชันลูกบอลวิ่งตามสายการผลิต
     ├── ui/
