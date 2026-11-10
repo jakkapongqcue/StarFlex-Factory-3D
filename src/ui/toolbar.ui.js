@@ -28,6 +28,31 @@ window.Starflex3D.UI.Toolbar = {
       btnCutaway.classList.add("active");
       btnRoof.classList.remove("active");
       statusText.textContent = "โหมดมองทะลุ 3D (Cutaway) · พร้อมสถาปัตยกรรมหน้าบริษัทจริง";
+    } else if (mode === "full") {
+      // 100% Solid Enclosed Exterior & Roof (Cannot see interior from outside!)
+      backWallsGroup.visible = true;
+      partitionWallsGroup.visible = true;
+      frontWallsGroup.visible = true;
+      roofTrussGroup.visible = true;
+      roofShellGroup.visible = true;
+      if (state.frontFacadeGroup) state.frontFacadeGroup.visible = true;
+
+      mats.wallCutawayFront.opacity = 1.0;
+      mats.wallCutawayFront.transparent = false;
+      mats.wallCutawayFront.needsUpdate = true;
+
+      mats.roofSheet.opacity = 1.0;
+      mats.roofSheet.transparent = false;
+      mats.roofSheet.needsUpdate = true;
+
+      mats.solarPanel.opacity = 1.0;
+      mats.solarPanel.transparent = false;
+      mats.solarPanel.needsUpdate = true;
+
+      document.getElementById("slider-roof").value = 95;
+      btnCutaway.classList.remove("active");
+      btnRoof.classList.add("active");
+      statusText.textContent = "โหมดปิดทึบโครงสร้างภายนอกจริง (Full Exterior) · หลังคาโค้งและโซลาร์เซลล์";
     } else if (mode === "xray") {
       backWallsGroup.visible = true;
       partitionWallsGroup.visible = true;
@@ -35,27 +60,23 @@ window.Starflex3D.UI.Toolbar = {
       roofTrussGroup.visible = true;
       roofShellGroup.visible = true;
       if (state.frontFacadeGroup) state.frontFacadeGroup.visible = true;
-      mats.wallCutawayFront.opacity = 0.25;
-      mats.roofSheet.opacity = 0.24;
-      mats.solarPanel.opacity = 0.38;
-      document.getElementById("slider-roof").value = 38;
+
+      mats.wallCutawayFront.transparent = true;
+      mats.wallCutawayFront.opacity = 0.28;
+      mats.wallCutawayFront.needsUpdate = true;
+
+      mats.roofSheet.transparent = true;
+      mats.roofSheet.opacity = 0.26;
+      mats.roofSheet.needsUpdate = true;
+
+      mats.solarPanel.transparent = true;
+      mats.solarPanel.opacity = 0.42;
+      mats.solarPanel.needsUpdate = true;
+
+      document.getElementById("slider-roof").value = 40;
       btnCutaway.classList.add("active");
       btnRoof.classList.add("active");
       statusText.textContent = "โหมดโปร่งแสง X-Ray · แสดงโครงหลังคาโค้งและโซลาร์เซลล์ทะลุภายใน";
-    } else if (mode === "full") {
-      backWallsGroup.visible = true;
-      partitionWallsGroup.visible = true;
-      frontWallsGroup.visible = true;
-      roofTrussGroup.visible = true;
-      roofShellGroup.visible = true;
-      if (state.frontFacadeGroup) state.frontFacadeGroup.visible = true;
-      mats.wallCutawayFront.opacity = 0.85;
-      mats.roofSheet.opacity = 0.92;
-      mats.solarPanel.opacity = 0.92;
-      document.getElementById("slider-roof").value = 92;
-      btnCutaway.classList.remove("active");
-      btnRoof.classList.add("active");
-      statusText.textContent = "โหมดโครงสร้างภายนอกจริง · หลังคาโค้งและโซลาร์เซลล์ตามสถานที่จริง";
     } else if (mode === "open") {
       backWallsGroup.visible = false;
       partitionWallsGroup.visible = false;
@@ -70,15 +91,13 @@ window.Starflex3D.UI.Toolbar = {
   },
 
   cycleStructureMode(state, mats) {
-    const order = ["cutaway", "xray", "full", "open"];
+    const order = ["cutaway", "full", "xray", "open"];
     const next = order[(order.indexOf(state.structureMode) + 1) % order.length];
     this.applyStructureMode(state, mats, next);
   },
 
   toggleSolarRoofPreview(state, mats) {
-    if (state.structureMode === "cutaway" || state.structureMode === "open") {
-      this.applyStructureMode(state, mats, "xray");
-    } else if (state.structureMode === "xray") {
+    if (state.structureMode !== "full") {
       this.applyStructureMode(state, mats, "full");
     } else {
       this.applyStructureMode(state, mats, "cutaway");
@@ -95,12 +114,34 @@ window.Starflex3D.UI.Toolbar = {
     if (op <= 0.02) {
       roofShellGroup.visible = false;
       frontWallsGroup.visible = false;
+    } else if (op >= 0.9) {
+      roofShellGroup.visible = true;
+      frontWallsGroup.visible = true;
+      mats.roofSheet.transparent = false;
+      mats.roofSheet.opacity = 1.0;
+      mats.roofSheet.needsUpdate = true;
+
+      mats.solarPanel.transparent = false;
+      mats.solarPanel.opacity = 1.0;
+      mats.solarPanel.needsUpdate = true;
+
+      mats.wallCutawayFront.transparent = false;
+      mats.wallCutawayFront.opacity = 1.0;
+      mats.wallCutawayFront.needsUpdate = true;
     } else {
       roofShellGroup.visible = true;
       frontWallsGroup.visible = true;
-      mats.roofSheet.opacity = op * 0.85;
+      mats.roofSheet.transparent = true;
+      mats.roofSheet.opacity = op;
+      mats.roofSheet.needsUpdate = true;
+
+      mats.solarPanel.transparent = true;
       mats.solarPanel.opacity = op;
-      mats.wallCutawayFront.opacity = op * 0.7;
+      mats.solarPanel.needsUpdate = true;
+
+      mats.wallCutawayFront.transparent = true;
+      mats.wallCutawayFront.opacity = op;
+      mats.wallCutawayFront.needsUpdate = true;
     }
   },
 

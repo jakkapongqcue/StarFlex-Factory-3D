@@ -1,9 +1,9 @@
 // ============================================================================
 // Module: src/builders/architecture.builder.js
 // Builds the cutaway building shells, steel H-columns, internal partitions,
-// curved barrel-arch roof trusses & solar PV arrays (matching the real
-// street-view & Google Maps photos), Central Loading Dock facade,
-// NE High-Bay Blow Film Penthouse, and overhead yellow bridge cranes.
+// curved barrel-arch roof trusses & solar PV arrays, AND complete watertight
+// exterior walls + curved arch gable tympanums (หน้าจั่วโค้งปิดทึบ) so that
+// when the exterior/roof is closed, zero interior machines leak through gaps.
 // ============================================================================
 
 window.Starflex3D = window.Starflex3D || {};
@@ -39,7 +39,7 @@ window.Starflex3D.Builders.Architecture = {
       const len = Math.hypot(dx, dz);
       const angle = Math.atan2(dz, dx);
 
-      const wallMesh = new THREE.Mesh(new THREE.BoxGeometry(len, h, 0.28), mat);
+      const wallMesh = new THREE.Mesh(new THREE.BoxGeometry(len, h, 0.3), mat);
       wallMesh.position.set((p1.x + p2.x) * 0.5, h * 0.5, (p1.z + p2.z) * 0.5);
       wallMesh.rotation.y = -angle;
       wallMesh.castShadow = true;
@@ -63,40 +63,45 @@ window.Starflex3D.Builders.Architecture = {
       }
     }
 
-    // 1. Back & Outer Side Structural Walls (Visible in Cutaway Mode)
+    // Helper: add a flat roof cap over an auxiliary room/annex
+    function addFlatRoofCap(px1, py1, px2, py2, h, targetGroup, mat) {
+      const r = rect([px1, py1, px2, py2]);
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(r.w + 0.3, 0.24, r.d + 0.3), mat);
+      cap.position.set(r.x, h + 0.12, r.z);
+      addEdges(cap, 0x64748b, 0.5);
+      targetGroup.add(cap);
+    }
+
+    // ========================================================================
+    // 1. BACK & OUTER SIDE STRUCTURAL WALLS (Always visible in Cutaway Mode)
+    // ========================================================================
     addWallSegment(200, 247, 1062, 247, 10.5, backWallsGroup, mats.wallSolid, true, 65);
     addWallSegment(1062, 247, 1498, 247, 11.2, backWallsGroup, mats.wallSolid, true, 65);
     addWallSegment(1498, 247, 1895, 247, 12.8, backWallsGroup, mats.wallSolid, true, 65);
 
+    // West Outer Wall of Hall 1
     addWallSegment(200, 247, 200, 1098, 10.5, backWallsGroup, mats.wallSolid, true, 65);
 
-    addWallSegment(1895, 247, 1895, 490, 14.5, backWallsGroup, mats.wallSolid, true, 65);
+    // East Outer Wall of Hall 4 + East MDB & East Oven Room
+    addWallSegment(1895, 247, 1895, 1100, 12.8, backWallsGroup, mats.wallSolid, true, 65);
     addWallSegment(1895, 490, 1950, 490, 4.5, backWallsGroup, mats.wallSolid, false);
     addWallSegment(1950, 490, 1950, 545, 4.5, backWallsGroup, mats.wallSolid, false);
-    addWallSegment(1895, 545, 1895, 885, 12.8, backWallsGroup, mats.wallSolid, true, 65);
+    addWallSegment(1895, 545, 1950, 545, 4.5, backWallsGroup, mats.wallSolid, false);
+
     addWallSegment(1895, 885, 1968, 885, 4.8, backWallsGroup, mats.wallSolid, false);
     addWallSegment(1968, 885, 1968, 1055, 4.8, backWallsGroup, mats.wallSolid, false);
+    addWallSegment(1895, 1055, 1968, 1055, 4.8, backWallsGroup, mats.wallSolid, false);
 
-    // High-Bay Blow Film Tower Back/Side Penthouse Enclosure (Visible in Image 5 at NE corner!)
-    addWallSegment(1755, 247, 1895, 247, 16.2, backWallsGroup, mats.wallSolid, false);
-    addWallSegment(1895, 247, 1895, 465, 16.2, backWallsGroup, mats.wallSolid, false);
-
-    // Pump Room Back/Side Walls
+    // Pump Room Walls
     addWallSegment(1940, 78, 2038, 78, 5.2, backWallsGroup, mats.wallSolid, true, 50);
     addWallSegment(1940, 78, 1940, 198, 5.2, backWallsGroup, mats.wallSolid, false);
     addWallSegment(2038, 78, 2038, 198, 5.2, backWallsGroup, mats.wallSolid, false);
+    addWallSegment(1940, 198, 2038, 198, 5.2, frontWallsGroup, mats.wallCutawayFront, false);
+    addFlatRoofCap(1940, 78, 2038, 198, 5.2, roofShellGroup, mats.roofSheet);
 
-    // Central Loading Dock Upper Fascia & Clerestory Window Band (Images 1 & 2 background)
-    const dockFasciaR = rect([1062, 810, 1398, 822]);
-    const dockUpperBeam = new THREE.Mesh(
-      new THREE.BoxGeometry(dockFasciaR.w, 2.4, 0.45),
-      new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.55 })
-    );
-    dockUpperBeam.position.set(dockFasciaR.x, 7.6, dockFasciaR.z);
-    addEdges(dockUpperBeam, 0x475569, 0.65);
-    backWallsGroup.add(dockUpperBeam);
-
-    // 2. Stepped Internal Partition Walls
+    // ========================================================================
+    // 2. INTERNAL PARTITION WALLS (Low/Stepped in Cutaway Mode)
+    // ========================================================================
     addWallSegment(632, 247, 632, 700, 6.2, partitionWallsGroup, mats.wallPartition, true, 75);
     addWallSegment(632, 700, 632, 1098, 3.6, partitionWallsGroup, mats.wallPartition, true, 75);
     addWallSegment(674, 247, 674, 700, 6.2, partitionWallsGroup, mats.wallPartition, true, 75);
@@ -121,11 +126,48 @@ window.Starflex3D.Builders.Architecture = {
       addWallSegment(seg[0], seg[1], seg[2], seg[3], 2.8, partitionWallsGroup, mats.wallPartition, false);
     });
 
-    // 3. Front / South Hall Walls (For X-Ray & Full Real Structure Modes)
-    addWallSegment(200, 1098, 674, 1098, 10.5, frontWallsGroup, mats.wallCutawayFront, true, 65);
-    addWallSegment(1062, 815, 1498, 815, 11.2, frontWallsGroup, mats.wallCutawayFront, true, 65);
+    // ========================================================================
+    // 3. COMPLETE FRONT & SIDE EXTERIOR ENCLOSURE WALLS (Sealing Circles 1–4!)
+    // ========================================================================
+    // Circle 1 & Circle 2: Full-height South front wall across BOTH Hall 1 & Hall 2 (px: 200..1062, py = 1098)
+    addWallSegment(200, 1098, 632, 1098, 10.5, frontWallsGroup, mats.wallCutawayFront, true, 65);
+    addWallSegment(632, 1098, 1062, 1098, 10.5, frontWallsGroup, mats.wallCutawayFront, true, 65);
 
-    // 4. Curved Barrel-Arch Roof Trusses & Solar PV Arrays (Matching Images 1–5 + Google Maps!)
+    // East outer wall of Hall 2 facing the central loading courtyard (px = 1062, py: 815..1098)
+    addWallSegment(1062, 247, 1062, 1098, 10.5, frontWallsGroup, mats.wallCutawayFront, true, 65);
+
+    // Circle 3: Full-height South wall of Hall 3 High-Bay Warehouse (px: 1062..1498, py = 815)
+    addWallSegment(1062, 815, 1498, 815, 11.2, frontWallsGroup, mats.wallCutawayFront, true, 65);
+    addWallSegment(1062, 247, 1062, 815, 11.2, frontWallsGroup, mats.wallCutawayFront, false);
+    addWallSegment(1498, 247, 1498, 815, 11.2, frontWallsGroup, mats.wallCutawayFront, false);
+
+    // Covered Loading Dock Canopy Roof & Side Enclosure (px: 1062..1402, py: 712..898)
+    addFlatRoofCap(1062, 712, 1402, 898, 8.5, roofShellGroup, mats.roofSheet);
+    addWallSegment(1062, 898, 1402, 898, 8.5, frontWallsGroup, mats.wallCutawayFront, true, 65);
+
+    // Circle 4: Full-height South & West walls of Hall 4 East Plant (px: 1498..1895, py = 1100)
+    addWallSegment(1498, 1100, 1895, 1100, 12.8, frontWallsGroup, mats.wallCutawayFront, true, 65);
+    addWallSegment(1498, 247, 1498, 1100, 12.8, frontWallsGroup, mats.wallCutawayFront, true, 65);
+
+    // West Ramp Annex Enclosure of Hall 4 (px: 1395..1498, py: 765..1100)
+    addWallSegment(1395, 765, 1498, 765, 8.4, frontWallsGroup, mats.wallCutawayFront, false);
+    addWallSegment(1395, 765, 1395, 1100, 8.4, frontWallsGroup, mats.wallCutawayFront, true, 65);
+    addFlatRoofCap(1395, 765, 1498, 1100, 8.4, roofShellGroup, mats.roofSheet);
+
+    // East MDB & East Oven Room Roof Caps
+    addFlatRoofCap(1895, 490, 1950, 545, 4.5, roofShellGroup, mats.roofSheet);
+    addFlatRoofCap(1895, 885, 1968, 1055, 4.8, roofShellGroup, mats.roofSheet);
+
+    // NE High-Bay Blow Film Penthouse Full 4-Sided Enclosure + Roof Cap (px: 1755..1895, py: 247..465)
+    addWallSegment(1755, 247, 1895, 247, 16.2, backWallsGroup, mats.wallSolid, false);
+    addWallSegment(1895, 247, 1895, 465, 16.2, backWallsGroup, mats.wallSolid, false);
+    addWallSegment(1755, 247, 1755, 465, 16.2, frontWallsGroup, mats.wallCutawayFront, false);
+    addWallSegment(1755, 465, 1895, 465, 16.2, frontWallsGroup, mats.wallCutawayFront, false);
+    addFlatRoofCap(1755, 247, 1895, 465, 16.2, roofShellGroup, mats.roofSheet);
+
+    // ========================================================================
+    // 4. CURVED BARREL-ARCH ROOFS + SOLID FRONT/BACK ARCH GABLE TYMPANUMS!
+    // ========================================================================
     function buildCurvedArchSpan(px1, px2, py1, py2, eaveH, archRise, solarCols = 2, hasMonitor = false) {
       const r = rect([px1, py1, px2, py2]);
       const archSegs = 12;
@@ -148,7 +190,7 @@ window.Starflex3D.Builders.Architecture = {
         roofTrussGroup.add(line);
       }
 
-      // 4B. Curved Roof Segments + North Cutaway Slice + Solar PV Panels
+      // 4B. Curved Roof Segments + North/South Arch Gable Tympanum Walls!
       const cutDepth = Math.min(8.5, r.d * 0.11);
       for (let s = 0; s < archSegs; s++) {
         const u1 = s / archSegs - 0.5;
@@ -158,18 +200,39 @@ window.Starflex3D.Builders.Architecture = {
         const y1 = eaveH + Math.cos(u1 * Math.PI) * archRise;
         const y2 = eaveH + Math.cos(u2 * Math.PI) * archRise;
 
+        const segW = Math.abs(x2 - x1);
         const segLen = Math.hypot(x2 - x1, y2 - y1);
         const segAng = Math.atan2(y2 - y1, x2 - x1);
         const midX = (x1 + x2) * 0.5;
         const midY = (y1 + y2) * 0.5;
 
-        // Full length curved roof sheet (for X-Ray & Full modes)
-        const deckMesh = new THREE.Mesh(new THREE.BoxGeometry(segLen + 0.05, 0.14, r.d), mats.roofSheet);
+        // Full length curved roof sheet
+        const deckMesh = new THREE.Mesh(new THREE.BoxGeometry(segLen + 0.08, 0.16, r.d + 0.4), mats.roofSheet);
         deckMesh.position.set(midX, midY, r.z);
         deckMesh.rotation.z = segAng;
         roofShellGroup.add(deckMesh);
 
-        // North-edge Cutaway Slice of the Curved Arch Roof (Always visible in Cutaway Mode!)
+        // SEAL ARCH GABLE TYMPANUMS (หน้าจั่วโค้งด้านหน้าและด้านหลังอาคาร!)
+        const tympH = Math.max(0.15, midY - eaveH + 0.15);
+        // 1) North Back Arch Gable Tympanum
+        const backTymp = new THREE.Mesh(
+          new THREE.BoxGeometry(segW + 0.06, tympH, 0.32),
+          mats.wallSolid
+        );
+        backTymp.position.set(midX, eaveH + tympH * 0.5 - 0.08, r.z1);
+        addEdges(backTymp, 0x94a3b8, 0.4);
+        backWallsGroup.add(backTymp);
+
+        // 2) South Front Arch Gable Tympanum (Closes the semi-circular gap under every arch roof!)
+        const frontTymp = new THREE.Mesh(
+          new THREE.BoxGeometry(segW + 0.06, tympH, 0.32),
+          mats.wallCutawayFront
+        );
+        frontTymp.position.set(midX, eaveH + tympH * 0.5 - 0.08, r.z2);
+        addEdges(frontTymp, 0x94a3b8, 0.45);
+        frontWallsGroup.add(frontTymp);
+
+        // North-edge Cutaway Slice of the Curved Arch Roof (Visible in Cutaway Mode)
         const cutDeck = new THREE.Mesh(
           new THREE.BoxGeometry(segLen + 0.05, 0.18, cutDepth),
           new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.5, metalness: 0.2 })
@@ -178,14 +241,14 @@ window.Starflex3D.Builders.Architecture = {
         cutDeck.rotation.z = segAng;
         roofTrussGroup.add(cutDeck);
 
-        // Solar PV panels on the inner segments (leaving maintenance walkways between columns)
+        // Solar PV panels
         const isWalkway = solarCols === 2 && (s === 0 || s === 5 || s === 6 || s === 11);
         if (!isWalkway) {
           const solarMesh = new THREE.Mesh(
             new THREE.BoxGeometry(segLen * 0.92, 0.08, r.d * 0.88),
             mats.solarPanel
           );
-          solarMesh.position.set(midX, midY + 0.14, r.z);
+          solarMesh.position.set(midX, midY + 0.15, r.z);
           solarMesh.rotation.z = segAng;
           roofShellGroup.add(solarMesh);
 
@@ -193,7 +256,7 @@ window.Starflex3D.Builders.Architecture = {
             new THREE.BoxGeometry(segLen * 0.92, 0.1, cutDepth * 0.82),
             new THREE.MeshStandardMaterial({ color: 0x1e3a5f, roughness: 0.25, metalness: 0.65 })
           );
-          cutSolar.position.set(midX, midY + 0.14, r.z1 + cutDepth * 0.5);
+          cutSolar.position.set(midX, midY + 0.15, r.z1 + cutDepth * 0.5);
           cutSolar.rotation.z = segAng;
           roofTrussGroup.add(cutSolar);
         }
@@ -223,19 +286,15 @@ window.Starflex3D.Builders.Architecture = {
       }
     }
 
-    // Hall 1 Curved Barrel-Arch Roof (2 Solar Columns — Image 1 & 3 left building)
+    // Build all 4 Hall Curved Barrel-Arch Roofs + Sealed Gable Tympanums
     buildCurvedArchSpan(200, 632, 247, 1098, 10.5, 2.5, 2, false);
-
-    // Hall 2 Curved Barrel-Arch Roof (2 Solar Columns — Image 1 & 3 center-left building)
     buildCurvedArchSpan(632, 1062, 247, 1098, 10.5, 2.5, 2, false);
-
-    // Hall 3 Central High-Bay Warehouse Roof
     buildCurvedArchSpan(1062, 1498, 247, 815, 11.2, 1.6, 2, false);
-
-    // Hall 4 East Plant Large White Curved Barrel-Arch Roof + Central Monitor (Images 2, 4, 5)
     buildCurvedArchSpan(1498, 1895, 247, 1100, 12.8, 2.8, 2, true);
 
-    // 5. Overhead Yellow Bridge Cranes
+    // ========================================================================
+    // 5. OVERHEAD YELLOW BRIDGE CRANES
+    // ========================================================================
     function addBridgeCrane(px1, px2, py, height) {
       const p1 = pt(px1, py);
       const p2 = pt(px2, py);

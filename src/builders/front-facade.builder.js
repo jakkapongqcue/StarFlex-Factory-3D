@@ -298,7 +298,23 @@ window.Starflex3D.Builders.FrontFacade = {
     const eastFrontR = rect([1395, 1085, 1895, 1230]);
     const eastH = 8.4;
 
-    // 3A. 2-Story Reflective Blue Glass Curtain Wall Box
+    // 3A. Solid Inner Backing Core (Blocks see-through into Hall 4 from outside!)
+    const solidInnerCore = new THREE.Mesh(
+      new THREE.BoxGeometry(eastFrontR.w - 0.3, eastH - 0.1, eastFrontR.d - 0.3),
+      new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.2 })
+    );
+    solidInnerCore.position.set(eastFrontR.x, eastH * 0.5, eastFrontR.z - 0.08);
+    frontGroup.add(solidInnerCore);
+
+    // Solid Roof Deck Slab over the entire 2-Story Annex (Seals top connection to Hall 4!)
+    const annexRoofCap = new THREE.Mesh(
+      new THREE.BoxGeometry(eastFrontR.w + 0.4, 0.35, eastFrontR.d + 1.2),
+      fMats.charcoalFascia
+    );
+    annexRoofCap.position.set(eastFrontR.x, eastH + 0.15, eastFrontR.z);
+    frontGroup.add(annexRoofCap);
+
+    // 2-Story Reflective Blue Glass Curtain Wall Shell
     const glassBox = new THREE.Mesh(
       new THREE.BoxGeometry(eastFrontR.w, eastH, eastFrontR.d),
       fMats.reflectiveGlass
