@@ -262,9 +262,10 @@ window.Starflex3D.Builders.FrontFacade = {
     }
 
     // ========================================================================
-    // 1. GREEN FRONT LAWN & 3 FLAGPOLES (West Front Yard — Images 1 & 3)
+    // 1. GREEN FRONT LAWN & 3 FLAGPOLES (West Front Yard — References/Front_View_3_Main_Office_Arch_Roof.jpg)
     // ========================================================================
-    const lawnRect = rect([205, 1135, 680, 1545]);
+    // Reduced lawn boundary to leave wide open paved concrete driveway in front of Office HQ
+    const lawnRect = rect([120, 1150, 460, 1545]);
     const lawnMesh = new THREE.Mesh(
       new THREE.BoxGeometry(lawnRect.w, 0.16, lawnRect.d),
       fMats.lawnGreen
@@ -273,9 +274,18 @@ window.Starflex3D.Builders.FrontFacade = {
     lawnMesh.receiveShadow = true;
     frontGroup.add(lawnMesh);
 
-    // Ornamental bushes along the lawn edge (Image 3)
-    for (let px = 240; px <= 660; px += 35) {
-      const bp = pt(px, 1135);
+    // Ornamental bushes lining the lawn border along the driveway (Front_View_3_Main_Office_Arch_Roof.jpg)
+    for (let py = 1170; py <= 1520; py += 35) {
+      const bp = pt(460, py);
+      const curb = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.16, 0.7), fMats.whiteTrim);
+      curb.position.set(bp.x, 0.08, bp.z);
+      const bush = new THREE.Mesh(new THREE.SphereGeometry(0.42, 8, 8), fMats.hedgeGreen);
+      bush.position.set(bp.x, 0.28, bp.z);
+      frontGroup.add(curb, bush);
+    }
+    // Bushes along the rear lawn boundary (py: 1150)
+    for (let px = 140; px < 460; px += 40) {
+      const bp = pt(px, 1150);
       const bush = new THREE.Mesh(new THREE.SphereGeometry(0.35, 8, 8), fMats.hedgeGreen);
       bush.position.set(bp.x, 0.25, bp.z);
       frontGroup.add(bush);
@@ -453,7 +463,159 @@ window.Starflex3D.Builders.FrontFacade = {
     gableLogo.position.set(offR.x, offH + 1.15, offR.z2 + 0.12);
     frontGroup.add(gableLogo);
 
-    // 2C. East Side Canopy Extension (หลังคาต่อเพิ่มด้านขวาของสำนักงานใหญ่ - Covered Carport & Passageway)
+    // ========================================================================
+    // 2C. HIPPED-ROOF ENTRANCE PORTE-COCHERE (ซุ้มทางเข้าด้านหน้าสำนักงานใหญ่)
+    // References: References/Front_View_3_Main_Office_Arch_Roof.jpg
+    // Features:
+    //  - 2 sturdy front columns clad in natural stone/sandstone (หินกาบ/หินทราย)
+    //  - Dark charcoal arch beam connecting columns with side tie-beams to wall
+    //  - Hipped roof pyramid with dark shingles & white cornice trim
+    //  - Raised concrete landing & wide 3-tread entrance stairs (+0.75m elevation)
+    //  - Topiary shrubs in planter beds flanking the columns
+    //  - Golden Spirit House (ศาลพระภูมิสีทอง) on the right
+    //  - Marked parking spaces on the wide concrete apron in front of office
+    // ========================================================================
+    const porchR = rect([806, 1190, 886, 1255]);
+    const porchH = 3.9;
+
+    // Raised concrete landing & wide entrance stairs leading to the office doors
+    const stepMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, roughness: 0.5 });
+    const landing = new THREE.Mesh(
+      new THREE.BoxGeometry(porchR.w * 0.88, 0.75, porchR.d * 0.78),
+      stepMat
+    );
+    landing.position.set(porchR.x, 0.375, porchR.z1 + (porchR.d * 0.78) * 0.5);
+    addEdges(landing, 0x9ca3af, 0.7);
+    frontGroup.add(landing);
+
+    // 3 wide concrete front steps
+    for (let s = 1; s <= 3; s++) {
+      const stepD = 0.55;
+      const stepH = 0.25;
+      const step = new THREE.Mesh(
+        new THREE.BoxGeometry(porchR.w * 0.88 - s * 0.15, stepH * (4 - s), stepD),
+        stepMat
+      );
+      step.position.set(
+        porchR.x,
+        (stepH * (4 - s)) * 0.5,
+        porchR.z1 + porchR.d * 0.78 + (s - 0.5) * stepD
+      );
+      addEdges(step, 0x9ca3af, 0.6);
+      frontGroup.add(step);
+    }
+
+    // 2 Sturdy Stone-Clad Front Columns (หินกาบ/หินทราย)
+    const pillarW = 0.65;
+    [-porchR.w * 0.42, porchR.w * 0.42].forEach(dx => {
+      const col = new THREE.Mesh(
+        new THREE.BoxGeometry(pillarW, porchH, pillarW),
+        fMats.stonePillar
+      );
+      col.position.set(porchR.x + dx, porchH * 0.5, porchR.z2 - 0.35);
+      col.castShadow = true;
+      addEdges(col, 0x78350f, 0.7);
+      frontGroup.add(col);
+
+      // White cornice capital & base trim on stone pillar
+      [0.2, porchH - 0.15].forEach(cy => {
+        const cap = new THREE.Mesh(
+          new THREE.BoxGeometry(pillarW + 0.14, 0.18, pillarW + 0.14),
+          fMats.whiteTrim
+        );
+        cap.position.set(porchR.x + dx, cy, porchR.z2 - 0.35);
+        frontGroup.add(cap);
+      });
+
+      // Shrub bed / planters flanking the columns (Front_View_3)
+      const planter = new THREE.Mesh(
+        new THREE.BoxGeometry(1.2, 0.35, 1.2),
+        fMats.charcoalFascia
+      );
+      planter.position.set(porchR.x + dx + (dx > 0 ? 0.85 : -0.85), 0.175, porchR.z2 - 0.35);
+      const shrub = new THREE.Mesh(new THREE.SphereGeometry(0.55, 10, 10), fMats.hedgeGreen);
+      shrub.position.set(porchR.x + dx + (dx > 0 ? 0.85 : -0.85), 0.65, porchR.z2 - 0.35);
+      frontGroup.add(planter, shrub);
+    });
+
+    // Dark-charcoal horizontal arch beam connecting the two stone pillars
+    const frontBeam = new THREE.Mesh(
+      new THREE.BoxGeometry(porchR.w * 0.94, 0.48, 0.42),
+      fMats.charcoalFascia
+    );
+    frontBeam.position.set(porchR.x, porchH - 0.24, porchR.z2 - 0.35);
+    addEdges(frontBeam, 0x1e293b, 0.8);
+    frontGroup.add(frontBeam);
+
+    // Side tie-beams connecting pillars back to the office facade wall
+    [-porchR.w * 0.42, porchR.w * 0.42].forEach(dx => {
+      const sideBeam = new THREE.Mesh(
+        new THREE.BoxGeometry(0.42, 0.48, porchR.d - 0.4),
+        fMats.charcoalFascia
+      );
+      sideBeam.position.set(porchR.x + dx, porchH - 0.24, (porchR.z1 + porchR.z2) * 0.5);
+      addEdges(sideBeam, 0x1e293b, 0.8);
+      frontGroup.add(sideBeam);
+    });
+
+    // White cornice fascia base trim of the hipped roof
+    const porchBase = new THREE.Mesh(
+      new THREE.BoxGeometry(porchR.w + 0.9, 0.32, porchR.d + 0.7),
+      fMats.whiteTrim
+    );
+    porchBase.position.set(porchR.x, porchH + 0.16, porchR.z);
+    addEdges(porchBase, 0x64748b, 0.7);
+    frontGroup.add(porchBase);
+
+    // Authentic 4-sided Hipped Roof Pyramid (หลังคาทรงปั้นหยา)
+    const porchHip = new THREE.Mesh(
+      new THREE.ConeGeometry(porchR.w * 0.72, 1.85, 4),
+      fMats.hipRoofTile
+    );
+    porchHip.position.set(porchR.x, porchH + 0.32 + 0.925, porchR.z);
+    porchHip.rotation.y = Math.PI / 4;
+    porchHip.scale.set(1.0, 1.0, (porchR.d + 0.7) / (porchR.w + 0.9));
+    addEdges(porchHip, 0xffffff, 0.65);
+    frontGroup.add(porchHip);
+
+    // Golden Spirit House (ศาลพระภูมิสีทอง) on the right of the office entrance (Image 1 & 3)
+    const shrinePos = pt(965, 1225);
+    const shrinePedestal = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.9, 1.4), fMats.whiteTrim);
+    shrinePedestal.position.set(shrinePos.x, 0.45, shrinePos.z);
+    const shrineTop = new THREE.Mesh(new THREE.ConeGeometry(0.75, 1.5, 4), fMats.goldLamp);
+    shrineTop.position.set(shrinePos.x, 1.65, shrinePos.z);
+    shrineTop.rotation.y = Math.PI / 4;
+    frontGroup.add(shrinePedestal, shrineTop);
+
+    // Decorative potted plants along the office building front plinth (Front_View_3)
+    [695, 735, 775, 915, 955, 995].forEach(px => {
+      const pot = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.28, 0.22, 0.45, 8),
+        fMats.charcoalFascia
+      );
+      const plant = new THREE.Mesh(
+        new THREE.SphereGeometry(0.32, 8, 8),
+        fMats.hedgeGreen
+      );
+      const pp = pt(px, 1198);
+      pot.position.set(pp.x, 0.225, pp.z);
+      plant.position.set(pp.x, 0.58, pp.z);
+      frontGroup.add(pot, plant);
+    });
+
+    // White parking stall markings on the driveway in front of the office (Front_View_3)
+    const parkLineMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.75 });
+    [690, 725, 760, 920, 955, 990].forEach(px => {
+      const p1 = pt(px, 1205);
+      const p2 = pt(px, 1255);
+      const stallLine = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 5.0), parkLineMat);
+      stallLine.rotation.x = -Math.PI / 2;
+      stallLine.position.set((p1.x + p2.x) * 0.5, 0.02, (p1.z + p2.z) * 0.5);
+      frontGroup.add(stallLine);
+    });
+
+    // ========================================================================
+    // 2D. East Side Canopy Extension (หลังคาต่อเพิ่มด้านขวาของสำนักงานใหญ่ - Covered Carport & Passageway)
     // Connects Office-HQ East wall (px: 1018) across the nook to Hall 2 corner wall (px: 1066, py: 1098..1185)
     const extCanopyR = rect([1018, 1098, 1066, 1185]);
     const extCanopyH = 4.0;
