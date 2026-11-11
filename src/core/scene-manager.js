@@ -24,9 +24,10 @@ window.Starflex3D.SceneManager = {
     );
     camera.position.set(...cfg.defaultCameraPos);
 
-    // 3. Renderer
+    // 3. Renderer with Logarithmic Depth Buffer to prevent z-fighting and camera rotation flicker
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
+      logarithmicDepthBuffer: true,
       powerPreference: "high-performance"
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -44,6 +45,17 @@ window.Starflex3D.SceneManager = {
     controls.maxPolarAngle = Math.PI / 2 - 0.03;
     controls.minDistance = cfg.minDistance;
     controls.maxDistance = cfg.maxDistance;
+
+    // Immediately cancel programmatic camera flights whenever user interacts with controls
+    const cancelFlight = () => {
+      state.cameraFlight = null;
+      state.cameraTargetLerp = null;
+      state.cameraPosLerp = null;
+    };
+    controls.addEventListener("start", cancelFlight);
+    renderer.domElement.addEventListener("pointerdown", cancelFlight, { passive: true });
+    renderer.domElement.addEventListener("wheel", cancelFlight, { passive: true });
+    renderer.domElement.addEventListener("touchstart", cancelFlight, { passive: true });
 
     // 5. Studio Architectural Lighting
     const hemiLight = new THREE.HemisphereLight(0xffffff, 0xdbeafe, 0.82);
@@ -102,19 +114,37 @@ window.Starflex3D.SceneManager = {
     return { scene, camera, renderer, controls, clipPlaneZ, highlightBox };
   },
 
-  flyTo(state, targetVec, posVec) {
+  flyTo(state, targetVec, posVec, duration = 750) {
+    if (!state.camera || !state.controls) return;
     state.cameraTargetLerp = targetVec.clone();
     state.cameraPosLerp = posVec.clone();
+    state.cameraFlight = {
+      startPos: state.camera.position.clone(),
+      startTarget: state.controls.target.clone(),
+      endPos: posVec.clone(),
+      endTarget: targetVec.clone(),
+      startTime: performance.now(),
+      duration: duration
+    };
   },
 
   updateCameraFlight(state) {
-    if (state.cameraTargetLerp && state.cameraPosLerp) {
-      state.controls.target.lerp(state.cameraTargetLerp, 0.08);
-      state.camera.position.lerp(state.cameraPosLerp, 0.08);
-      if (state.camera.position.distanceTo(state.cameraPosLerp) < 0.35) {
-        state.cameraTargetLerp = null;
-        state.cameraPosLerp = null;
-      }
+    if (!state.cameraFlight) return;
+    const now = performance.now();
+    const elapsed = now - state.cameraFlight.startTime;
+    const progress = Math.min(1.0, elapsed / state.cameraFlight.duration);
+    // Smooth easeOutCubic curve: starts responsive, settles gently
+    const ease = 1 - Math.pow(1 - progress, 3);
+
+    state.camera.position.lerpVectors(state.cameraFlight.startPos, state.cameraFlight.endPos, ease);
+    state.controls.target.lerpVectors(state.cameraFlight.startTarget, state.cameraFlight.endTarget, ease);
+
+    if (progress >= 1.0) {
+      state.camera.position.copy(state.cameraFlight.endPos);
+      state.controls.target.copy(state.cameraFlight.endTarget);
+      state.cameraFlight = null;
+      state.cameraTargetLerp = null;
+      state.cameraPosLerp = null;
     }
   }
 };

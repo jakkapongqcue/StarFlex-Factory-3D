@@ -51,8 +51,24 @@ window.Starflex3D.Builders.FrontFacade = {
       }),
       tentFabric: new THREE.MeshStandardMaterial({ color: 0x9ca3af, roughness: 0.65, metalness: 0.1 }),
       ttbOrange: new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.35 }),
-      darkWindow: new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.25, metalness: 0.4 })
+      darkWindow: new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.25, metalness: 0.4 }),
+      acBody: new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.45, metalness: 0.15 }),
+      acGrille: new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.3 })
     };
+
+    // Helper: create a realistic wall-mounted AC outdoor condenser unit with dark fan circle
+    function createACUnit(x, y, z, rotY = 0) {
+      const ac = new THREE.Group();
+      const box = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.66, 0.38), fMats.acBody);
+      addEdges(box, 0x94a3b8, 0.6);
+      const fan = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.4, 10), fMats.acGrille);
+      fan.rotation.x = Math.PI / 2;
+      fan.position.set(-0.12, 0, 0.02);
+      ac.add(box, fan);
+      ac.position.set(x, y, z);
+      ac.rotation.y = rotY;
+      return ac;
+    }
 
     // Helper: create high-res Starflex logo textures using assets/Starflex_logo.png
     function createStarflexLogoSignTexture(options = {}) {
@@ -248,7 +264,7 @@ window.Starflex3D.Builders.FrontFacade = {
     // ========================================================================
     // 1. GREEN FRONT LAWN & 3 FLAGPOLES (West Front Yard — Images 1 & 3)
     // ========================================================================
-    const lawnRect = rect([205, 1135, 660, 1395]);
+    const lawnRect = rect([205, 1135, 680, 1545]);
     const lawnMesh = new THREE.Mesh(
       new THREE.BoxGeometry(lawnRect.w, 0.16, lawnRect.d),
       fMats.lawnGreen
@@ -258,7 +274,7 @@ window.Starflex3D.Builders.FrontFacade = {
     frontGroup.add(lawnMesh);
 
     // Ornamental bushes along the lawn edge (Image 3)
-    for (let px = 240; px <= 640; px += 35) {
+    for (let px = 240; px <= 660; px += 35) {
       const bp = pt(px, 1135);
       const bush = new THREE.Mesh(new THREE.SphereGeometry(0.35, 8, 8), fMats.hedgeGreen);
       bush.position.set(bp.x, 0.25, bp.z);
@@ -267,9 +283,9 @@ window.Starflex3D.Builders.FrontFacade = {
 
     // 3 Tall Flagpoles (Thai National Flag in center + 2 Corporate Flags — Image 1)
     const flagPositions = [
-      { px: 375, py: 1360, h: 11.5, type: "corp" },
-      { px: 405, py: 1360, h: 12.8, type: "thai" },
-      { px: 435, py: 1360, h: 11.5, type: "corp" }
+      { px: 375, py: 1510, h: 11.5, type: "corp" },
+      { px: 405, py: 1510, h: 12.8, type: "thai" },
+      { px: 435, py: 1510, h: 11.5, type: "corp" }
     ];
     flagPositions.forEach(fp => {
       const p = pt(fp.px, fp.py);
@@ -347,17 +363,43 @@ window.Starflex3D.Builders.FrontFacade = {
       pilaster.position.set(bx, offH * 0.5, offR.z2 + 0.05);
       frontGroup.add(pilaster);
 
-      if (i < numBays && i !== 4) {
-        // 1st & 2nd floor vertical windows
-        [1.9, 5.6].forEach(wy => {
-          const win = new THREE.Mesh(
+      if (i < numBays) {
+        if (i === 4) {
+          // Main Ground Floor Glass Entrance Doors at center bay (clean, flush modern entry)
+          const bayW = offR.w / numBays;
+          const doorFrame = new THREE.Mesh(
+            new THREE.BoxGeometry(bayW * 0.88, 2.8, 0.14),
+            fMats.whiteTrim
+          );
+          doorFrame.position.set(bx + bayW * 0.5, 1.4, offR.z2 + 0.06);
+          const doorGlass = new THREE.Mesh(
+            new THREE.BoxGeometry(bayW * 0.78, 2.5, 0.16),
+            fMats.reflectiveGlass
+          );
+          doorGlass.position.set(bx + bayW * 0.5, 1.4, offR.z2 + 0.07);
+          addEdges(doorGlass, 0x0284c7, 0.85);
+          frontGroup.add(doorFrame, doorGlass);
+
+          // 2nd floor window above entrance
+          const win2 = new THREE.Mesh(
             new THREE.BoxGeometry(0.65, 2.2, 0.15),
             fMats.reflectiveGlass
           );
-          win.position.set(bx + (offR.w / numBays) * 0.5, wy, offR.z2 + 0.06);
-          addEdges(win, 0xffffff, 0.9);
-          frontGroup.add(win);
-        });
+          win2.position.set(bx + bayW * 0.5, 5.6, offR.z2 + 0.06);
+          addEdges(win2, 0xffffff, 0.9);
+          frontGroup.add(win2);
+        } else {
+          // 1st & 2nd floor vertical windows
+          [1.9, 5.6].forEach(wy => {
+            const win = new THREE.Mesh(
+              new THREE.BoxGeometry(0.65, 2.2, 0.15),
+              fMats.reflectiveGlass
+            );
+            win.position.set(bx + (offR.w / numBays) * 0.5, wy, offR.z2 + 0.06);
+            addEdges(win, 0xffffff, 0.9);
+            frontGroup.add(win);
+          });
+        }
       }
     }
 
@@ -411,50 +453,54 @@ window.Starflex3D.Builders.FrontFacade = {
     gableLogo.position.set(offR.x, offH + 1.15, offR.z2 + 0.12);
     frontGroup.add(gableLogo);
 
-    // 2C. Hipped-Roof Entrance Porte-Cochere with 2 Stone Columns (Image 3)
-    const porchR = rect([808, 1190, 892, 1248]);
-    const porchH = 3.8;
+    // 2C. East Side Canopy Extension (หลังคาต่อเพิ่มด้านขวาของสำนักงานใหญ่ - Covered Carport & Passageway)
+    // Connects Office-HQ East wall (px: 1018) across the nook to Hall 2 corner wall (px: 1066, py: 1098..1185)
+    const extCanopyR = rect([1018, 1098, 1066, 1185]);
+    const extCanopyH = 4.0;
 
-    // 2 Stone-clad front columns
-    [-porchR.w * 0.38, porchR.w * 0.38].forEach(dx => {
-      const col = new THREE.Mesh(
-        new THREE.BoxGeometry(0.55, porchH, 0.55),
-        fMats.stonePillar
-      );
-      col.position.set(porchR.x + dx, porchH * 0.5, porchR.z2 - 0.4);
-      col.castShadow = true;
-      addEdges(col, 0x78350f, 0.6);
-      frontGroup.add(col);
-
-      // Manicured topiary bush in front of each stone pillar
-      const shrub = new THREE.Mesh(new THREE.ConeGeometry(0.55, 1.3, 10), fMats.hedgeGreen);
-      shrub.position.set(porchR.x + dx, 0.65, porchR.z2 + 0.35);
-      frontGroup.add(shrub);
-    });
-
-    // Hipped roof pyramid over the entrance porch
-    const porchBase = new THREE.Mesh(
-      new THREE.BoxGeometry(porchR.w + 0.8, 0.28, porchR.d + 0.6),
-      fMats.whiteTrim
+    // Roof deck slab
+    const extCanopyDeck = new THREE.Mesh(
+      new THREE.BoxGeometry(extCanopyR.w, 0.26, extCanopyR.d),
+      fMats.guardRoofTile
     );
-    porchBase.position.set(porchR.x, porchH, porchR.z);
-    const porchHip = new THREE.Mesh(
-      new THREE.ConeGeometry(porchR.w * 0.68, 1.55, 4),
-      fMats.hipRoofTile
-    );
-    porchHip.position.set(porchR.x, porchH + 0.9, porchR.z);
-    porchHip.rotation.y = Math.PI / 4;
-    addEdges(porchHip, 0xffffff, 0.6);
-    frontGroup.add(porchBase, porchHip);
+    extCanopyDeck.position.set(extCanopyR.x, extCanopyH, extCanopyR.z);
+    extCanopyDeck.castShadow = true;
+    extCanopyDeck.receiveShadow = true;
+    addEdges(extCanopyDeck, 0x475569, 0.7);
+    frontGroup.add(extCanopyDeck);
 
-    // Golden Spirit House (ศาลพระภูมิสีทอง) & Palm Trees on right of office (Image 1)
-    const shrinePos = pt(965, 1225);
-    const shrinePedestal = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.9, 1.4), fMats.whiteTrim);
-    shrinePedestal.position.set(shrinePos.x, 0.45, shrinePos.z);
-    const shrineTop = new THREE.Mesh(new THREE.ConeGeometry(0.75, 1.5, 4), fMats.goldLamp);
-    shrineTop.position.set(shrinePos.x, 1.65, shrinePos.z);
-    shrineTop.rotation.y = Math.PI / 4;
-    frontGroup.add(shrinePedestal, shrineTop);
+    // Charcoal fascia trim along the front (South) and outer (East) roof edges
+    const extFasciaFront = new THREE.Mesh(
+      new THREE.BoxGeometry(extCanopyR.w + 0.12, 0.42, 0.16),
+      fMats.charcoalFascia
+    );
+    extFasciaFront.position.set(extCanopyR.x, extCanopyH - 0.08, extCanopyR.z2 + 0.08);
+    const extFasciaEast = new THREE.Mesh(
+      new THREE.BoxGeometry(0.16, 0.42, extCanopyR.d + 0.12),
+      fMats.charcoalFascia
+    );
+    extFasciaEast.position.set(extCanopyR.x2 + 0.08, extCanopyH - 0.08, extCanopyR.z);
+    addEdges(extFasciaFront, 0x94a3b8, 0.75);
+    addEdges(extFasciaEast, 0x94a3b8, 0.75);
+    frontGroup.add(extFasciaFront, extFasciaEast);
+
+    // Slim square steel column supporting the front outer corner (leaves driveway open underneath)
+    const colPost = new THREE.Mesh(
+      new THREE.BoxGeometry(0.32, extCanopyH - 0.13, 0.32),
+      fMats.charcoalFascia
+    );
+    colPost.position.set(extCanopyR.x2 - 0.2, (extCanopyH - 0.13) * 0.5, extCanopyR.z2 - 0.2);
+    colPost.castShadow = true;
+    addEdges(colPost, 0x94a3b8, 0.65);
+    frontGroup.add(colPost);
+
+    // Row of AC outdoor condenser units mounted on the canopy roof (as seen in Front_View_3)
+    const numAcUnits = 4;
+    for (let i = 0; i < numAcUnits; i++) {
+      const acZ = extCanopyR.z1 + (extCanopyR.d * (i + 0.5)) / numAcUnits;
+      const acUnit = createACUnit(extCanopyR.x1 + 1.15, extCanopyH + 0.46, acZ, 0);
+      frontGroup.add(acUnit);
+    }
 
     // ========================================================================
     // 3. BUILDING 4 MODERN 2-STORY BLUE GLASS & WHITE V-COLUMN FACADE (Images 2, 4, 5)
@@ -615,14 +661,16 @@ window.Starflex3D.Builders.FrontFacade = {
       }
     }
 
-    // West Front Fence (px: 185..695, py = 1410)
-    buildFenceRun(185, 1410, 695, 1410, 52);
-    // East Front Fence (px: 1325..2035, py = 1410) & East Return Fence (px = 2035, py: 1080..1410)
-    buildFenceRun(1325, 1410, 2035, 1410, 52);
-    buildFenceRun(2035, 1410, 2035, 1080, 52);
+    // West Front Fence (px: 185..695, py = 1560) & West Return Fence (px = 185, py: 1098..1560)
+    buildFenceRun(185, 1560, 695, 1560, 52);
+    buildFenceRun(185, 1098, 185, 1560, 52);
+
+    // East Front Fence (px: 1450..2035, py = 1560) & East Return Fence (px = 2035, py: 1080..1560)
+    buildFenceRun(1450, 1560, 2035, 1560, 52);
+    buildFenceRun(2035, 1560, 2035, 1080, 52);
 
     // 4B. Royal-Blue "STARFLEX PUBLIC COMPANY LIMITED" Sign Wall (Image 1)
-    const signR = rect([695, 1402, 878, 1418]);
+    const signR = rect([695, 1552, 878, 1568]);
     const signBase = new THREE.Mesh(new THREE.BoxGeometry(signR.w, 0.65, 0.48), fMats.stonePillar);
     signBase.position.set(signR.x, 0.32, signR.z);
     const signWall = new THREE.Mesh(new THREE.BoxGeometry(signR.w, 1.6, 0.38), fMats.blueSign);
@@ -644,18 +692,18 @@ window.Starflex3D.Builders.FrontFacade = {
     signFace.position.set(signR.x, 1.45, signR.z + 0.21);
     frontGroup.add(signBase, signWall, signFace);
 
-    // 4C. Sliding White Steel Main Gate (Image 1)
-    const gateR = rect([878, 1408, 1145, 1414]);
-    const gateMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(gateR.w, 1.75, 0.16),
+    // 4C. Main Entrance "In" Sliding Gate (px: 878..1145, py: 1560)
+    const gateInR = rect([878, 1558, 1145, 1564]);
+    const gateInMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(gateInR.w, 1.75, 0.16),
       fMats.whiteTrim
     );
-    gateMesh.position.set(gateR.x, 0.9, gateR.z);
-    addEdges(gateMesh, 0x64748b, 0.8);
-    frontGroup.add(gateMesh);
+    gateInMesh.position.set(gateInR.x, 0.9, gateInR.z);
+    addEdges(gateInMesh, 0x64748b, 0.8);
+    frontGroup.add(gateInMesh);
 
-    // 4D. Blue "ttb" ATM Booth at Main Gate Entrance (Integrated into front perimeter fence line)
-    const atmR = rect([1145, 1396, 1178, 1422]);
+    // 4D. Blue "ttb" ATM Booth at Main Gate Entrance
+    const atmR = rect([1140, 1546, 1165, 1572]);
     const atmBody = new THREE.Mesh(new THREE.BoxGeometry(atmR.w, 2.5, atmR.d), fMats.blueBrand);
     atmBody.position.set(atmR.x, 1.25, atmR.z);
     addEdges(atmBody, 0xffffff, 0.8);
@@ -671,10 +719,9 @@ window.Starflex3D.Builders.FrontFacade = {
     atmAccent.position.set(atmR.x, 2.55, atmR.z + atmR.d * 0.55);
     frontGroup.add(atmBody, atmHeader, atmAccent);
 
-    // 4E. Hipped-Roof Security Guardhouse Pavilion INSIDE the fence perimeter (py: 1290..1405 < 1410)
-    // Matches Loading_Dock_1_StreetView.jpg & Front_View_1..2:
-    // Guardhouse sits on the inside (North) of the perimeter fence/gate line, facing the driveway entrance!
-    const ghR = rect([1180, 1290, 1310, 1405]);
+    // 4E. Hipped-Roof Security Guardhouse Pavilion (px: 1165..1295, py: 1445..1560)
+    // Sits in the center dividing "In" entrance lane and "Out" exit lane
+    const ghR = rect([1165, 1445, 1295, 1560]);
     const ghWallH = 3.1;
     const ghBody = new THREE.Mesh(
       new THREE.BoxGeometry(ghR.w, ghWallH, ghR.d),
@@ -683,14 +730,11 @@ window.Starflex3D.Builders.FrontFacade = {
     ghBody.position.set(ghR.x, ghWallH * 0.5, ghR.z);
     addEdges(ghBody, 0x64748b, 0.7);
 
-    // Guardhouse Inspection Windows on West & South faces
+    // Guardhouse Inspection Window on West face (facing "In" driveway inspection lane under the awning)
     const ghWinWest = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.2, ghR.d * 0.65), fMats.darkWindow);
     ghWinWest.position.set(ghR.x1 + 0.06, 1.6, ghR.z);
     addEdges(ghWinWest, 0xffffff, 0.9);
-    const ghWinSouth = new THREE.Mesh(new THREE.BoxGeometry(ghR.w * 0.6, 1.2, 0.12), fMats.darkWindow);
-    ghWinSouth.position.set(ghR.x, 1.6, ghR.z2 - 0.06);
-    addEdges(ghWinSouth, 0xffffff, 0.9);
-    frontGroup.add(ghWinWest, ghWinSouth);
+    frontGroup.add(ghWinWest);
 
     // Large Grey Hipped Roof on Guardhouse
     const ghRoof = new THREE.Mesh(
@@ -702,7 +746,7 @@ window.Starflex3D.Builders.FrontFacade = {
     ghRoof.scale.set(ghR.w / ghR.d, 1, 1);
     addEdges(ghRoof, 0x475569, 0.65);
 
-    // Cantilevered Grey Awning projecting over the West driveway inspection lane (Loading_Dock_1_StreetView.jpg right foreground)
+    // Cantilevered Grey Awning projecting over the West "In" driveway inspection lane
     const ghAwning = new THREE.Mesh(
       new THREE.BoxGeometry(3.2, 0.18, ghR.d * 0.95),
       fMats.guardRoofTile
@@ -711,7 +755,7 @@ window.Starflex3D.Builders.FrontFacade = {
     ghAwning.rotation.z = 0.18;
     addEdges(ghAwning, 0x475569, 0.6);
 
-    // Red-and-White painted curb around the guardhouse driveway island (Loading_Dock_1_StreetView.jpg)
+    // Red-and-White painted curb around the guardhouse driveway island
     const curbW = ghR.w + 3.8;
     const curbD = ghR.d + 1.2;
     const curbPlinth = new THREE.Mesh(
@@ -726,7 +770,7 @@ window.Starflex3D.Builders.FrontFacade = {
     for (let c = 0; c < curbSegs; c++) {
       const cz = ghR.z - curbD * 0.5 + (curbD * (c + 0.5)) / curbSegs;
       const stripe = new THREE.Mesh(
-        new THREE.BoxGeometry(0.18, 0.24, curbD / curbSegs * 0.92),
+        new THREE.BoxGeometry(0.18, 0.24, (curbD / curbSegs) * 0.92),
         c % 2 === 0 ? new THREE.MeshLambertMaterial({ color: 0xdc2626 }) : fMats.whiteTrim
       );
       stripe.position.set(ghR.x - 1.4 - curbW * 0.5, 0.12, cz);
@@ -734,6 +778,16 @@ window.Starflex3D.Builders.FrontFacade = {
     }
 
     frontGroup.add(ghBody, ghRoof, ghAwning, curbPlinth);
+
+    // 4F. Main Exit "Out" Sliding Gate (px: 1295..1450, py: 1560)
+    const gateOutR = rect([1295, 1558, 1450, 1564]);
+    const gateOutMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(gateOutR.w, 1.75, 0.16),
+      fMats.whiteTrim
+    );
+    gateOutMesh.position.set(gateOutR.x, 0.9, gateOutR.z);
+    addEdges(gateOutMesh, 0x64748b, 0.8);
+    frontGroup.add(gateOutMesh);
 
     // ========================================================================
     // 5. AUTHENTIC LOADING DOCK COURTYARD ARCHITECTURE
@@ -758,20 +812,6 @@ window.Starflex3D.Builders.FrontFacade = {
       yellowPaint: new THREE.MeshBasicMaterial({ color: 0xfacc15 }),
       orangeCone: new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.4 })
     };
-
-    // Helper: create a realistic wall-mounted AC outdoor condenser unit with dark fan circle
-    function createACUnit(x, y, z, rotY = 0) {
-      const ac = new THREE.Group();
-      const box = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.66, 0.38), dMats.acBody);
-      addEdges(box, 0x94a3b8, 0.6);
-      const fan = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.4, 10), dMats.acGrille);
-      fan.rotation.x = Math.PI / 2;
-      fan.position.set(-0.12, 0, 0.02);
-      ac.add(box, fan);
-      ac.position.set(x, y, z);
-      ac.rotation.y = rotY;
-      return ac;
-    }
 
     // 5A. 7-Bay Loading Dock Upper Clerestory Facade, Straight Gutter Eave & 8 Curved Downspouts
     const dockSpanR = rect([1062, 814, 1395, 818]);
@@ -909,18 +949,7 @@ window.Starflex3D.Builders.FrontFacade = {
       dockFacadeGroup.add(hood);
     }
 
-    // Cantilevered Side Canopy along Hall 2 East Wall (px: 1062..1108, py: 820..1105, y = 4.15m)
-    const leftCanopyR = rect([1062, 820, 1108, 1105]);
-    const leftCanopy = new THREE.Mesh(
-      new THREE.BoxGeometry(leftCanopyR.w, 0.2, leftCanopyR.d),
-      fMats.guardRoofTile
-    );
-    leftCanopy.position.set(leftCanopyR.x, 4.15, leftCanopyR.z);
-    leftCanopy.rotation.z = -0.06;
-    addEdges(leftCanopy, 0x475569, 0.65);
-    dockFacadeGroup.add(leftCanopy);
-
-    // Row of 8 AC Condenser Units mounted above Left Side Canopy
+    // Row of 8 AC Condenser Units mounted along Left Courtyard Wall (Hall 2 East Wall)
     for (let py = 845; py <= 1080; py += 32) {
       const ap = pt(1063, py);
       dockFacadeGroup.add(createACUnit(ap.x + 0.32, 4.85, ap.z, Math.PI / 2));
@@ -957,22 +986,13 @@ window.Starflex3D.Builders.FrontFacade = {
       dockFacadeGroup.add(createACUnit(rightWallX - 0.32, 6.3, ap.z, -Math.PI / 2));
     });
 
-    // 5E. Courtyard Pavement Markings (Yellow Dashed Line, White Arrow & Orange Traffic Cones)
+    // 5E. Courtyard Pavement Markings (Yellow Dashed Line)
     for (let py = 885; py <= 1140; py += 22) {
       const yp = pt(1132, py);
       const dash = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.02, 1.25), dMats.yellowPaint);
       dash.position.set(yp.x, -0.31, yp.z);
       dockFacadeGroup.add(dash);
     }
-
-    // White directional pavement arrow on left parking lane
-    const arrowPos = pt(1095, 1065);
-    const arrowShaft = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.02, 1.8), fMats.whiteTrim);
-    arrowShaft.position.set(arrowPos.x, -0.31, arrowPos.z);
-    const arrowHead = new THREE.Mesh(new THREE.ConeGeometry(0.55, 0.9, 3), fMats.whiteTrim);
-    arrowHead.rotation.x = -Math.PI / 2;
-    arrowHead.position.set(arrowPos.x, -0.31, arrowPos.z - 1.1);
-    dockFacadeGroup.add(arrowShaft, arrowHead);
 
     frontGroup.add(dockFacadeGroup);
 

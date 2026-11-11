@@ -63,7 +63,7 @@ window.Starflex3D.Config = {
       id: "west_hall",
       target: [-45, 3, -5],
       pos: [-105, 62, 65],
-      label: "มุมมองอาคาร 1 (Rotomec PT-01 & Tandem Extrusion)"
+      label: "มุมมองอาคาร 1 (Cylinder Storage & Tandem Extrusion)"
     }
   ]
 };

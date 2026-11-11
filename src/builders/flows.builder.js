@@ -18,7 +18,7 @@ window.Starflex3D.Builders.Flows = {
     flows.forEach(flow => {
       const pts3D = flow.points.map(p => {
         const w = pt(p[0], p[1]);
-        return new THREE.Vector3(w.x, 1.35, w.z);
+        return new THREE.Vector3(w.x, 1.25 + 1.35, w.z);
       });
 
       const curve = new THREE.CatmullRomCurve3(pts3D, false, "catmullrom", 0.12);

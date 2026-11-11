@@ -29,10 +29,19 @@ window.Starflex3D.UI.Labels = {
       };
       container.appendChild(el);
 
+      const isOutsideGroundItem = (
+        item.id === "loading_dock_trucks" ||
+        item.id === "guardhouse_item" ||
+        item.id === "pump_house_item" ||
+        item.id === "east_ramps_shipping" ||
+        item.id === "admin_vip_office"
+      );
+      const baseElev = isOutsideGroundItem ? 0 : 1.25;
+
       state.labelElements.push({
         id: item.id,
         el,
-        pos: new THREE.Vector3(r.x, (item.height || 4) + 1.1, r.z),
+        pos: new THREE.Vector3(r.x, baseElev + (item.height || 4) + 1.1, r.z),
         category: item.category
       });
     });

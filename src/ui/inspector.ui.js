@@ -44,11 +44,12 @@ window.Starflex3D.UI.Inspector = {
 
     state.selectedItemId = itemId;
     const { item, category, rect } = group.userData;
+    const elevation = group.userData.elevation || 0;
     const buildings = window.Starflex3D.Data.buildings;
 
     // 1. Update 3D Selection Highlight Wireframe Box
     state.highlightBox.scale.set(rect.w + 1.0, (item.height || 4) + 0.8, rect.d + 1.0);
-    state.highlightBox.position.set(rect.x, (item.height || 4) * 0.5, rect.z);
+    state.highlightBox.position.set(rect.x, elevation + (item.height || 4) * 0.5, rect.z);
     state.highlightBox.visible = true;
 
     // 2. Populate Detail Card
@@ -74,7 +75,7 @@ window.Starflex3D.UI.Inspector = {
     if (flyTo) {
       window.Starflex3D.SceneManager.flyTo(
         state,
-        new THREE.Vector3(rect.x, 2, rect.z),
+        new THREE.Vector3(rect.x, elevation + 2, rect.z),
         new THREE.Vector3(rect.x - 14, Math.max(26, (item.height || 4) * 4.5), rect.z + 36)
       );
     }

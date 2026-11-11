@@ -23,11 +23,11 @@ window.Starflex3D.Builders.Site = {
 
     // 2. Dashed Property Boundary Line
     const boundaryPts = [
-      pt(120, 45),
+      pt(30, 45),
       pt(2080, 45),
       pt(2080, 1575),
-      pt(120, 1575),
-      pt(120, 45)
+      pt(30, 1575),
+      pt(30, 45)
     ].map(p => new THREE.Vector3(p.x, -0.38, p.z));
     const boundaryGeo = new THREE.BufferGeometry().setFromPoints(boundaryPts);
     const boundaryMat = new THREE.LineDashedMaterial({
@@ -43,8 +43,9 @@ window.Starflex3D.Builders.Site = {
     // 3. Internal Roads, Truck Courtyard & Gate Approach Slab
     const courtyardRects = [
       [1062, 815, 1410, 1430], // Central Truck Loading Courtyard
-      [650, 1235, 1680, 1430], // Front East-West internal driveway
-      [1160, 1430, 1320, 1570] // Main gate entrance road by Guardhouse
+      [650, 1235, 1680, 1565], // Front East-West internal driveway & Courtyard Apron
+      [875, 1430, 1455, 1575], // Main gate In/Out entrance & exit road approach
+      [50, 45, 185, 310]        // West Chemical Storage Service Road & Apron
     ];
     courtyardRects.forEach(b => {
       const r = rect(b);
@@ -56,24 +57,41 @@ window.Starflex3D.Builders.Site = {
     });
 
     // 4. Raised Architectural Concrete Plinths for Each Building Section
-    const floorSections = [
-      [200, 247, 1062, 1098],  // Hall 1 & Hall 2 main slab
-      [674, 1098, 1018, 1190], // Front 2-Story VIP/Admin Office Wing
-      [1062, 247, 1498, 898],  // Hall 3 High-Bay Warehouse & Covered Dock
+    // Main Factory Interior Floor is elevated at +1.25m (level with loading dock!)
+    const dockElevH = 1.25;
+
+    const factoryInteriorSections = [
+      [200, 247, 1062, 1098],  // Hall 1 & Hall 2 main factory slab
+      [1062, 247, 1498, 815],  // Hall 3 High-Bay Warehouse interior floor (Dock at 815+ handled by LoadingDock builder)
       [1498, 247, 1895, 1148], // Hall 4 East Plant (Blow Film, Printing, Lamination)
       [1395, 765, 1498, 1230], // Hall 4 West Ramp Corridor
       [1395, 1148, 1705, 1235],// Hall 4 South Shipping Bay
       [1895, 490, 1950, 545],  // East MDB Room
-      [1895, 885, 1968, 1055], // East Oven Room
-      [1940, 78, 2038, 198],   // NE Pump Room
-      [1175, 1285, 1315, 1410] // South Security Guardhouse Plinth (Inside fence)
+      [1895, 885, 1968, 1055]  // East Oven Room
     ];
 
-    floorSections.forEach(b => {
+    factoryInteriorSections.forEach(b => {
       const r = rect(b);
-      const slabGeo = new THREE.BoxGeometry(r.w, 0.44, r.d);
+      const slabGeo = new THREE.BoxGeometry(r.w, dockElevH, r.d);
       const slabMesh = new THREE.Mesh(slabGeo, mats.slab);
-      slabMesh.position.set(r.x, -0.22, r.z);
+      slabMesh.position.set(r.x, dockElevH * 0.5, r.z);
+      slabMesh.receiveShadow = true;
+      addEdges(slabMesh, 0x94a3b8, 0.7);
+      siteGroup.add(slabMesh);
+    });
+
+    const exteriorAuxSections = [
+      { bounds: [674, 1098, 1018, 1190], h: 0.85, y: 0.425 }, // Front 2-Story VIP/Admin Office Wing
+      { bounds: [1940, 78, 2038, 198],    h: 0.35, y: 0.175 }, // NE Pump Room
+      { bounds: [1155, 1440, 1305, 1565], h: 0.25, y: 0.125 }, // South Security Guardhouse Plinth
+      { bounds: [75, 50, 165, 280],       h: 0.30, y: 0.15 }   // West Chemical Storage Building Plinth
+    ];
+
+    exteriorAuxSections.forEach(sec => {
+      const r = rect(sec.bounds);
+      const slabGeo = new THREE.BoxGeometry(r.w, sec.h, r.d);
+      const slabMesh = new THREE.Mesh(slabGeo, mats.slab);
+      slabMesh.position.set(r.x, sec.y, r.z);
       slabMesh.receiveShadow = true;
       addEdges(slabMesh, 0xcbd5e1, 0.7);
       siteGroup.add(slabMesh);
@@ -89,12 +107,13 @@ window.Starflex3D.Builders.Site = {
     const blueprintPlaneMat = new THREE.MeshBasicMaterial({
       color: 0xffffff,
       transparent: true,
-      opacity: 0.32,
+      opacity: 0.0,
       depthWrite: false
     });
     const blueprintPlane = new THREE.Mesh(blueprintPlaneGeo, blueprintPlaneMat);
     blueprintPlane.rotation.x = -Math.PI / 2;
-    blueprintPlane.position.set(bpCenterX, 0.015, bpCenterZ);
+    blueprintPlane.position.set(bpCenterX, -0.34, bpCenterZ);
+    blueprintPlane.visible = false;
     siteGroup.add(blueprintPlane);
     state.blueprintPlane = blueprintPlane;
 
@@ -119,53 +138,52 @@ window.Starflex3D.Builders.Site = {
           blueprintPlaneMat.needsUpdate = true;
         });
       }
-      if (window.STARFLEX_TEXTURES.overlay) {
-        loadDataTex(window.STARFLEX_TEXTURES.overlay, tex => {
-          state.textures.overlay = tex;
-        });
-      }
-      if (window.STARFLEX_TEXTURES.satellite) {
-        loadDataTex(window.STARFLEX_TEXTURES.satellite, tex => {
-          state.textures.satellite = tex;
-        });
-      }
     }
 
-    // Satellite plane aligned to real building orientation
-    const satPlaneGeo = new THREE.PlaneGeometry(315, 187);
-    const satPlaneMat = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.0,
-      depthWrite: false
-    });
-    const satPlane = new THREE.Mesh(satPlaneGeo, satPlaneMat);
-    satPlane.rotation.x = -Math.PI / 2;
-    satPlane.rotation.z = -0.455;
-    satPlane.position.set(16.0, -0.34, -2.0);
-    satPlane.visible = false;
-    siteGroup.add(satPlane);
-    state.satPlane = satPlane;
-
-    // 6. 5 Blue Forklift Ramps ("ทางขึ้นลง")
+    // 6. 5 Blue Forklift Ramps ("ทางขึ้นลง" - Sloped connection from ground to elevated factory floor +1.25m)
     const blueRamps = [
-      [1102, 665, 1158, 712], // Ramp 1 (Center)
-      [1445, 755, 1492, 838], // Ramp 2 (East Hall N)
-      [1425, 948, 1470, 1005],// Ramp 3 (East Hall M)
-      [1470, 980, 1530, 1055],// Ramp 4 (East Hall S1)
-      [1470, 1068, 1530, 1140]// Ramp 5 (East Hall S2)
+      { bounds: [1102, 665, 1158, 712], dir: "N" }, // Ramp 1 (Center)
+      { bounds: [1445, 755, 1492, 838], dir: "S" }, // Ramp 2 (East Hall N)
+      { bounds: [1425, 948, 1470, 1005], dir: "S" },// Ramp 3 (East Hall M)
+      { bounds: [1470, 980, 1530, 1055], dir: "S" },// Ramp 4 (East Hall S1)
+      { bounds: [1470, 1068, 1530, 1140], dir: "S" }// Ramp 5 (East Hall S2)
     ];
-    blueRamps.forEach(bounds => {
-      const r = rect(bounds);
-      const rampMesh = new THREE.Mesh(new THREE.BoxGeometry(r.w, 0.22, r.d), mats.rampBlue);
-      rampMesh.position.set(r.x, 0.11, r.z);
+    blueRamps.forEach(rampDef => {
+      const r = rect(rampDef.bounds);
+      const isLongZ = r.d >= r.w;
+      const run = isLongZ ? r.d : r.w;
+      const width = isLongZ ? r.w : r.d;
+
+      const shape = new THREE.Shape();
+      if (rampDef.dir === "N") {
+        // Slopes up toward North (-Z)
+        shape.moveTo(0, 0);
+        shape.lineTo(0, dockElevH);
+        shape.lineTo(run, 0);
+      } else {
+        // Slopes up toward South (+Z)
+        shape.moveTo(0, 0);
+        shape.lineTo(run, dockElevH);
+        shape.lineTo(run, 0);
+      }
+      shape.closePath();
+
+      const extrudeGeo = new THREE.ExtrudeGeometry(shape, { depth: width, bevelEnabled: false });
+      if (isLongZ) {
+        extrudeGeo.rotateY(-Math.PI / 2);
+      }
+      const rampMesh = new THREE.Mesh(extrudeGeo, mats.rampBlue);
+      rampMesh.position.set(
+        isLongZ ? r.x + width * 0.5 : r.x - run * 0.5,
+        0,
+        isLongZ ? r.z - run * 0.5 : r.z - width * 0.5
+      );
       addEdges(rampMesh, 0x1d4ed8, 0.8);
       siteGroup.add(rampMesh);
     });
 
-    // 7. Green Entrance / Shipping Canopies
+    // 7. Green Shipping Canopies (SE Shipping bays)
     const greenCanopies = [
-      [842, 1190, 884, 1234],  // Front VIP Office Canopy
       [1440, 1230, 1492, 1290],// SE Shipping Canopy Left
       [1550, 1230, 1602, 1290] // SE Shipping Canopy Right
     ];

@@ -90,7 +90,7 @@
     </button>
 
     <!-- 3. Cut-away Mode (มองมุมไหน กำแพงหายมุมนั้น) -->
-    <button id="btn-cutaway" class="tool-btn active" data-tooltip="โหมด Cut-away (มองมุมไหน กำแพงหายมุมนั้น)" onclick="StarflexActions.setStructureMode('cutaway')">
+    <button id="btn-cutaway" class="tool-btn active" data-tooltip="สลับโหมด Cut-away (มองมุมไหน กำแพงหายมุมนั้น)" onclick="StarflexActions.toggleCutaway()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="6" cy="6" r="3"/>
         <circle cx="6" cy="18" r="3"/>
@@ -101,7 +101,7 @@
     </button>
 
     <!-- 4. X-Ray Mode (มองทะลุกำแพงและหลังคา) -->
-    <button id="btn-xray" class="tool-btn" data-tooltip="โหมด X-ray (มองทะลุกำแพงและหลังคา)" onclick="StarflexActions.setStructureMode('xray')">
+    <button id="btn-xray" class="tool-btn" data-tooltip="สลับโหมด X-ray (มองทะลุกำแพงและหลังคา)" onclick="StarflexActions.toggleXray()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polygon points="12 2 2 7 12 12 22 7 12 2"/>
         <polyline points="2 17 12 22 22 17"/>
@@ -109,8 +109,8 @@
       </svg>
     </button>
 
-    <!-- 5. Floor Blueprint / Satellite Overlay -->
-    <button id="btn-floor-map" class="tool-btn active" data-tooltip="สลับพื้นผังโรงงาน / ภาพถ่ายดาวเทียม" onclick="StarflexActions.cycleFloorOverlay()">
+    <!-- 5. Floor Blueprint Overlay -->
+    <button id="btn-floor-map" class="tool-btn active" data-tooltip="สลับการแสดงผังแบบแปลนโรงงาน (Blueprint)" onclick="StarflexActions.cycleFloorOverlay()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="3" width="18" height="18" rx="2"/>
         <line x1="3" y1="9" x2="21" y2="9"/>
@@ -247,6 +247,12 @@
   <script src="src/config/constants.js"></script>
   <script src="src/config/categories.js"></script>
   <script src="src/data/buildings.data.js"></script>
+  <script src="src/data/machines/blown-film.data.js"></script>
+  <script src="src/data/machines/printing.data.js"></script>
+  <script src="src/data/machines/laminating.data.js"></script>
+  <script src="src/data/machines/converting.data.js"></script>
+  <script src="src/data/machines/warehouse.data.js"></script>
+  <script src="src/data/machines/facilities.data.js"></script>
   <script src="src/data/machines.data.js"></script>
   <script src="src/data/flows.data.js"></script>
   <script src="src/data/tour.data.js"></script>
@@ -260,6 +266,17 @@
   <script src="src/builders/site.builder.js"></script>
   <script src="src/builders/architecture.builder.js"></script>
   <script src="src/builders/front-facade.builder.js"></script>
+  <script src="src/builders/machines/common.js"></script>
+  <script src="src/builders/machines/blown-film.builder.js"></script>
+  <script src="src/builders/machines/printing.builder.js"></script>
+  <script src="src/builders/machines/laminating.builder.js"></script>
+  <script src="src/builders/machines/converting.builder.js"></script>
+  <script src="src/builders/machines/warehouse.builder.js"></script>
+  <script src="src/builders/machines/loading-dock.builder.js"></script>
+  <script src="src/builders/machines/facilities.builder.js"></script>
+  <script src="src/builders/machines/resin-film-storage.builder.js"></script>
+  <script src="src/builders/machines/chemical-warehouse.builder.js"></script>
+  <script src="src/builders/machines/cylinder-storage.builder.js"></script>
   <script src="src/builders/machines.builder.js"></script>
   <script src="src/builders/flows.builder.js"></script>
 

@@ -9,15 +9,19 @@ window.Starflex3D.UI = window.Starflex3D.UI || {};
 
 window.Starflex3D.UI.Toolbar = {
   /**
-   * Only 2 Viewing Modes as requested:
-   * 1. 'cutaway': Dynamic 360° cut-away (มองมุมไหน กำแพงหายมุมนั้น)
-   * 2. 'xray': See-through transparent structure (มองทะลุกำแพงและหลังคา)
+   * Cut-away and X-Ray Modes can work TOGETHER (พร้อมกัน) or INDEPENDENTLY (แยกกัน):
+   * 1. Cut-away (state.isCutaway): Dynamic 360° cut-away (มองมุมไหน กำแพงหายมุมนั้น)
+   * 2. X-ray (state.isXray): Translucent see-through structure (มองทะลุกำแพงและหลังคา)
+   *
+   * Both active simultaneously: Dynamic wall vanishing on camera-facing side + translucent see-through opposite walls & roofs!
    */
-  applyStructureMode(state, mats, mode) {
-    if (mode !== "xray" && mode !== "cutaway") {
-      mode = "cutaway";
-    }
-    state.structureMode = mode;
+  applyStructureModes(state, mats) {
+    if (state.isCutaway === undefined) state.isCutaway = true;
+    if (state.isXray === undefined) state.isXray = false;
+
+    const isCutaway = state.isCutaway;
+    const isXray = state.isXray;
+
     const {
       wallsNorth,
       wallsSouth,
@@ -31,57 +35,15 @@ window.Starflex3D.UI.Toolbar = {
     const statusText = document.getElementById("status-mode-text");
     const btnCutaway = document.getElementById("btn-cutaway");
     const btnXray = document.getElementById("btn-xray") || document.getElementById("btn-roof");
+    const sliderRoof = document.getElementById("slider-roof");
 
-    if (mode === "cutaway") {
-      if (partitionWallsGroup) partitionWallsGroup.visible = true;
-      if (roofTrussGroup) roofTrussGroup.visible = true;
-      if (roofShellGroup) roofShellGroup.visible = false;
-      if (state.frontFacadeGroup) state.frontFacadeGroup.visible = true;
+    // 1. Update toolbar button active states independently
+    if (btnCutaway) btnCutaway.classList.toggle("active", isCutaway);
+    if (btnXray) btnXray.classList.toggle("active", isXray);
 
-      // Restore solid opaque materials
-      mats.wallSolid.opacity = 1.0;
-      mats.wallSolid.transparent = false;
-      mats.wallSolid.needsUpdate = true;
-
-      mats.wallCutawayFront.opacity = 1.0;
-      mats.wallCutawayFront.transparent = false;
-      mats.wallCutawayFront.needsUpdate = true;
-
-      mats.wallPartition.opacity = 1.0;
-      mats.wallPartition.transparent = false;
-      mats.wallPartition.needsUpdate = true;
-
-      mats.roofSheet.opacity = 1.0;
-      mats.roofSheet.transparent = false;
-      mats.roofSheet.needsUpdate = true;
-
-      mats.solarPanel.opacity = 1.0;
-      mats.solarPanel.transparent = false;
-      mats.solarPanel.needsUpdate = true;
-
-      const sliderRoof = document.getElementById("slider-roof");
-      if (sliderRoof) sliderRoof.value = 0;
-
-      // Run dynamic wall occlusion immediately for current camera orientation
-      this.updateDynamicCutaway(state);
-
-      if (btnCutaway) btnCutaway.classList.add("active");
-      if (btnXray) btnXray.classList.remove("active");
-      if (statusText) {
-        statusText.textContent = "✂️ โหมด Cut-away (มองมุมไหน กำแพงหายมุมนั้น) · Dynamic 360°";
-      }
-    } else if (mode === "xray") {
-      // In X-Ray mode: ALL exterior walls and full roofs are visible, but see-through!
-      if (wallsNorth) wallsNorth.visible = true;
-      if (wallsSouth) wallsSouth.visible = true;
-      if (wallsWest) wallsWest.visible = true;
-      if (wallsEast) wallsEast.visible = true;
-      if (partitionWallsGroup) partitionWallsGroup.visible = true;
-      if (roofTrussGroup) roofTrussGroup.visible = true;
-      if (roofShellGroup) roofShellGroup.visible = true;
-      if (state.frontFacadeGroup) state.frontFacadeGroup.visible = true;
-
-      // X-Ray translucent materials
+    // 2. Adjust material opacities and transparency based on X-Ray mode
+    if (isXray) {
+      // Translucent see-through walls & roofs
       mats.wallSolid.transparent = true;
       mats.wallSolid.opacity = 0.26;
       mats.wallSolid.needsUpdate = true;
@@ -102,27 +64,97 @@ window.Starflex3D.UI.Toolbar = {
       mats.solarPanel.opacity = 0.36;
       mats.solarPanel.needsUpdate = true;
 
-      const sliderRoof = document.getElementById("slider-roof");
       if (sliderRoof) sliderRoof.value = 40;
+    } else {
+      // Solid opaque walls & roofs
+      mats.wallSolid.transparent = false;
+      mats.wallSolid.opacity = 1.0;
+      mats.wallSolid.needsUpdate = true;
 
-      if (btnCutaway) btnCutaway.classList.remove("active");
-      if (btnXray) btnXray.classList.add("active");
-      if (statusText) {
+      mats.wallCutawayFront.transparent = false;
+      mats.wallCutawayFront.opacity = 1.0;
+      mats.wallCutawayFront.needsUpdate = true;
+
+      mats.wallPartition.transparent = false;
+      mats.wallPartition.opacity = 1.0;
+      mats.wallPartition.needsUpdate = true;
+
+      mats.roofSheet.transparent = false;
+      mats.roofSheet.opacity = 1.0;
+      mats.roofSheet.needsUpdate = true;
+
+      mats.solarPanel.transparent = false;
+      mats.solarPanel.opacity = 1.0;
+      mats.solarPanel.needsUpdate = true;
+
+      if (sliderRoof) sliderRoof.value = isCutaway ? 0 : 95;
+    }
+
+    // 3. Structural element visibility
+    if (partitionWallsGroup) partitionWallsGroup.visible = true;
+    if (roofTrussGroup) roofTrussGroup.visible = true;
+    if (state.frontFacadeGroup) state.frontFacadeGroup.visible = true;
+
+    if (isCutaway) {
+      // Cut-away enabled: evaluate camera angle in real time to hide camera-facing exterior wall
+      if (roofShellGroup) roofShellGroup.visible = isXray; // In Cutaway + Xray, show translucent roof; in pure Cutaway, open roof
+      this.updateDynamicCutaway(state);
+    } else {
+      // Cut-away disabled: restore all exterior walls
+      if (wallsNorth) wallsNorth.visible = true;
+      if (wallsSouth) wallsSouth.visible = true;
+      if (wallsWest) wallsWest.visible = true;
+      if (wallsEast) wallsEast.visible = true;
+      if (roofShellGroup) roofShellGroup.visible = true;
+    }
+
+    // 4. Update status display text
+    if (statusText) {
+      if (isCutaway && isXray) {
+        statusText.textContent = "✂️⚡ โหมด Cut-away + X-ray (กำแพงหายตามมุมกล้อง + มองทะลุโปร่งแสง)";
+      } else if (isCutaway && !isXray) {
+        statusText.textContent = "✂️ โหมด Cut-away (มองมุมไหน กำแพงหายมุมนั้น) · Dynamic 360°";
+      } else if (!isCutaway && isXray) {
         statusText.textContent = "⚡ โหมด X-ray (มองทะลุกำแพงและหลังคา) · โครงสร้างโปร่งแสง 3D";
+      } else {
+        statusText.textContent = "🏢 โหมดโครงสร้างทึบเต็มรูปแบบ (Full Solid Structure)";
       }
     }
 
     if (window.__triggerRender) window.__triggerRender();
   },
 
+  toggleCutaway(state, mats) {
+    state.isCutaway = !state.isCutaway;
+    this.applyStructureModes(state, mats);
+  },
+
+  toggleXray(state, mats) {
+    state.isXray = !state.isXray;
+    this.applyStructureModes(state, mats);
+  },
+
+  setStructureMode(state, mats, mode) {
+    if (mode === "cutaway") {
+      this.toggleCutaway(state, mats);
+    } else if (mode === "xray") {
+      this.toggleXray(state, mats);
+    } else {
+      this.applyStructureModes(state, mats);
+    }
+  },
+
+  applyStructureMode(state, mats, mode) {
+    this.setStructureMode(state, mats, mode);
+  },
+
   /**
    * Dynamic Wall Cut-away (มองมุมไหน กำแพงหายมุมนั้น):
    * Evaluates camera angle relative to factory center in real-time.
-   * Any exterior wall facing towards the camera is automatically hidden,
-   * opening an unobstructed view into the factory interior from that angle!
+   * Any exterior wall facing towards the camera is automatically hidden.
    */
   updateDynamicCutaway(state) {
-    if (state.structureMode !== "cutaway") return;
+    if (!state.isCutaway) return;
     if (!state.camera || !state.archGroups) return;
 
     const cam = state.camera;
@@ -160,8 +192,22 @@ window.Starflex3D.UI.Toolbar = {
   },
 
   cycleStructureMode(state, mats) {
-    const next = state.structureMode === "cutaway" ? "xray" : "cutaway";
-    this.applyStructureMode(state, mats, next);
+    // 4-step cycle:
+    // 1. Cutaway only (T, F) -> 2. Both Cutaway + Xray (T, T) -> 3. Xray only (F, T) -> 4. Full Solid (F, F)
+    if (state.isCutaway && !state.isXray) {
+      state.isCutaway = true;
+      state.isXray = true;
+    } else if (state.isCutaway && state.isXray) {
+      state.isCutaway = false;
+      state.isXray = true;
+    } else if (!state.isCutaway && state.isXray) {
+      state.isCutaway = false;
+      state.isXray = false;
+    } else {
+      state.isCutaway = true;
+      state.isXray = false;
+    }
+    this.applyStructureModes(state, mats);
   },
 
   toggleSolarRoofPreview(state, mats) {
@@ -211,50 +257,50 @@ window.Starflex3D.UI.Toolbar = {
 
   updateBlueprintOpacity(state, val) {
     if (state.blueprintPlane) {
-      state.blueprintPlane.material.opacity = parseFloat(val) / 100;
-      state.blueprintPlane.visible = parseFloat(val) > 1;
+      const op = parseFloat(val) / 100;
+      state.blueprintPlane.material.opacity = op;
+      state.blueprintPlane.visible = op > 0.02;
+      if (op > 0.02) {
+        state.blueprintPlane.position.y = 15.0;
+        state.blueprintPlane.renderOrder = 999;
+      } else {
+        state.blueprintPlane.position.y = -0.34;
+      }
     }
   },
 
   cycleFloorOverlay(state) {
-    const modes = ["blueprint_soft", "blueprint_full", "overlay", "satellite"];
+    const modes = ["clean", "blueprint_soft", "blueprint_full"];
     const next = modes[(modes.indexOf(state.floorMode) + 1) % modes.length];
     state.floorMode = next;
     const bp = state.blueprintPlane;
     const sat = state.satPlane;
     const statusText = document.getElementById("status-mode-text");
 
-    if (next === "blueprint_soft") {
-      bp.visible = true;
-      bp.material.opacity = 0.32;
+    if (sat) {
       sat.visible = false;
-      document.getElementById("slider-bp").value = 32;
-      statusText.textContent = "พื้นคอนกรีตสถาปัตยกรรม + เส้นผังโรงงานบาง";
+      sat.material.opacity = 0;
+    }
+
+    if (next === "clean") {
+      bp.visible = false;
+      bp.position.y = -0.34;
+      document.getElementById("slider-bp").value = 0;
+      statusText.textContent = "พื้นคอนกรีตสถาปัตยกรรม 3D (ซ่อนผังแบบแปลน)";
+    } else if (next === "blueprint_soft") {
+      bp.visible = true;
+      bp.material.opacity = 0.45;
+      bp.position.y = 15.0;
+      bp.renderOrder = 999;
+      document.getElementById("slider-bp").value = 45;
+      statusText.textContent = "แสดงผังโรงงานแบบโปร่งใส 45%";
     } else if (next === "blueprint_full") {
       bp.visible = true;
       bp.material.opacity = 0.88;
-      sat.visible = false;
+      bp.position.y = 15.0;
+      bp.renderOrder = 999;
       document.getElementById("slider-bp").value = 88;
       statusText.textContent = "แสดงผังโรงงานจริง 100% (Starflex Plant Layout.jpeg)";
-    } else if (next === "overlay") {
-      bp.visible = true;
-      bp.material.opacity = 0.55;
-      if (state.textures.overlay) {
-        sat.material.map = state.textures.overlay;
-        sat.material.needsUpdate = true;
-      }
-      sat.visible = true;
-      sat.material.opacity = 0.85;
-      statusText.textContent = "เปรียบเทียบผังโรงงานซ้อนภาพถ่ายดาวเทียม Google Maps";
-    } else if (next === "satellite") {
-      bp.visible = false;
-      if (state.textures.satellite) {
-        sat.material.map = state.textures.satellite;
-        sat.material.needsUpdate = true;
-      }
-      sat.visible = true;
-      sat.material.opacity = 0.92;
-      statusText.textContent = "เปรียบเทียบสถานที่จริงจากภาพถ่ายดาวเทียม Google Maps";
     }
   },
 
@@ -278,6 +324,21 @@ window.Starflex3D.UI.Toolbar = {
       new THREE.Vector3(...p.pos)
     );
     document.getElementById("status-mode-text").textContent = p.label;
+
+    // Show blueprint when in high angle (top_down), hide when in other 3D views
+    if (state.blueprintPlane) {
+      if (p.id === "top_down") {
+        state.blueprintPlane.visible = true;
+        state.blueprintPlane.material.opacity = 0.85;
+        state.blueprintPlane.position.y = 15.0;
+        state.blueprintPlane.renderOrder = 999;
+      } else {
+        if (state.floorMode !== "blueprint_full" && state.floorMode !== "blueprint_soft") {
+          state.blueprintPlane.visible = false;
+          state.blueprintPlane.position.y = -0.34;
+        }
+      }
+    }
   },
 
   resetCamera(state) {
@@ -288,6 +349,12 @@ window.Starflex3D.UI.Toolbar = {
       new THREE.Vector3(...cfg.defaultCameraTarget),
       new THREE.Vector3(...cfg.defaultCameraPos)
     );
+
+    // Hide blueprint in normal default view
+    if (state.blueprintPlane && state.floorMode !== "blueprint_full" && state.floorMode !== "blueprint_soft") {
+      state.blueprintPlane.visible = false;
+      state.blueprintPlane.position.y = -0.34;
+    }
   },
 
   toggleFullscreen() {

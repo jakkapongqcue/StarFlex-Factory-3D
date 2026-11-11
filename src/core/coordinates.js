@@ -49,8 +49,14 @@ window.Starflex3D.Coords = (function () {
     const edges = new THREE.EdgesGeometry(mesh.geometry, 25);
     const line = new THREE.LineSegments(
       edges,
-      new THREE.LineBasicMaterial({ color, transparent: opacity < 1, opacity })
+      new THREE.LineBasicMaterial({
+        color,
+        transparent: opacity < 1,
+        opacity,
+        depthWrite: false
+      })
     );
+    line.renderOrder = 2;
     mesh.add(line);
     return line;
   }

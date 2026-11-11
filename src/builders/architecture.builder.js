@@ -93,13 +93,13 @@ window.Starflex3D.Builders.Architecture = {
     // North Back Wall of Halls 1, 2, 3, 4 (py = 247)
     addWallSegment(200, 247, 1062, 247, 10.5, wallsNorth, mats.wallSolid, true, 65);
     addWallSegment(1062, 247, 1498, 247, 8.8, wallsNorth, mats.wallSolid, true, 65);
-    addWallSegment(1498, 247, 1895, 247, 12.8, wallsNorth, mats.wallSolid, true, 65);
+    addWallSegment(1498, 247, 1755, 247, 12.8, wallsNorth, mats.wallSolid, true, 65);
 
     // West Outer Wall of Hall 1 (px = 200, py: 247..1098)
     addWallSegment(200, 247, 200, 1098, 10.5, wallsWest, mats.wallSolid, true, 65);
 
     // East Outer Wall of Hall 4 + East MDB & East Oven Room (px = 1895)
-    addWallSegment(1895, 247, 1895, 1100, 12.8, wallsEast, mats.wallSolid, true, 65);
+    addWallSegment(1895, 465, 1895, 1100, 12.8, wallsEast, mats.wallSolid, true, 65);
     addWallSegment(1895, 490, 1950, 490, 4.5, wallsNorth, mats.wallSolid, false);
     addWallSegment(1950, 490, 1950, 545, 4.5, wallsEast, mats.wallSolid, false);
     addWallSegment(1895, 545, 1950, 545, 4.5, wallsSouth, mats.wallSolid, false);
@@ -123,18 +123,18 @@ window.Starflex3D.Builders.Architecture = {
     addWallSegment(674, 247, 674, 700, 6.2, partitionWallsGroup, mats.wallPartition, true, 75);
     addWallSegment(674, 700, 674, 1098, 3.6, partitionWallsGroup, mats.wallPartition, true, 75);
 
-    addWallSegment(1062, 247, 1062, 750, 7.2, partitionWallsGroup, mats.wallPartition, true, 75);
-    addWallSegment(1062, 750, 1062, 1098, 4.2, partitionWallsGroup, mats.wallPartition, true, 75);
+    // Partition between Hall 2 and Hall 3 corridor (px = 1062) with opening for Finished Goods double doors (py: 330..365)
+    addWallSegment(1062, 247, 1062, 330, 7.2, partitionWallsGroup, mats.wallPartition, true, 75);
+    addWallSegment(1062, 365, 1062, 750, 7.2, partitionWallsGroup, mats.wallPartition, true, 75);
+    addWallSegment(1062, 750, 1062, 815, 4.2, partitionWallsGroup, mats.wallPartition, true, 75);
 
-    addWallSegment(1498, 247, 1498, 760, 7.8, partitionWallsGroup, mats.wallPartition, true, 75);
     addWallSegment(1640, 247, 1640, 545, 7.8, partitionWallsGroup, mats.wallPartition, true, 75);
     addWallSegment(1640, 545, 1895, 545, 6.0, partitionWallsGroup, mats.wallPartition, true, 75);
 
     const lowPartitions = [
-      [278, 315, 552, 315], [395, 247, 395, 315], [520, 247, 520, 382],
       [200, 1048, 590, 1048], [890, 247, 890, 326], [890, 326, 1062, 326],
       [738, 398, 995, 398], [738, 540, 995, 540], [738, 398, 738, 540], [995, 398, 995, 540],
-      [674, 1048, 922, 1048], [674, 1098, 1018, 1098],
+      [674, 1048, 922, 1048],
       [1102, 712, 1402, 712], [1102, 815, 1402, 815],
       [1498, 880, 1895, 880], [1498, 1055, 1895, 1055]
     ];
@@ -155,8 +155,6 @@ window.Starflex3D.Builders.Architecture = {
     // Circle 3: Full-height South wall of Hall 3 High-Bay Warehouse at py = 815 (px: 1062..1498)
     // Note: Keep py > 815 open for the raised Loading Dock platform & cantilevered canopy!
     addWallSegment(1062, 815, 1498, 815, 8.8, wallsSouth, mats.wallCutawayFront, true, 48);
-    addWallSegment(1062, 247, 1062, 815, 9.4, partitionWallsGroup, mats.wallPartition, false);
-    addWallSegment(1498, 247, 1498, 815, 9.4, partitionWallsGroup, mats.wallPartition, false);
 
     // Circle 4: Full-height South & internal partitions of Hall 4 East Plant (px: 1498..1895, py = 1100)
     addWallSegment(1498, 1100, 1895, 1100, 12.8, wallsSouth, mats.wallCutawayFront, true, 65);

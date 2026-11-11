@@ -10,8 +10,10 @@
   // 1. Central Application State
   const state = {
     mode: "explore",             // 'explore' | 'tour'
-    structureMode: "cutaway",    // 'cutaway' | 'xray' | 'full' | 'open'
-    floorMode: "blueprint_soft", // 'blueprint_soft' | 'blueprint_full' | 'overlay' | 'satellite'
+    isCutaway: true,             // Dynamic 360° cut-away (มองมุมไหน กำแพงหายมุมนั้น)
+    isXray: false,               // Translucent see-through structure (มองทะลุกำแพงและหลังคา)
+    structureMode: "cutaway",    // legacy string support
+    floorMode: "clean",          // 'clean' | 'blueprint_soft' | 'blueprint_full' | 'overlay' | 'satellite'
     showLabels: true,
     showFlows: true,
     selectedCategory: "all",
@@ -23,7 +25,8 @@
     labelElements: [],
     flowParticles: [],
     cameraTargetLerp: null,
-    cameraPosLerp: null
+    cameraPosLerp: null,
+    cameraFlight: null
   };
 
   App.state = state;
@@ -100,10 +103,11 @@
     setAppMode: mode => App.UI.Tour.setAppMode(state, mode),
     toggleLabels: () => App.UI.Labels.toggle(state),
     toggleFlows: () => App.UI.Toolbar.toggleFlows(state),
+    toggleCutaway: () => App.UI.Toolbar.toggleCutaway(state, mats),
+    toggleXray: () => App.UI.Toolbar.toggleXray(state, mats),
     cycleStructureMode: () => App.UI.Toolbar.cycleStructureMode(state, mats),
-    setStructureMode: mode => App.UI.Toolbar.applyStructureMode(state, mats, mode),
+    setStructureMode: mode => App.UI.Toolbar.setStructureMode(state, mats, mode),
     toggleSolarRoofPreview: () => App.UI.Toolbar.toggleSolarRoofPreview(state, mats),
-    toggleXray: () => App.UI.Toolbar.applyStructureMode(state, mats, state.structureMode === "xray" ? "cutaway" : "xray"),
     cycleFloorOverlay: () => App.UI.Toolbar.cycleFloorOverlay(state),
     cycleCameraPreset: () => App.UI.Toolbar.cycleCameraPreset(state),
     toggleFullscreen: () => App.UI.Toolbar.toggleFullscreen(),
