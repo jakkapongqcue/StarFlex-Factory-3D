@@ -44,7 +44,8 @@ window.Starflex3D.Config.Layout = {
     LOADING_COURTYARD: [1062, 815, 1410, 1430],
     LOADING_DOCK_CANOPY: [1062, 815, 1398, 874],
     FRONT_DRIVEWAY: [460, 1150, 1680, 1565],
-    OFFICE_NOOK_APRON: [1018, 1098, 1062, 1150]
+    OFFICE_NOOK_APRON: [1018, 1098, 1062, 1150],
+    WALKWAY_PROD: [1056, 318, 1102, 815] // Main white walkway & North hygiene station
   },
 
   // 4. Auxiliary Facilities

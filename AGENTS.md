@@ -62,6 +62,7 @@ Conversion:
 | **Facade Orchestrator** | `src/builders/front-facade.builder.js` | Assembles all facade sub-builders into `frontGroup` |
 | **Chemical Warehouse (CHEM-WH)** | `src/builders/machines/chemical-warehouse.builder.js` | `[240, 80, 540, 190]`, North Yard behind Hall 1 |
 | **Main Warehouse (WH-MAIN Racks)** | `src/builders/machines/warehouse.builder.js` | `[674, 348, 1005, 542]`, 5 Rack Rows, 12 Bays |
+| **Main Walkway & Hygiene Room (WALK-PROD)** | `src/builders/machines/facilities.builder.js` | `[1056, 318, 1102, 815]`, White Path, Air Shower, 2 Doors |
 | **Factory Outer Walls & Solar Roofs** | `src/builders/architecture.builder.js` | Outer Walls, Solar Panels, Gabled Roofs, Cutaway |
 | **Ground Pavements, Roads & Plinths** | `src/builders/site.builder.js` | `courtyardRects`, `factoryInteriorSections`, Grid |
 | **Machine Data / Metadata / Specs** | `src/data/machines/*.data.js` | Machine IDs, Dimensions, Spec Sheets, Descriptions |

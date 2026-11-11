@@ -271,16 +271,16 @@ window.Starflex3D.Builders.Facilities = (function () {
   function buildProductionWalkway(group, r, H, mats) {
     const floorW = r.w * 0.96;
     const floorD = r.d * 0.99;
-    const greenMat = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.45 });
+    const whiteFloorMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.25, metalness: 0.05 });
     const yellowStripeMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
-    const redPathMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
 
     const walkGroup = new THREE.Group();
     group.add(walkGroup);
 
-    // Green walkway floor (sits directly on elevated factory floor +1.25m, flush with Loading Dock)
-    const walkFloor = new THREE.Mesh(new THREE.BoxGeometry(floorW, 0.03, floorD), greenMat);
+    // 1. Clean White Walkway Floor (ไม่มีเส้นสีแดง - sits directly on elevated floor +1.25m)
+    const walkFloor = new THREE.Mesh(new THREE.BoxGeometry(floorW, 0.03, floorD), whiteFloorMat);
     walkFloor.position.y = 0.015;
+    walkFloor.receiveShadow = true;
     walkGroup.add(walkFloor);
 
     // Yellow safety borders along East and West edges
@@ -292,60 +292,7 @@ window.Starflex3D.Builders.Facilities = (function () {
     rightStripe.position.set(floorW * 0.5 - 0.06, 0.016, 0);
     walkGroup.add(rightStripe);
 
-    // RED ARROW PATH (Exact path indicated by user!)
-    // North intersection where path branches: z = -r.d * 0.38 (py ≈ 340)
-    const splitZ = -r.d * 0.38;
-    const pathWidth = 0.38;
-    const pathThick = 0.036;
-
-    // Main south straight red path: from south (z = +r.d * 0.46) up to splitZ
-    const straightLen = (r.d * 0.46) - splitZ;
-    const straightPath = new THREE.Mesh(
-      new THREE.BoxGeometry(pathWidth, pathThick, straightLen),
-      redPathMat
-    );
-    straightPath.position.set(0, 0.018, splitZ + straightLen * 0.5);
-    walkGroup.add(straightPath);
-
-    // Red chevron arrows pointing North along the walkway
-    const numArrows = 6;
-    for (let a = 0; a < numArrows; a++) {
-      const az = splitZ + straightLen * 0.12 + (straightLen * 0.76 * a) / (numArrows - 1);
-      const arrowHead = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.65, 3), redPathMat);
-      arrowHead.rotation.x = -Math.PI / 2;
-      arrowHead.position.set(0, 0.022, az);
-      walkGroup.add(arrowHead);
-    }
-
-    // Branch 1 (West Arrow): Turns 90° West into Door 1 (Finished Goods Area)
-    const branchWestLen = floorW * 0.5;
-    const westBranch = new THREE.Mesh(
-      new THREE.BoxGeometry(branchWestLen, pathThick, pathWidth),
-      redPathMat
-    );
-    westBranch.position.set(-branchWestLen * 0.5, 0.018, splitZ);
-    walkGroup.add(westBranch);
-
-    const westArrow = new THREE.Mesh(new THREE.ConeGeometry(0.4, 0.7, 3), redPathMat);
-    westArrow.rotation.z = Math.PI / 2;
-    westArrow.position.set(-branchWestLen * 0.85, 0.022, splitZ);
-    walkGroup.add(westArrow);
-
-    // Branch 2 (North Arrow): Continues straight North into Door 2 (Production Line)
-    const northLen = Math.abs(-r.d * 0.48 - splitZ);
-    const northBranch = new THREE.Mesh(
-      new THREE.BoxGeometry(pathWidth, pathThick, northLen),
-      redPathMat
-    );
-    northBranch.position.set(0, 0.018, splitZ - northLen * 0.5);
-    walkGroup.add(northBranch);
-
-    const northArrow = new THREE.Mesh(new THREE.ConeGeometry(0.4, 0.7, 3), redPathMat);
-    northArrow.rotation.x = -Math.PI / 2;
-    northArrow.position.set(0, 0.022, -r.d * 0.46);
-    walkGroup.add(northArrow);
-
-    // 6 Planter Pots (แนวต้นไม้ 6 กระถาง beside SW5 Office)
+    // 2. 6 Planter Pots (แนวต้นไม้ 6 กระถาง beside SW5 Office)
     const potMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6 });
     const stemMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.7 });
     const leafMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.35 });
@@ -368,18 +315,18 @@ window.Starflex3D.Builders.Facilities = (function () {
       walkGroup.add(crown);
     }
 
-    // DOOR 1 (WEST DOOR): Entrance to Finished Goods / คลังสินค้า
-    const door1Z = splitZ;
-    const door1X = -floorW * 0.5;
-    const door1Group = new THREE.Group();
-    door1Group.position.set(door1X, 0, door1Z);
+    // 3. West Door: Entrance to Finished Goods / คลังสินค้าสำเร็จรูป
+    const doorWestZ = -r.d * 0.38;
+    const doorWestX = -floorW * 0.5;
+    const doorWestGroup = new THREE.Group();
+    doorWestGroup.position.set(doorWestX, 0, doorWestZ);
 
     const portalFrame = new THREE.Mesh(
       new THREE.BoxGeometry(0.2, 3.2, 2.6),
       new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.6, roughness: 0.3 })
     );
     portalFrame.position.y = 1.6;
-    door1Group.add(portalFrame);
+    doorWestGroup.add(portalFrame);
 
     const doorMat = new THREE.MeshStandardMaterial({ color: 0x0369a1, roughness: 0.3 });
     const glassMat = new THREE.MeshStandardMaterial({ color: 0xbae6fd, transparent: true, opacity: 0.65 });
@@ -398,10 +345,10 @@ window.Starflex3D.Builders.Facilities = (function () {
       pushBar.position.set(0.05, -0.15, 0);
       leaf.add(pushBar);
 
-      door1Group.add(leaf);
+      doorWestGroup.add(leaf);
     });
 
-    const sign1 = createSignboardMesh(
+    const signWest = createSignboardMesh(
       2.5,
       0.55,
       "คลังสินค้าสำเร็จรูป",
@@ -410,56 +357,302 @@ window.Starflex3D.Builders.Facilities = (function () {
       "#ffffff",
       "#38bdf8"
     );
-    sign1.position.set(0.12, 2.85, 0);
-    sign1.rotation.y = Math.PI / 2;
-    door1Group.add(sign1);
+    signWest.position.set(0.12, 2.85, 0);
+    signWest.rotation.y = Math.PI / 2;
+    doorWestGroup.add(signWest);
+    walkGroup.add(doorWestGroup);
 
-    walkGroup.add(door1Group);
+    // ========================================================================
+    // 4. ปลายทาง: ห้องสำหรับทำความสะอาดก่อนเข้าไลน์ผลิต (Air Shower & Hygiene Anteroom)
+    //    พร้อม 2 ประตูเข้าสู่สายการผลิต (Door 1 & Door 2 into Production Line)
+    // ========================================================================
+    const hygW = floorW;
+    const hygD = 6.8;
+    const hygH = 3.3;
+    const hygZ = -floorD * 0.5 + hygD * 0.5;
 
-    // DOOR 2 (NORTH DOOR): Entrance to Production Line / สายการผลิต
-    const door2Z = -r.d * 0.48;
-    const door2Group = new THREE.Group();
-    door2Group.position.set(0, 0, door2Z);
+    const hygGroup = new THREE.Group();
+    hygGroup.position.set(0, 0, hygZ);
+    walkGroup.add(hygGroup);
 
-    const portalNorth = new THREE.Mesh(
-      new THREE.BoxGeometry(3.0, 3.4, 0.22),
-      new THREE.MeshStandardMaterial({ color: 0xb91c1c, metalness: 0.6, roughness: 0.3 })
-    );
-    portalNorth.position.y = 1.7;
-    door2Group.add(portalNorth);
+    const cleanWallMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.35 });
+    const cleanFloorMat = new THREE.MeshStandardMaterial({ color: 0xe0f2fe, roughness: 0.25 });
+    const stainlessMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 0.85, roughness: 0.2 });
+    const blueFrameMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.5, roughness: 0.3 });
+    const greenFrameMat = new THREE.MeshStandardMaterial({ color: 0x059669, metalness: 0.5, roughness: 0.3 });
+    const visionGlassMat = new THREE.MeshPhysicalMaterial({
+      color: 0x38bdf8,
+      roughness: 0.1,
+      metalness: 0.2,
+      transparent: true,
+      opacity: 0.55
+    });
 
-    const shutter = new THREE.Mesh(
-      new THREE.BoxGeometry(2.5, 2.6, 0.08),
-      new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.5 })
-    );
-    shutter.position.y = 1.35;
-    door2Group.add(shutter);
+    // 4A. Cleanroom Floor Slab (พื้นคลีนรูมสีฟ้าอ่อน ปลอดเชื้อ)
+    const hygFloor = new THREE.Mesh(new THREE.BoxGeometry(hygW - 0.05, 0.04, hygD - 0.05), cleanFloorMat);
+    hygFloor.position.y = 0.02;
+    hygGroup.add(hygFloor);
 
-    const hazardMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
-    const topStrip = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.12, 0.25), hazardMat);
-    topStrip.position.y = 2.75;
-    door2Group.add(topStrip);
+    // 4B. Cleanroom Ceiling & Inset LED Panel Lights
+    const hygCeiling = new THREE.Mesh(new THREE.BoxGeometry(hygW + 0.1, 0.18, hygD + 0.1), cleanWallMat);
+    hygCeiling.position.y = hygH + 0.09;
+    hygGroup.add(hygCeiling);
 
-    const sign2 = createSignboardMesh(
-      2.9,
+    [-hygW * 0.26, hygW * 0.26].forEach(lx => {
+      [-hygD * 0.25, hygD * 0.25].forEach(lz => {
+        const led = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.7), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+        led.rotation.x = Math.PI / 2;
+        led.position.set(lx, hygH - 0.01, lz);
+        hygGroup.add(led);
+      });
+    });
+
+    // 4C. Perimeter Cleanroom Walls (ผนังไอโซวอลล์คลีนรูมสีขาว)
+    // East wall (+X) with vision observation window
+    const eastWall = new THREE.Mesh(new THREE.BoxGeometry(0.14, hygH, hygD), cleanWallMat);
+    eastWall.position.set(hygW * 0.5 - 0.07, hygH * 0.5, 0);
+    addEdges(eastWall, 0x94a3b8, 0.6);
+    hygGroup.add(eastWall);
+
+    const eastWin = new THREE.Mesh(new THREE.BoxGeometry(0.18, 1.2, 2.4), visionGlassMat);
+    eastWin.position.set(hygW * 0.5 - 0.07, 1.8, 0);
+    addEdges(eastWin, 0xffffff, 0.8);
+    hygGroup.add(eastWin);
+
+    // West wall (-X)
+    const westWall = new THREE.Mesh(new THREE.BoxGeometry(0.14, hygH, hygD), cleanWallMat);
+    westWall.position.set(-hygW * 0.5 + 0.07, hygH * 0.5, 0);
+    addEdges(westWall, 0x94a3b8, 0.6);
+    hygGroup.add(westWall);
+
+    // 4D. South Entrance Wall (facing the white walkway, at +Z): Double Glass Door + Sign
+    const southWallZ = hygD * 0.5 - 0.07;
+    // Left & right wall pillars of South wall
+    [-hygW * 0.38, hygW * 0.38].forEach(sx => {
+      const sp = new THREE.Mesh(new THREE.BoxGeometry(hygW * 0.24, hygH, 0.14), cleanWallMat);
+      sp.position.set(sx, hygH * 0.5, southWallZ);
+      addEdges(sp, 0x94a3b8, 0.5);
+      hygGroup.add(sp);
+    });
+    // Header wall above South door
+    const southTopWall = new THREE.Mesh(new THREE.BoxGeometry(hygW * 0.52, hygH - 2.5, 0.14), cleanWallMat);
+    southTopWall.position.set(0, 2.5 + (hygH - 2.5) * 0.5, southWallZ);
+    hygGroup.add(southTopWall);
+
+    // South Entrance Double Glass Door into Cleaning Room
+    const sDoorFrame = new THREE.Mesh(new THREE.BoxGeometry(2.3, 2.5, 0.16), blueFrameMat);
+    sDoorFrame.position.set(0, 1.25, southWallZ);
+    addEdges(sDoorFrame, 0x38bdf8, 0.7);
+    hygGroup.add(sDoorFrame);
+
+    [-0.52, 0.52].forEach(dx => {
+      const leaf = new THREE.Mesh(new THREE.BoxGeometry(0.98, 2.38, 0.08), visionGlassMat);
+      leaf.position.set(dx, 1.25, southWallZ);
+      addEdges(leaf, 0xffffff, 0.9);
+      const pushBar = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.9, 8), stainlessMat);
+      pushBar.position.set(dx > 0 ? -0.38 : 0.38, 1.15, 0.06);
+      leaf.add(pushBar);
+      hygGroup.add(leaf);
+    });
+
+    // Illuminated Header Signboard for the Cleaning Room
+    const roomSign = createSignboardMesh(
+      3.4,
       0.58,
-      "ทางเข้าสายการผลิต",
-      "PRODUCTION LINE ENTRANCE",
-      "#b91c1c",
+      "ห้องทำความสะอาดสุขอนามัย (Air Shower)",
+      "HYGIENE & SANITIZATION ROOM",
+      "#0284c7",
       "#ffffff",
-      "#fca5a5"
+      "#38bdf8"
     );
-    sign2.position.set(0, 3.1, 0.12);
-    door2Group.add(sign2);
+    roomSign.position.set(0, 2.85, southWallZ + 0.12);
+    hygGroup.add(roomSign);
 
-    const beacon = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.1, 0.12, 0.2, 12),
+    // 4E. Interior Sanitizing & Cleaning Equipment (อุปกรณ์ทำความสะอาดภายใน)
+    // 1) Air Shower Booth (ตู้เป่าลมแอร์ชาวเวอร์)
+    const airShowerGroup = new THREE.Group();
+    airShowerGroup.position.set(0, 0, 0.8);
+
+    const asFrameL = new THREE.Mesh(new THREE.BoxGeometry(0.25, 2.6, 1.6), stainlessMat);
+    asFrameL.position.set(-1.0, 1.3, 0);
+    const asFrameR = new THREE.Mesh(new THREE.BoxGeometry(0.25, 2.6, 1.6), stainlessMat);
+    asFrameR.position.set(1.0, 1.3, 0);
+    const asTop = new THREE.Mesh(new THREE.BoxGeometry(2.25, 0.35, 1.6), stainlessMat);
+    asTop.position.set(0, 2.75, 0);
+    airShowerGroup.add(asFrameL, asFrameR, asTop);
+
+    // Circular air jet nozzles on side walls
+    for (let nz = -0.55; nz <= 0.55; nz += 0.36) {
+      for (let ny = 0.8; ny <= 2.2; ny += 0.45) {
+        [-0.86, 0.86].forEach(nx => {
+          const nozzle = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.04, 0.04, 0.08, 8),
+            new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.9 })
+          );
+          nozzle.rotation.z = Math.PI / 2;
+          nozzle.position.set(nx, ny, nz);
+          airShowerGroup.add(nozzle);
+        });
+      }
+    }
+
+    // Air Shower overhead sensor & status beacon
+    const asBeacon = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08, 0.08, 0.16, 8),
       new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x16a34a, emissiveIntensity: 0.8 })
     );
-    beacon.position.set(0, 3.5, 0);
-    door2Group.add(beacon);
+    asBeacon.position.set(0, 3.0, 0);
+    airShowerGroup.add(asBeacon);
+    hygGroup.add(airShowerGroup);
 
-    walkGroup.add(door2Group);
+    // 2) Automated Handwashing & Sanitizing Sink Counter (อ่างล้างมือฆ่าเชื้อสแตนเลส)
+    const sinkCounter = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.85, 0.55), stainlessMat);
+    sinkCounter.position.set(-hygW * 0.5 + 0.38, 0.425, -1.2);
+    addEdges(sinkCounter, 0x64748b, 0.7);
+    hygGroup.add(sinkCounter);
+
+    // 2 Faucets & Dispensers
+    [-0.45, 0.45].forEach(fx => {
+      const faucet = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.02, 0.02, 0.28, 8),
+        stainlessMat
+      );
+      faucet.position.set(-hygW * 0.5 + 0.38 + fx, 0.95, -1.2);
+      const dispenser = new THREE.Mesh(
+        new THREE.BoxGeometry(0.14, 0.28, 0.1),
+        new THREE.MeshStandardMaterial({ color: 0x0284c7 })
+      );
+      dispenser.position.set(-hygW * 0.5 + 0.15, 1.4, -1.2 + fx * 0.8);
+      hygGroup.add(faucet, dispenser);
+    });
+
+    // 3) High-Speed Hand Dryers on East wall
+    [-1.0, -1.6].forEach(dz => {
+      const dryer = new THREE.Mesh(
+        new THREE.BoxGeometry(0.18, 0.38, 0.28),
+        new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 })
+      );
+      dryer.position.set(hygW * 0.5 - 0.18, 1.35, dz);
+      addEdges(dryer, 0x94a3b8, 0.7);
+      hygGroup.add(dryer);
+    });
+
+    // 4) Cleanroom Step-Over Stainless Bench (ม้านั่งสแตนเลสเปลี่ยนรองเท้า)
+    const bench = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.45, 1.8), stainlessMat);
+    bench.position.set(0, 0.225, -0.6);
+    addEdges(bench, 0x475569, 0.6);
+    hygGroup.add(bench);
+
+    // 5) Blue Sticky Mats (แผ่นกาวดักฝุ่นก่อนถึงประตู)
+    [-hygW * 0.26, hygW * 0.26].forEach(mx => {
+      const stickyMat = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.2, 0.8),
+        new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.3 })
+      );
+      stickyMat.rotation.x = -Math.PI / 2;
+      stickyMat.position.set(mx, 0.045, -hygD * 0.5 + 1.2);
+      hygGroup.add(stickyMat);
+    });
+
+    // ========================================================================
+    // 4F. สองประตูเข้าสู่ LINE ผลิต (TWO DOORS ENTERING THE PRODUCTION LINE)
+    // ========================================================================
+    const northWallZ = -hygD * 0.5 + 0.07;
+
+    // Center divider pillar between Door 1 and Door 2
+    const centerPillar = new THREE.Mesh(new THREE.BoxGeometry(0.48, hygH, 0.14), cleanWallMat);
+    centerPillar.position.set(0, hygH * 0.5, northWallZ);
+    addEdges(centerPillar, 0x94a3b8, 0.6);
+    hygGroup.add(centerPillar);
+
+    // Outer edge pillars (left & right of doors)
+    [-hygW * 0.5 + 0.18, hygW * 0.5 - 0.18].forEach(px => {
+      const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.36, hygH, 0.14), cleanWallMat);
+      pillar.position.set(px, hygH * 0.5, northWallZ);
+      addEdges(pillar, 0x94a3b8, 0.6);
+      hygGroup.add(pillar);
+    });
+
+    // Wall header above both North doors
+    const northHeader = new THREE.Mesh(new THREE.BoxGeometry(hygW, hygH - 2.5, 0.14), cleanWallMat);
+    northHeader.position.set(0, 2.5 + (hygH - 2.5) * 0.5, northWallZ);
+    hygGroup.add(northHeader);
+
+    // --- DOOR 1 (ประตูที่ 1 ฝั่งซ้าย: เข้าไลน์ผลิต Line 1) ---
+    const door1X = -hygW * 0.26;
+    const door1Frame = new THREE.Mesh(new THREE.BoxGeometry(1.68, 2.5, 0.16), blueFrameMat);
+    door1Frame.position.set(door1X, 1.25, northWallZ);
+    addEdges(door1Frame, 0x38bdf8, 0.8);
+    hygGroup.add(door1Frame);
+
+    const door1Leaf = new THREE.Mesh(new THREE.BoxGeometry(1.55, 2.38, 0.06), visionGlassMat);
+    door1Leaf.position.set(door1X, 1.25, northWallZ);
+    addEdges(door1Leaf, 0xffffff, 0.9);
+    const bar1 = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.9, 8), stainlessMat);
+    bar1.position.set(0.35, 1.15, 0.05);
+    door1Leaf.add(bar1);
+    hygGroup.add(door1Leaf);
+
+    const signDoor1 = createSignboardMesh(
+      1.75,
+      0.48,
+      "ประตู 1: เข้าสายการผลิต",
+      "DOOR 1 · PRODUCTION LINE",
+      "#0284c7",
+      "#ffffff",
+      "#38bdf8"
+    );
+    signDoor1.position.set(door1X, 2.78, northWallZ - 0.1);
+    signDoor1.rotation.y = Math.PI; // Faces into line
+    const signDoor1In = signDoor1.clone();
+    signDoor1In.rotation.y = 0;
+    signDoor1In.position.set(door1X, 2.78, northWallZ + 0.1);
+    hygGroup.add(signDoor1, signDoor1In);
+
+    const beacon1 = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08, 0.1, 0.18, 10),
+      new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x16a34a, emissiveIntensity: 0.85 })
+    );
+    beacon1.position.set(door1X, 3.12, northWallZ);
+    hygGroup.add(beacon1);
+
+    // --- DOOR 2 (ประตูที่ 2 ฝั่งขวา: เข้าไลน์ผลิต Line 2) ---
+    const door2X = hygW * 0.26;
+    const door2Frame = new THREE.Mesh(new THREE.BoxGeometry(1.68, 2.5, 0.16), greenFrameMat);
+    door2Frame.position.set(door2X, 1.25, northWallZ);
+    addEdges(door2Frame, 0x34d399, 0.8);
+    hygGroup.add(door2Frame);
+
+    const door2Leaf = new THREE.Mesh(new THREE.BoxGeometry(1.55, 2.38, 0.06), visionGlassMat);
+    door2Leaf.position.set(door2X, 1.25, northWallZ);
+    addEdges(door2Leaf, 0xffffff, 0.9);
+    const bar2 = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.9, 8), stainlessMat);
+    bar2.position.set(-0.35, 1.15, 0.05);
+    door2Leaf.add(bar2);
+    hygGroup.add(door2Leaf);
+
+    const signDoor2 = createSignboardMesh(
+      1.75,
+      0.48,
+      "ประตู 2: เข้าสายการผลิต",
+      "DOOR 2 · PRODUCTION LINE",
+      "#059669",
+      "#ffffff",
+      "#6ee7b7"
+    );
+    signDoor2.position.set(door2X, 2.78, northWallZ - 0.1);
+    signDoor2.rotation.y = Math.PI; // Faces into line
+    const signDoor2In = signDoor2.clone();
+    signDoor2In.rotation.y = 0;
+    signDoor2In.position.set(door2X, 2.78, northWallZ + 0.1);
+    hygGroup.add(signDoor2, signDoor2In);
+
+    const beacon2 = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08, 0.1, 0.18, 10),
+      new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x16a34a, emissiveIntensity: 0.85 })
+    );
+    beacon2.position.set(door2X, 3.12, northWallZ);
+    hygGroup.add(beacon2);
   }
 
   return {
