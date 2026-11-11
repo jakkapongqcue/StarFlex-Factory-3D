@@ -130,6 +130,11 @@ window.Starflex3D.Builders.Machines = (function () {
         case "cylinder_storage":
           buildCylinderStorage(group, r, H, mats);
           break;
+        case "hq_office":
+        case "guard_station":
+        case "ramp_group":
+          // Fully modeled by FrontFacade builder, avoid duplicate meshes & Z-fighting
+          break;
         default:
           buildRoomBlock(group, item.type, r, H, mats, cat.color, accentMat);
           break;

@@ -56,6 +56,73 @@ window.Starflex3D.Builders.FrontFacade = {
       acGrille: new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.3 })
     };
 
+    /**
+     * Builds a true 3D rectangular Hipped Roof (หลังคาปั้นหยา) geometry.
+     * Perfectly squared with axes, zero tilt/skew/crookedness, with crisp horizontal apex ridge cap.
+     */
+    function createHippedRoofGeometry(w, d, h) {
+      const halfW = w * 0.5;
+      const halfD = d * 0.5;
+      const isLongX = w >= d;
+      const ridgeL = isLongX ? Math.max(0, w - d * 0.75) : Math.max(0, d - w * 0.75);
+      const halfR = ridgeL * 0.5;
+
+      const positions = [];
+      const uvs = [];
+
+      const v0 = [-halfW, 0, halfD];  // Front-Left (South-West)
+      const v1 = [halfW, 0, halfD];   // Front-Right (South-East)
+      const v2 = [halfW, 0, -halfD];  // Back-Right (North-East)
+      const v3 = [-halfW, 0, -halfD]; // Back-Left (North-West)
+
+      let r0, r1;
+      if (isLongX) {
+        r0 = [-halfR, h, 0];
+        r1 = [halfR, h, 0];
+      } else {
+        r0 = [0, h, -halfR];
+        r1 = [0, h, halfR];
+      }
+
+      function addTri(a, b, c) {
+        positions.push(...a, ...b, ...c);
+        uvs.push(0, 0, 1, 0, 0.5, 1);
+      }
+      function addQuad(a, b, c, d) {
+        addTri(a, b, c);
+        addTri(a, c, d);
+      }
+
+      if (isLongX) {
+        // Front trapezoid (South, facing +Z)
+        addQuad(v0, v1, r1, r0);
+        // Back trapezoid (North, facing -Z)
+        addQuad(v2, v3, r0, r1);
+        // Right triangle (East, facing +X)
+        addTri(v1, v2, r1);
+        // Left triangle (West, facing -X)
+        addTri(v3, v0, r0);
+      } else {
+        // Right trapezoid (East, facing +X)
+        addQuad(v1, v2, r0, r1);
+        // Left trapezoid (West, facing -X)
+        addQuad(v3, v0, r1, r0);
+        // Front triangle (South, facing +Z)
+        addTri(v0, v1, r1);
+        // Back triangle (North, facing -Z)
+        addTri(v2, v3, r0);
+      }
+
+      // Bottom ceiling / eave soffit (facing -Y)
+      addQuad(v0, v3, v2, v1);
+
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+      geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
+      geo.computeVertexNormals();
+      return geo;
+    }
+
     // Helper: create a realistic wall-mounted AC outdoor condenser unit with dark fan circle
     function createACUnit(x, y, z, rotY = 0) {
       const ac = new THREE.Group();
@@ -567,15 +634,11 @@ window.Starflex3D.Builders.FrontFacade = {
     addEdges(porchBase, 0x64748b, 0.7);
     frontGroup.add(porchBase);
 
-    // Authentic 4-sided Hipped Roof Pyramid (หลังคาทรงปั้นหยา)
-    const porchHip = new THREE.Mesh(
-      new THREE.ConeGeometry(porchR.w * 0.72, 1.85, 4),
-      fMats.hipRoofTile
-    );
-    porchHip.position.set(porchR.x, porchH + 0.32 + 0.925, porchR.z);
-    porchHip.rotation.y = Math.PI / 4;
-    porchHip.scale.set(1.0, 1.0, (porchR.d + 0.7) / (porchR.w + 0.9));
-    addEdges(porchHip, 0xffffff, 0.65);
+    // Authentic 4-sided Rectangular Hipped Roof (หลังคาทรงปั้นหยา ตรง ไม่เบี้ยว)
+    const hipRoofGeo = createHippedRoofGeometry(porchR.w + 0.86, porchR.d + 0.66, 1.8);
+    const porchHip = new THREE.Mesh(hipRoofGeo, fMats.hipRoofTile);
+    porchHip.position.set(porchR.x, porchH + 0.32, porchR.z);
+    addEdges(porchHip, 0xffffff, 0.75);
     frontGroup.add(porchHip);
 
     // Golden Spirit House (ศาลพระภูมิสีทอง) on the right of the office entrance (Image 1 & 3)
@@ -894,15 +957,11 @@ window.Starflex3D.Builders.FrontFacade = {
     addEdges(ghWinWest, 0xffffff, 0.9);
     frontGroup.add(ghWinWest);
 
-    // Large Grey Hipped Roof on Guardhouse
-    const ghRoof = new THREE.Mesh(
-      new THREE.ConeGeometry(ghR.d * 0.78, 2.3, 4),
-      fMats.guardRoofTile
-    );
-    ghRoof.position.set(ghR.x, ghWallH + 1.15, ghR.z);
-    ghRoof.rotation.y = Math.PI / 4;
-    ghRoof.scale.set(ghR.w / ghR.d, 1, 1);
-    addEdges(ghRoof, 0x475569, 0.65);
+    // Authentic Rectangular Hipped Roof on Guardhouse (หลังคาปั้นหยา ตรง ไม่เบี้ยว)
+    const ghRoofGeo = createHippedRoofGeometry(ghR.w + 1.2, ghR.d + 1.2, 2.2);
+    const ghRoof = new THREE.Mesh(ghRoofGeo, fMats.guardRoofTile);
+    ghRoof.position.set(ghR.x, ghWallH, ghR.z);
+    addEdges(ghRoof, 0x475569, 0.7);
 
     // Cantilevered Grey Awning projecting over the West "In" driveway inspection lane
     const ghAwning = new THREE.Mesh(

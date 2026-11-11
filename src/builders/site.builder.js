@@ -81,9 +81,7 @@ window.Starflex3D.Builders.Site = {
     });
 
     const exteriorAuxSections = [
-      { bounds: [674, 1098, 1018, 1190], h: 0.85, y: 0.425 }, // Front 2-Story VIP/Admin Office Wing
       { bounds: [1940, 78, 2038, 198],    h: 0.35, y: 0.175 }, // NE Pump Room
-      { bounds: [1155, 1440, 1305, 1565], h: 0.25, y: 0.125 }, // South Security Guardhouse Plinth
       { bounds: [240, 80, 540, 190],      h: 0.30, y: 0.15 }   // North Chemical Storage Building Plinth
     ];
 
