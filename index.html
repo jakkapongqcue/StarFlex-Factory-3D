@@ -10,6 +10,22 @@
 </head>
 <body>
 
+  <!-- Loading Screen Overlay -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loading-content">
+      <div class="loading-logo-wrapper">
+        <img src="assets/favicon.png" alt="Starflex Logo" class="loading-logo-img" />
+        <div class="loading-spinner-ring"></div>
+      </div>
+      <h2 class="loading-title">Starflex Factory 3D</h2>
+      <p id="loading-status-text" class="loading-desc">กำลังเตรียมโมเดลจำลองโรงงาน 3D...</p>
+      <div class="loading-bar-container">
+        <div id="loading-bar-fill" class="loading-bar-fill"></div>
+      </div>
+      <span id="loading-pct-text" class="loading-pct">0%</span>
+    </div>
+  </div>
+
   <!-- 3D WebGL Canvas -->
   <div id="canvas-container"></div>
 

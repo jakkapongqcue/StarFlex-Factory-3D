@@ -28,29 +28,71 @@
 
   App.state = state;
 
+  // Loading Screen Controller
+  const loadingScreen = document.getElementById("loading-screen");
+  const loadingStatusText = document.getElementById("loading-status-text");
+  const loadingBarFill = document.getElementById("loading-bar-fill");
+  const loadingPctText = document.getElementById("loading-pct-text");
+
+  function updateLoadingProgress(pct, statusText) {
+    if (loadingBarFill) loadingBarFill.style.width = `${pct}%`;
+    if (loadingPctText) loadingPctText.textContent = `${pct}%`;
+    if (loadingStatusText && statusText) loadingStatusText.textContent = statusText;
+  }
+
+  function hideLoadingScreen() {
+    updateLoadingProgress(100, "พร้อมเข้าสู่แบบจำลอง 3D");
+    setTimeout(() => {
+      if (loadingScreen) {
+        loadingScreen.classList.add("fade-out");
+        setTimeout(() => {
+          loadingScreen.style.display = "none";
+        }, 500);
+      }
+    }, 350);
+  }
+
+  // Staged loading to give browser UI thread time to render visual progress
+  updateLoadingProgress(15, "กำลังเริ่มต้น Scene และระบบกราฟิก 3D...");
+
   // 2. Initialize Three.js Scene & Materials
   const container = document.getElementById("canvas-container");
   const { scene, clipPlaneZ } = App.SceneManager.init(container, state);
   const mats = App.Materials.create([clipPlaneZ]);
   App.mats = mats;
 
-  // 3. Build 3D Factory World
-  App.Builders.Site.build(scene, mats, state);
-  App.Builders.Architecture.build(scene, mats, state);
-  App.Builders.FrontFacade.build(scene, mats, state);
-  App.Builders.Machines.build(scene, mats, state);
-  App.Builders.Flows.build(scene, state);
+  setTimeout(() => {
+    updateLoadingProgress(35, "กำลังสร้างพื้นและแผนผังโรงงาน (Site & Ground)...");
+    App.Builders.Site.build(scene, mats, state);
 
-  // 4. Initialize UI Modules
-  App.UI.Labels.init(state);
-  App.UI.Drawer.init(state);
-  App.UI.Inspector.initRaycasting(state);
+    setTimeout(() => {
+      updateLoadingProgress(55, "กำลังประกอบโครงสร้างสถาปัตยกรรม 4 อาคาร...");
+      App.Builders.Architecture.build(scene, mats, state);
 
-  // Update total item count on "ส่วนประกอบ" button
-  const compCountEl = document.getElementById("components-count");
-  if (compCountEl) {
-    compCountEl.textContent = `ส่วนประกอบ (${App.Data.items.length})`;
-  }
+      setTimeout(() => {
+        updateLoadingProgress(75, "กำลังสร้างหน้าอาคาร รั้ว และท่าโหลดสินค้า...");
+        App.Builders.FrontFacade.build(scene, mats, state);
+
+        setTimeout(() => {
+          updateLoadingProgress(90, "กำลังโหลดเครื่องจักร ท่อลำเลียง และระบบควบคุม...");
+          App.Builders.Machines.build(scene, mats, state);
+          App.Builders.Flows.build(scene, state);
+
+          // 4. Initialize UI Modules
+          App.UI.Labels.init(state);
+          App.UI.Drawer.init(state);
+          App.UI.Inspector.initRaycasting(state);
+
+          const compCountEl = document.getElementById("components-count");
+          if (compCountEl) {
+            compCountEl.textContent = `ส่วนประกอบ (${App.Data.items.length})`;
+          }
+
+          hideLoadingScreen();
+        }, 30);
+      }, 30);
+    }, 30);
+  }, 30);
 
   // 5. Bind UI Controls to Modular Actions (Exposed for inline or programmatic use)
   window.StarflexActions = {
