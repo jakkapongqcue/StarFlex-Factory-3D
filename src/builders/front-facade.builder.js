@@ -54,39 +54,195 @@ window.Starflex3D.Builders.FrontFacade = {
       darkWindow: new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.25, metalness: 0.4 })
     };
 
-    // Helper: create a 2D canvas text texture for signs (STARFLEX / ttb / ISO)
-    function createSignTexture(bgHex, titleText, subText, accentHex = "#ffffff") {
-      const c = document.createElement("canvas");
-      c.width = 512;
-      c.height = 160;
-      const g = c.getContext("2d");
-      g.fillStyle = bgHex;
-      g.fillRect(0, 0, c.width, c.height);
+    // Helper: create high-res Starflex logo textures using assets/Starflex_logo.png
+    function createStarflexLogoSignTexture(options = {}) {
+      const width = options.width || 2048;
+      const height = options.height || 256;
+      const bgHex = options.bgHex || "#143a75";
+      const showSubtext = options.showSubtext !== false;
+      const whiteLetters = options.whiteLetters !== false;
+      const border = options.border !== false;
 
-      // Hexagonal S-cube emblem on the left
-      g.fillStyle = "#38bdf8";
-      g.beginPath();
-      g.arc(68, 80, 38, 0, Math.PI * 2);
-      g.fill();
-      g.fillStyle = "#ffffff";
-      g.font = "bold 36px Arial, sans-serif";
-      g.textAlign = "center";
-      g.fillText("S", 68, 93);
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
 
-      // Main title
-      g.textAlign = "left";
-      g.fillStyle = accentHex;
-      g.font = "900 44px Arial, sans-serif";
-      g.fillText(titleText, 125, 76);
+      function renderFallback() {
+        ctx.fillStyle = bgHex;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Subtitle
-      g.fillStyle = "#e2e8f0";
-      g.font = "bold 20px Arial, sans-serif";
-      g.fillText(subText, 125, 112);
+        if (border) {
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+          ctx.lineWidth = 4;
+          ctx.strokeRect(6, 6, canvas.width - 12, canvas.height - 12);
+        }
 
-      const tex = new THREE.CanvasTexture(c);
-      tex.anisotropy = 4;
-      return tex;
+        // Authentic ribbon fallback: 3-leaf ribbon
+        const icX = showSubtext ? canvas.width * 0.22 : canvas.width * 0.28;
+        const icY = showSubtext ? 100 : canvas.height / 2;
+        const r = showSubtext ? 46 : 56;
+
+        // Teal ribbon
+        ctx.fillStyle = "#5bc2a7";
+        ctx.beginPath();
+        ctx.moveTo(icX, icY - r);
+        ctx.lineTo(icX + r * 0.86, icY - r * 0.5);
+        ctx.lineTo(icX + r * 0.45, icY - r * 0.25);
+        ctx.lineTo(icX, icY - r * 0.5);
+        ctx.closePath();
+        ctx.fill();
+
+        // Cyan ribbon
+        ctx.fillStyle = "#33aad0";
+        ctx.beginPath();
+        ctx.moveTo(icX - r * 0.86, icY - r * 0.5);
+        ctx.lineTo(icX, icY);
+        ctx.lineTo(icX - r * 0.45, icY + r * 0.25);
+        ctx.lineTo(icX - r * 0.86, icY);
+        ctx.closePath();
+        ctx.fill();
+
+        // Deep blue ribbon
+        ctx.fillStyle = "#073674";
+        ctx.beginPath();
+        ctx.moveTo(icX, icY + r);
+        ctx.lineTo(icX + r * 0.86, icY + r * 0.5);
+        ctx.lineTo(icX + r * 0.45, icY + r * 0.25);
+        ctx.lineTo(icX, icY + r * 0.5);
+        ctx.closePath();
+        ctx.fill();
+
+        // Bold STARFLEX lettering in crisp white
+        ctx.fillStyle = "#ffffff";
+        ctx.font =
+          "900 " +
+          (showSubtext ? "82px" : "96px") +
+          ' "Montserrat", "Segoe UI", Arial, sans-serif';
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.fillText("STARFLEX", icX + (showSubtext ? 75 : 90), icY);
+
+        if (showSubtext) {
+          ctx.fillStyle = "#f1f5f9";
+          ctx.font = 'bold 30px "Kanit", "Prompt", "Segoe UI", Arial, sans-serif';
+          ctx.textAlign = "center";
+          ctx.textBaseline = "alphabetic";
+          ctx.fillText(
+            "PUBLIC COMPANY LIMITED  ·  บริษัท สตาร์เฟล็กซ์ จำกัด (มหาชน)",
+            canvas.width / 2,
+            218
+          );
+
+          ctx.fillStyle = "#93c5fd";
+          ctx.font = 'bold 20px "Kanit", "Prompt", "Segoe UI", Arial, sans-serif';
+          ctx.textAlign = "right";
+          ctx.fillText("เลขที่ 189/48-49 ม.3", canvas.width - 24, 220);
+        }
+      }
+
+      renderFallback();
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.anisotropy = 8;
+
+      if (typeof Image !== "undefined") {
+        const img = new Image();
+        const logoSrc =
+          (window.STARFLEX_TEXTURES && window.STARFLEX_TEXTURES.starflexLogo) ||
+          "assets/Starflex_logo.png";
+
+        if (typeof logoSrc === "string" && logoSrc.startsWith("http")) {
+          img.crossOrigin = "anonymous";
+        }
+
+        img.onload = function () {
+          let processedSource = img;
+          if (whiteLetters) {
+            try {
+              const off = document.createElement("canvas");
+              off.width = img.width;
+              off.height = img.height;
+              const offCtx = off.getContext("2d");
+              offCtx.drawImage(img, 0, 0);
+              const imgData = offCtx.getImageData(0, 0, off.width, off.height);
+              const d = imgData.data;
+              for (let i = 0; i < d.length; i += 4) {
+                const a = d[i + 3];
+                if (a > 30) {
+                  const r = d[i],
+                    g = d[i + 1],
+                    b = d[i + 2];
+                  const isGrayscale =
+                    Math.abs(r - g) < 22 &&
+                    Math.abs(g - b) < 22 &&
+                    Math.abs(r - b) < 22;
+                  if (isGrayscale && r < 120) {
+                    d[i] = 255;
+                    d[i + 1] = 255;
+                    d[i + 2] = 255;
+                  }
+                }
+              }
+              offCtx.putImageData(imgData, 0, 0);
+              processedSource = off;
+            } catch (err) {
+              console.warn("Could not recolor logo for sign:", err);
+              processedSource = img;
+            }
+          }
+
+          ctx.fillStyle = bgHex;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          if (border) {
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(6, 6, canvas.width - 12, canvas.height - 12);
+          }
+
+          const aspect = img.width / img.height;
+          let drawH = showSubtext ? 142 : 180;
+          let drawW = drawH * aspect;
+          if (drawW > canvas.width - 80) {
+            drawW = canvas.width - 80;
+            drawH = drawW / aspect;
+          }
+          const drawX = (canvas.width - drawW) / 2;
+          const drawY = showSubtext ? 18 : (canvas.height - drawH) / 2;
+
+          ctx.drawImage(processedSource, drawX, drawY, drawW, drawH);
+
+          if (showSubtext) {
+            ctx.fillStyle = "#ffffff";
+            ctx.font = 'bold 30px "Kanit", "Prompt", "Segoe UI", Arial, sans-serif';
+            ctx.textAlign = "center";
+            ctx.textBaseline = "alphabetic";
+            ctx.fillText(
+              "PUBLIC COMPANY LIMITED  ·  บริษัท สตาร์เฟล็กซ์ จำกัด (มหาชน)",
+              canvas.width / 2,
+              218
+            );
+
+            ctx.fillStyle = "#93c5fd";
+            ctx.font = 'bold 20px "Kanit", "Prompt", "Segoe UI", Arial, sans-serif';
+            ctx.textAlign = "right";
+            ctx.fillText("เลขที่ 189/48-49 ม.3", canvas.width - 24, 220);
+          }
+
+          texture.needsUpdate = true;
+          if (window.__triggerRender) window.__triggerRender();
+        };
+
+        img.onerror = function (e) {
+          console.warn("Starflex logo image failed to load for sign", e);
+        };
+
+        img.src = logoSrc;
+      }
+
+      return texture;
     }
 
     // ========================================================================
@@ -240,9 +396,16 @@ window.Starflex3D.Builders.FrontFacade = {
     }
 
     // 3D Starflex Emblem mounted on the center of the Curved Arch Gable (Image 3)
-    const logoTex = createSignTexture("#7c8ea6", "STARFLEX", "PUBLIC COMPANY LIMITED", "#1e3a8a");
+    const logoTex = createStarflexLogoSignTexture({
+      width: 1024,
+      height: 256,
+      bgHex: "#7c8ea6",
+      showSubtext: false,
+      whiteLetters: false,
+      border: false
+    });
     const gableLogo = new THREE.Mesh(
-      new THREE.PlaneGeometry(6.5, 1.9),
+      new THREE.PlaneGeometry(6.5, 1.6),
       new THREE.MeshBasicMaterial({ map: logoTex })
     );
     gableLogo.position.set(offR.x, offH + 1.15, offR.z2 + 0.12);
@@ -466,9 +629,16 @@ window.Starflex3D.Builders.FrontFacade = {
     signWall.position.set(signR.x, 1.45, signR.z);
     addEdges(signWall, 0xffffff, 0.85);
 
-    const mainSignTex = createSignTexture("#1e40af", "STARFLEX", "PUBLIC COMPANY LIMITED · บริษัท สตาร์เฟล็กซ์ จำกัด (มหาชน)");
+    const mainSignTex = createStarflexLogoSignTexture({
+      width: 2048,
+      height: 256,
+      bgHex: "#143a75",
+      showSubtext: true,
+      whiteLetters: true,
+      border: true
+    });
     const signFace = new THREE.Mesh(
-      new THREE.PlaneGeometry(signR.w * 0.92, 1.35),
+      new THREE.PlaneGeometry(signR.w * 0.94, 1.35),
       new THREE.MeshBasicMaterial({ map: mainSignTex })
     );
     signFace.position.set(signR.x, 1.45, signR.z + 0.21);
