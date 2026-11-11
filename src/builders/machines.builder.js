@@ -603,7 +603,15 @@ window.Starflex3D.Builders.Machines = (function () {
 
     if (typeof Image !== "undefined") {
       const img = new Image();
-      img.crossOrigin = "anonymous";
+      const logoSrc =
+        window.STARFLEX_TEXTURES && window.STARFLEX_TEXTURES.starflexLogo
+          ? window.STARFLEX_TEXTURES.starflexLogo
+          : "assets/Starflex_logo.png";
+
+      if (typeof logoSrc === "string" && logoSrc.startsWith("http")) {
+        img.crossOrigin = "anonymous";
+      }
+
       img.onload = function () {
         renderBaseTrailerWall();
         const stripeH = 50;
@@ -623,7 +631,11 @@ window.Starflex3D.Builders.Machines = (function () {
         texture.needsUpdate = true;
         if (window.__triggerRender) window.__triggerRender();
       };
-      img.src = "assets/Starflex_logo.png";
+      img.onerror = function (e) {
+        // Fallback vector logo is already drawn
+        console.warn("Starflex logo failed to load via image, using vector fallback", e);
+      };
+      img.src = logoSrc;
     }
 
     return texture;
