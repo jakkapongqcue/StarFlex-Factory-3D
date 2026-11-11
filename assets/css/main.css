@@ -128,6 +128,15 @@ body, html {
   box-shadow: var(--shadow-pill);
 }
 
+.brand-icon-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
 .brand-icon {
   width: 36px;
   height: 36px;
