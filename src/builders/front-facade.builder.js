@@ -770,18 +770,6 @@ window.Starflex3D.Builders.FrontFacade = {
     arrowHead.position.set(arrowPos.x, -0.31, arrowPos.z - 1.1);
     dockFacadeGroup.add(arrowShaft, arrowHead);
 
-    // Orange Traffic Cones (กรวยจราจรสีส้มหน้าจุดจอดรถกระบะสีขาว)
-    [
-      [1122, 1022],
-      [1126, 1005],
-      [1145, 1185]
-    ].forEach(([cpx, cpy]) => {
-      const cp = pt(cpx, cpy);
-      const cone = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.65, 8), dMats.orangeCone);
-      cone.position.set(cp.x, 0.02, cp.z);
-      dockFacadeGroup.add(cone);
-    });
-
     frontGroup.add(dockFacadeGroup);
 
     scene.add(frontGroup);
