@@ -474,7 +474,7 @@ window.Starflex3D.Builders.FrontFacade = {
     frontGroup.add(signBase, signWall, signFace);
 
     // 4C. Sliding White Steel Main Gate (Image 1)
-    const gateR = rect([878, 1408, 1005, 1414]);
+    const gateR = rect([878, 1408, 1145, 1414]);
     const gateMesh = new THREE.Mesh(
       new THREE.BoxGeometry(gateR.w, 1.75, 0.16),
       fMats.whiteTrim
@@ -483,8 +483,8 @@ window.Starflex3D.Builders.FrontFacade = {
     addEdges(gateMesh, 0x64748b, 0.8);
     frontGroup.add(gateMesh);
 
-    // 4D. Blue "ttb" ATM Booth at Main Gate Entrance (Image 2)
-    const atmR = rect([1152, 1396, 1184, 1428]);
+    // 4D. Blue "ttb" ATM Booth at Main Gate Entrance (Integrated into front perimeter fence line)
+    const atmR = rect([1145, 1396, 1178, 1422]);
     const atmBody = new THREE.Mesh(new THREE.BoxGeometry(atmR.w, 2.5, atmR.d), fMats.blueBrand);
     atmBody.position.set(atmR.x, 1.25, atmR.z);
     addEdges(atmBody, 0xffffff, 0.8);
@@ -500,8 +500,10 @@ window.Starflex3D.Builders.FrontFacade = {
     atmAccent.position.set(atmR.x, 2.55, atmR.z + atmR.d * 0.55);
     frontGroup.add(atmBody, atmHeader, atmAccent);
 
-    // 4E. Hipped-Roof Security Guardhouse Pavilion with Cantilevered Driveway Awning (Images 1 & 2)
-    const ghR = rect([1188, 1415, 1315, 1545]);
+    // 4E. Hipped-Roof Security Guardhouse Pavilion INSIDE the fence perimeter (py: 1290..1405 < 1410)
+    // Matches Loading_Dock_1_StreetView.jpg & Front_View_1..2:
+    // Guardhouse sits on the inside (North) of the perimeter fence/gate line, facing the driveway entrance!
+    const ghR = rect([1180, 1290, 1310, 1405]);
     const ghWallH = 3.1;
     const ghBody = new THREE.Mesh(
       new THREE.BoxGeometry(ghR.w, ghWallH, ghR.d),
@@ -509,6 +511,15 @@ window.Starflex3D.Builders.FrontFacade = {
     );
     ghBody.position.set(ghR.x, ghWallH * 0.5, ghR.z);
     addEdges(ghBody, 0x64748b, 0.7);
+
+    // Guardhouse Inspection Windows on West & South faces
+    const ghWinWest = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.2, ghR.d * 0.65), dMats.darkWindow);
+    ghWinWest.position.set(ghR.x1 + 0.06, 1.6, ghR.z);
+    addEdges(ghWinWest, 0xffffff, 0.9);
+    const ghWinSouth = new THREE.Mesh(new THREE.BoxGeometry(ghR.w * 0.6, 1.2, 0.12), dMats.darkWindow);
+    ghWinSouth.position.set(ghR.x, 1.6, ghR.z2 - 0.06);
+    addEdges(ghWinSouth, 0xffffff, 0.9);
+    frontGroup.add(ghWinWest, ghWinSouth);
 
     // Large Grey Hipped Roof on Guardhouse
     const ghRoof = new THREE.Mesh(
@@ -520,16 +531,38 @@ window.Starflex3D.Builders.FrontFacade = {
     ghRoof.scale.set(ghR.w / ghR.d, 1, 1);
     addEdges(ghRoof, 0x475569, 0.65);
 
-    // Cantilevered Grey Awning projecting over the West driveway inspection lane (Image 1 right)
+    // Cantilevered Grey Awning projecting over the West driveway inspection lane (Loading_Dock_1_StreetView.jpg right foreground)
     const ghAwning = new THREE.Mesh(
-      new THREE.BoxGeometry(2.6, 0.18, ghR.d * 0.92),
+      new THREE.BoxGeometry(3.2, 0.18, ghR.d * 0.95),
       fMats.guardRoofTile
     );
-    ghAwning.position.set(ghR.x1 - 1.2, 2.65, ghR.z);
+    ghAwning.position.set(ghR.x1 - 1.5, 2.65, ghR.z);
     ghAwning.rotation.z = 0.18;
     addEdges(ghAwning, 0x475569, 0.6);
 
-    frontGroup.add(ghBody, ghRoof, ghAwning);
+    // Red-and-White painted curb around the guardhouse driveway island (Loading_Dock_1_StreetView.jpg)
+    const curbW = ghR.w + 3.8;
+    const curbD = ghR.d + 1.2;
+    const curbPlinth = new THREE.Mesh(
+      new THREE.BoxGeometry(curbW, 0.22, curbD),
+      fMats.whiteTrim
+    );
+    curbPlinth.position.set(ghR.x - 1.4, 0.11, ghR.z);
+    addEdges(curbPlinth, 0xdc2626, 0.85);
+
+    // Alternating red and white curb edge stripes on driveway side
+    const curbSegs = 10;
+    for (let c = 0; c < curbSegs; c++) {
+      const cz = ghR.z - curbD * 0.5 + (curbD * (c + 0.5)) / curbSegs;
+      const stripe = new THREE.Mesh(
+        new THREE.BoxGeometry(0.18, 0.24, curbD / curbSegs * 0.92),
+        c % 2 === 0 ? new THREE.MeshLambertMaterial({ color: 0xdc2626 }) : fMats.whiteTrim
+      );
+      stripe.position.set(ghR.x - 1.4 - curbW * 0.5, 0.12, cz);
+      frontGroup.add(stripe);
+    }
+
+    frontGroup.add(ghBody, ghRoof, ghAwning, curbPlinth);
 
     // ========================================================================
     // 5. AUTHENTIC LOADING DOCK COURTYARD ARCHITECTURE

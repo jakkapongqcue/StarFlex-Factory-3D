@@ -66,7 +66,7 @@ window.Starflex3D.Builders.Site = {
       [1895, 490, 1950, 545],  // East MDB Room
       [1895, 885, 1968, 1055], // East Oven Room
       [1940, 78, 2038, 198],   // NE Pump Room
-      [1185, 1430, 1292, 1560] // South Security Guardhouse
+      [1175, 1285, 1315, 1410] // South Security Guardhouse Plinth (Inside fence)
     ];
 
     floorSections.forEach(b => {
