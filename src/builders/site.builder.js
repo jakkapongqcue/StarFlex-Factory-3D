@@ -45,7 +45,7 @@ window.Starflex3D.Builders.Site = {
       [1062, 815, 1410, 1430], // Central Truck Loading Courtyard
       [650, 1235, 1680, 1565], // Front East-West internal driveway & Courtyard Apron
       [875, 1430, 1455, 1575], // Main gate In/Out entrance & exit road approach
-      [50, 45, 185, 310]        // West Chemical Storage Service Road & Apron
+      [215, 60, 565, 247]       // North Chemical Storage Service Yard & Apron behind Hall 1
     ];
     courtyardRects.forEach(b => {
       const r = rect(b);
@@ -84,7 +84,7 @@ window.Starflex3D.Builders.Site = {
       { bounds: [674, 1098, 1018, 1190], h: 0.85, y: 0.425 }, // Front 2-Story VIP/Admin Office Wing
       { bounds: [1940, 78, 2038, 198],    h: 0.35, y: 0.175 }, // NE Pump Room
       { bounds: [1155, 1440, 1305, 1565], h: 0.25, y: 0.125 }, // South Security Guardhouse Plinth
-      { bounds: [75, 50, 165, 280],       h: 0.30, y: 0.15 }   // West Chemical Storage Building Plinth
+      { bounds: [240, 80, 540, 190],      h: 0.30, y: 0.15 }   // North Chemical Storage Building Plinth
     ];
 
     exteriorAuxSections.forEach(sec => {
