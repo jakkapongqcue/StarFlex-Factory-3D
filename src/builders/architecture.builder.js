@@ -16,16 +16,31 @@ window.Starflex3D.Builders.Architecture = {
     const archGroup = new THREE.Group();
     archGroup.name = "CutawayArchitecture";
 
-    const backWallsGroup = new THREE.Group();
+    // 4 Directional Exterior Wall Groups for Dynamic 360° View Cut-away
+    const wallsNorth = new THREE.Group();
+    wallsNorth.name = "WallsNorth";
+    const wallsSouth = new THREE.Group();
+    wallsSouth.name = "WallsSouth";
+    const wallsWest = new THREE.Group();
+    wallsWest.name = "WallsWest";
+    const wallsEast = new THREE.Group();
+    wallsEast.name = "WallsEast";
+
     const partitionWallsGroup = new THREE.Group();
-    const frontWallsGroup = new THREE.Group();
+    partitionWallsGroup.name = "PartitionWalls";
     const roofTrussGroup = new THREE.Group();
+    roofTrussGroup.name = "RoofTrusses";
     const roofShellGroup = new THREE.Group();
+    roofShellGroup.name = "RoofShells";
 
     state.archGroups = {
-      backWallsGroup,
+      wallsNorth,
+      wallsSouth,
+      wallsWest,
+      wallsEast,
+      backWallsGroup: wallsNorth,
+      frontWallsGroup: wallsSouth,
       partitionWallsGroup,
-      frontWallsGroup,
       roofTrussGroup,
       roofShellGroup
     };
@@ -73,30 +88,31 @@ window.Starflex3D.Builders.Architecture = {
     }
 
     // ========================================================================
-    // 1. BACK & OUTER SIDE STRUCTURAL WALLS (Always visible in Cutaway Mode)
+    // 1. BACK (NORTH) & OUTER SIDE STRUCTURAL WALLS
     // ========================================================================
-    addWallSegment(200, 247, 1062, 247, 10.5, backWallsGroup, mats.wallSolid, true, 65);
-    addWallSegment(1062, 247, 1498, 247, 8.8, backWallsGroup, mats.wallSolid, true, 65);
-    addWallSegment(1498, 247, 1895, 247, 12.8, backWallsGroup, mats.wallSolid, true, 65);
+    // North Back Wall of Halls 1, 2, 3, 4 (py = 247)
+    addWallSegment(200, 247, 1062, 247, 10.5, wallsNorth, mats.wallSolid, true, 65);
+    addWallSegment(1062, 247, 1498, 247, 8.8, wallsNorth, mats.wallSolid, true, 65);
+    addWallSegment(1498, 247, 1895, 247, 12.8, wallsNorth, mats.wallSolid, true, 65);
 
-    // West Outer Wall of Hall 1
-    addWallSegment(200, 247, 200, 1098, 10.5, backWallsGroup, mats.wallSolid, true, 65);
+    // West Outer Wall of Hall 1 (px = 200, py: 247..1098)
+    addWallSegment(200, 247, 200, 1098, 10.5, wallsWest, mats.wallSolid, true, 65);
 
-    // East Outer Wall of Hall 4 + East MDB & East Oven Room
-    addWallSegment(1895, 247, 1895, 1100, 12.8, backWallsGroup, mats.wallSolid, true, 65);
-    addWallSegment(1895, 490, 1950, 490, 4.5, backWallsGroup, mats.wallSolid, false);
-    addWallSegment(1950, 490, 1950, 545, 4.5, backWallsGroup, mats.wallSolid, false);
-    addWallSegment(1895, 545, 1950, 545, 4.5, backWallsGroup, mats.wallSolid, false);
+    // East Outer Wall of Hall 4 + East MDB & East Oven Room (px = 1895)
+    addWallSegment(1895, 247, 1895, 1100, 12.8, wallsEast, mats.wallSolid, true, 65);
+    addWallSegment(1895, 490, 1950, 490, 4.5, wallsNorth, mats.wallSolid, false);
+    addWallSegment(1950, 490, 1950, 545, 4.5, wallsEast, mats.wallSolid, false);
+    addWallSegment(1895, 545, 1950, 545, 4.5, wallsSouth, mats.wallSolid, false);
 
-    addWallSegment(1895, 885, 1968, 885, 4.8, backWallsGroup, mats.wallSolid, false);
-    addWallSegment(1968, 885, 1968, 1055, 4.8, backWallsGroup, mats.wallSolid, false);
-    addWallSegment(1895, 1055, 1968, 1055, 4.8, backWallsGroup, mats.wallSolid, false);
+    addWallSegment(1895, 885, 1968, 885, 4.8, wallsNorth, mats.wallSolid, false);
+    addWallSegment(1968, 885, 1968, 1055, 4.8, wallsEast, mats.wallSolid, false);
+    addWallSegment(1895, 1055, 1968, 1055, 4.8, wallsSouth, mats.wallSolid, false);
 
     // Pump Room Walls
-    addWallSegment(1940, 78, 2038, 78, 5.2, backWallsGroup, mats.wallSolid, true, 50);
-    addWallSegment(1940, 78, 1940, 198, 5.2, backWallsGroup, mats.wallSolid, false);
-    addWallSegment(2038, 78, 2038, 198, 5.2, backWallsGroup, mats.wallSolid, false);
-    addWallSegment(1940, 198, 2038, 198, 5.2, frontWallsGroup, mats.wallCutawayFront, false);
+    addWallSegment(1940, 78, 2038, 78, 5.2, wallsNorth, mats.wallSolid, true, 50);
+    addWallSegment(1940, 78, 1940, 198, 5.2, wallsWest, mats.wallSolid, false);
+    addWallSegment(2038, 78, 2038, 198, 5.2, wallsEast, mats.wallSolid, false);
+    addWallSegment(1940, 198, 2038, 198, 5.2, wallsSouth, mats.wallCutawayFront, false);
     addFlatRoofCap(1940, 78, 2038, 198, 5.2, roofShellGroup, mats.roofSheet);
 
     // ========================================================================
@@ -130,27 +146,27 @@ window.Starflex3D.Builders.Architecture = {
     // 3. COMPLETE FRONT & SIDE EXTERIOR ENCLOSURE WALLS (Sealing Circles 1–4!)
     // ========================================================================
     // Circle 1 & Circle 2: Full-height South front wall across BOTH Hall 1 & Hall 2 (px: 200..1062, py = 1098)
-    addWallSegment(200, 1098, 632, 1098, 10.5, frontWallsGroup, mats.wallCutawayFront, true, 65);
-    addWallSegment(632, 1098, 1062, 1098, 10.5, frontWallsGroup, mats.wallCutawayFront, true, 65);
+    addWallSegment(200, 1098, 632, 1098, 10.5, wallsSouth, mats.wallCutawayFront, true, 65);
+    addWallSegment(632, 1098, 1062, 1098, 10.5, wallsSouth, mats.wallCutawayFront, true, 65);
 
     // East outer wall of Hall 2 facing the central loading courtyard (px = 1062, py: 815..1098)
-    addWallSegment(1062, 247, 1062, 1098, 10.5, frontWallsGroup, mats.wallCutawayFront, true, 65);
+    addWallSegment(1062, 815, 1062, 1098, 10.5, wallsEast, mats.wallCutawayFront, true, 65);
 
     // Circle 3: Full-height South wall of Hall 3 High-Bay Warehouse at py = 815 (px: 1062..1498)
     // Note: Keep py > 815 open for the raised Loading Dock platform & cantilevered canopy!
-    addWallSegment(1062, 815, 1498, 815, 8.8, frontWallsGroup, mats.wallCutawayFront, true, 48);
-    addWallSegment(1062, 247, 1062, 815, 9.4, frontWallsGroup, mats.wallCutawayFront, false);
-    addWallSegment(1498, 247, 1498, 815, 9.4, frontWallsGroup, mats.wallCutawayFront, false);
+    addWallSegment(1062, 815, 1498, 815, 8.8, wallsSouth, mats.wallCutawayFront, true, 48);
+    addWallSegment(1062, 247, 1062, 815, 9.4, partitionWallsGroup, mats.wallPartition, false);
+    addWallSegment(1498, 247, 1498, 815, 9.4, partitionWallsGroup, mats.wallPartition, false);
 
-    // Circle 4: Full-height South & West walls of Hall 4 East Plant (px: 1498..1895, py = 1100)
-    addWallSegment(1498, 1100, 1895, 1100, 12.8, frontWallsGroup, mats.wallCutawayFront, true, 65);
-    addWallSegment(1498, 247, 1498, 1100, 12.8, frontWallsGroup, mats.wallCutawayFront, true, 65);
+    // Circle 4: Full-height South & internal partitions of Hall 4 East Plant (px: 1498..1895, py = 1100)
+    addWallSegment(1498, 1100, 1895, 1100, 12.8, wallsSouth, mats.wallCutawayFront, true, 65);
+    addWallSegment(1498, 247, 1498, 1100, 12.8, partitionWallsGroup, mats.wallPartition, true, 65);
 
     // West Courtyard Wall & Sloped Solar Roof Extension of Hall 4 (px: 1395..1498, py: 765..1100)
     // Matches the right side of Loading_Dock_2_CloseUp.jpg where Hall 4's solar roof slopes down to px = 1395!
-    addWallSegment(1395, 765, 1498, 765, 10.5, frontWallsGroup, mats.wallCutawayFront, false);
-    addWallSegment(1395, 765, 1395, 1100, 10.5, frontWallsGroup, mats.wallCutawayFront, true, 55);
-    addWallSegment(1395, 1100, 1498, 1100, 10.5, frontWallsGroup, mats.wallCutawayFront, false);
+    addWallSegment(1395, 765, 1498, 765, 10.5, wallsNorth, mats.wallCutawayFront, false);
+    addWallSegment(1395, 765, 1395, 1100, 10.5, wallsWest, mats.wallCutawayFront, true, 55);
+    addWallSegment(1395, 1100, 1498, 1100, 10.5, wallsSouth, mats.wallCutawayFront, false);
     {
       const westSlopeR = rect([1395, 765, 1498, 1100]);
       const slopeW = Math.hypot(westSlopeR.w, 2.3);
@@ -172,14 +188,19 @@ window.Starflex3D.Builders.Architecture = {
       roofShellGroup.add(slopeSolar);
 
       // Seal triangular front & back gables under the sloped roof extension
-      [westSlopeR.z1, westSlopeR.z2].forEach(gz => {
-        const triFill = new THREE.Mesh(
-          new THREE.BoxGeometry(westSlopeR.w, 2.3, 0.3),
-          mats.wallCutawayFront
-        );
-        triFill.position.set(westSlopeR.x, 10.5 + 1.15, gz);
-        frontWallsGroup.add(triFill);
-      });
+      const triFillFront = new THREE.Mesh(
+        new THREE.BoxGeometry(westSlopeR.w, 2.3, 0.3),
+        mats.wallCutawayFront
+      );
+      triFillFront.position.set(westSlopeR.x, 10.5 + 1.15, westSlopeR.z2);
+      wallsSouth.add(triFillFront);
+
+      const triFillBack = new THREE.Mesh(
+        new THREE.BoxGeometry(westSlopeR.w, 2.3, 0.3),
+        mats.wallSolid
+      );
+      triFillBack.position.set(westSlopeR.x, 10.5 + 1.15, westSlopeR.z1);
+      wallsNorth.add(triFillBack);
     }
 
     // East MDB & East Oven Room Roof Caps
@@ -187,10 +208,10 @@ window.Starflex3D.Builders.Architecture = {
     addFlatRoofCap(1895, 885, 1968, 1055, 4.8, roofShellGroup, mats.roofSheet);
 
     // NE High-Bay Blow Film Penthouse Full 4-Sided Enclosure + Roof Cap (px: 1755..1895, py: 247..465)
-    addWallSegment(1755, 247, 1895, 247, 16.2, backWallsGroup, mats.wallSolid, false);
-    addWallSegment(1895, 247, 1895, 465, 16.2, backWallsGroup, mats.wallSolid, false);
-    addWallSegment(1755, 247, 1755, 465, 16.2, frontWallsGroup, mats.wallCutawayFront, false);
-    addWallSegment(1755, 465, 1895, 465, 16.2, frontWallsGroup, mats.wallCutawayFront, false);
+    addWallSegment(1755, 247, 1895, 247, 16.2, wallsNorth, mats.wallSolid, false);
+    addWallSegment(1895, 247, 1895, 465, 16.2, wallsEast, mats.wallSolid, false);
+    addWallSegment(1755, 247, 1755, 465, 16.2, wallsWest, mats.wallCutawayFront, false);
+    addWallSegment(1755, 465, 1895, 465, 16.2, wallsSouth, mats.wallCutawayFront, false);
     addFlatRoofCap(1755, 247, 1895, 465, 16.2, roofShellGroup, mats.roofSheet);
 
     // ========================================================================
@@ -249,7 +270,7 @@ window.Starflex3D.Builders.Architecture = {
         );
         backTymp.position.set(midX, eaveH + tympH * 0.5 - 0.08, r.z1);
         addEdges(backTymp, 0x94a3b8, 0.4);
-        backWallsGroup.add(backTymp);
+        wallsNorth.add(backTymp);
 
         // 2) South Front Arch Gable Tympanum (Closes the semi-circular gap under every arch roof!)
         const frontTymp = new THREE.Mesh(
@@ -258,7 +279,7 @@ window.Starflex3D.Builders.Architecture = {
         );
         frontTymp.position.set(midX, eaveH + tympH * 0.5 - 0.08, r.z2);
         addEdges(frontTymp, 0x94a3b8, 0.45);
-        frontWallsGroup.add(frontTymp);
+        wallsSouth.add(frontTymp);
 
         // North-edge Cutaway Slice of the Curved Arch Roof (Visible in Cutaway Mode)
         const cutDeck = new THREE.Mesh(
@@ -358,9 +379,11 @@ window.Starflex3D.Builders.Architecture = {
     addBridgeCrane(1515, 1880, 690, 10.6);
 
     archGroup.add(
-      backWallsGroup,
+      wallsNorth,
+      wallsSouth,
+      wallsWest,
+      wallsEast,
       partitionWallsGroup,
-      frontWallsGroup,
       roofTrussGroup,
       roofShellGroup
     );

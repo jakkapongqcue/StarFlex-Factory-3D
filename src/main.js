@@ -101,7 +101,9 @@
     toggleLabels: () => App.UI.Labels.toggle(state),
     toggleFlows: () => App.UI.Toolbar.toggleFlows(state),
     cycleStructureMode: () => App.UI.Toolbar.cycleStructureMode(state, mats),
+    setStructureMode: mode => App.UI.Toolbar.applyStructureMode(state, mats, mode),
     toggleSolarRoofPreview: () => App.UI.Toolbar.toggleSolarRoofPreview(state, mats),
+    toggleXray: () => App.UI.Toolbar.applyStructureMode(state, mats, state.structureMode === "xray" ? "cutaway" : "xray"),
     cycleFloorOverlay: () => App.UI.Toolbar.cycleFloorOverlay(state),
     cycleCameraPreset: () => App.UI.Toolbar.cycleCameraPreset(state),
     toggleFullscreen: () => App.UI.Toolbar.toggleFullscreen(),
@@ -132,6 +134,7 @@
     App.SceneManager.updateCameraFlight(state);
     App.Builders.Flows.updateParticles(state);
     state.controls.update();
+    App.UI.Toolbar.updateDynamicCutaway(state);
     state.renderer.render(state.scene, state.camera);
     App.UI.Labels.updateProjection(state);
   }

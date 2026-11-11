@@ -89,8 +89,8 @@
       </svg>
     </button>
 
-    <!-- 3. Cutaway / See-Through Mode -->
-    <button id="btn-cutaway" class="tool-btn active" data-tooltip="โหมดมองทะลุ: ผ่าตัดขวาง (Cutaway)" onclick="StarflexActions.cycleStructureMode()">
+    <!-- 3. Cut-away Mode (มองมุมไหน กำแพงหายมุมนั้น) -->
+    <button id="btn-cutaway" class="tool-btn active" data-tooltip="โหมด Cut-away (มองมุมไหน กำแพงหายมุมนั้น)" onclick="StarflexActions.setStructureMode('cutaway')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="6" cy="6" r="3"/>
         <circle cx="6" cy="18" r="3"/>
@@ -100,8 +100,8 @@
       </svg>
     </button>
 
-    <!-- 4. X-Ray / Solar Roof View -->
-    <button id="btn-roof" class="tool-btn" data-tooltip="แสดงโครงหลังคาโซลาร์เซลล์ตามสถานที่จริง" onclick="StarflexActions.toggleSolarRoofPreview()">
+    <!-- 4. X-Ray Mode (มองทะลุกำแพงและหลังคา) -->
+    <button id="btn-xray" class="tool-btn" data-tooltip="โหมด X-ray (มองทะลุกำแพงและหลังคา)" onclick="StarflexActions.setStructureMode('xray')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polygon points="12 2 2 7 12 12 22 7 12 2"/>
         <polyline points="2 17 12 22 22 17"/>
@@ -228,10 +228,10 @@
       </div>
     </div>
 
-    <button class="status-bar-btn" onclick="StarflexActions.toggleCutawayPopover()">
+    <button class="status-bar-btn" onclick="StarflexActions.cycleStructureMode()" title="คลิกเพื่อสลับระหว่างโหมด Cut-away และ X-ray">
       <span class="pulse-dot"></span>
-      <span id="status-mode-text">โหมดมองทะลุ 3D (Cutaway) · โครงสร้างจริง 4 อาคารหลัก</span>
-      <strong style="margin-left:4px; color:#0f172a;">ปรับแต่งชั้นมุมมอง ▴</strong>
+      <span id="status-mode-text">✂️ โหมด Cut-away (มองมุมไหน กำแพงหายมุมนั้น) · Dynamic 360°</span>
+      <strong style="margin-left:6px; color:#1e40af; font-size:11px;">สลับโหมด ⇄</strong>
     </button>
   </div>
 

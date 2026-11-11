@@ -8,38 +8,48 @@ window.Starflex3D = window.Starflex3D || {};
 window.Starflex3D.UI = window.Starflex3D.UI || {};
 
 window.Starflex3D.UI.Toolbar = {
+  /**
+   * Only 2 Viewing Modes as requested:
+   * 1. 'cutaway': Dynamic 360° cut-away (มองมุมไหน กำแพงหายมุมนั้น)
+   * 2. 'xray': See-through transparent structure (มองทะลุกำแพงและหลังคา)
+   */
   applyStructureMode(state, mats, mode) {
+    if (mode !== "xray" && mode !== "cutaway") {
+      mode = "cutaway";
+    }
     state.structureMode = mode;
-    const { backWallsGroup, partitionWallsGroup, frontWallsGroup, roofTrussGroup, roofShellGroup } = state.archGroups;
+    const {
+      wallsNorth,
+      wallsSouth,
+      wallsWest,
+      wallsEast,
+      partitionWallsGroup,
+      roofTrussGroup,
+      roofShellGroup
+    } = state.archGroups || {};
+
     const statusText = document.getElementById("status-mode-text");
     const btnCutaway = document.getElementById("btn-cutaway");
-    const btnRoof = document.getElementById("btn-roof");
+    const btnXray = document.getElementById("btn-xray") || document.getElementById("btn-roof");
 
     if (mode === "cutaway") {
-      backWallsGroup.visible = true;
-      partitionWallsGroup.visible = true;
-      frontWallsGroup.visible = false;
-      roofTrussGroup.visible = true;
-      roofShellGroup.visible = false;
+      if (partitionWallsGroup) partitionWallsGroup.visible = true;
+      if (roofTrussGroup) roofTrussGroup.visible = true;
+      if (roofShellGroup) roofShellGroup.visible = false;
       if (state.frontFacadeGroup) state.frontFacadeGroup.visible = true;
+
+      // Restore solid opaque materials
       mats.wallSolid.opacity = 1.0;
       mats.wallSolid.transparent = false;
-      document.getElementById("slider-roof").value = 0;
-      btnCutaway.classList.add("active");
-      btnRoof.classList.remove("active");
-      statusText.textContent = "โหมดมองทะลุ 3D (Cutaway) · พร้อมสถาปัตยกรรมหน้าบริษัทจริง";
-    } else if (mode === "full") {
-      // 100% Solid Enclosed Exterior & Roof (Cannot see interior from outside!)
-      backWallsGroup.visible = true;
-      partitionWallsGroup.visible = true;
-      frontWallsGroup.visible = true;
-      roofTrussGroup.visible = true;
-      roofShellGroup.visible = true;
-      if (state.frontFacadeGroup) state.frontFacadeGroup.visible = true;
+      mats.wallSolid.needsUpdate = true;
 
       mats.wallCutawayFront.opacity = 1.0;
       mats.wallCutawayFront.transparent = false;
       mats.wallCutawayFront.needsUpdate = true;
+
+      mats.wallPartition.opacity = 1.0;
+      mats.wallPartition.transparent = false;
+      mats.wallPartition.needsUpdate = true;
 
       mats.roofSheet.opacity = 1.0;
       mats.roofSheet.transparent = false;
@@ -49,59 +59,113 @@ window.Starflex3D.UI.Toolbar = {
       mats.solarPanel.transparent = false;
       mats.solarPanel.needsUpdate = true;
 
-      document.getElementById("slider-roof").value = 95;
-      btnCutaway.classList.remove("active");
-      btnRoof.classList.add("active");
-      statusText.textContent = "โหมดปิดทึบโครงสร้างภายนอกจริง (Full Exterior) · หลังคาโค้งและโซลาร์เซลล์";
+      const sliderRoof = document.getElementById("slider-roof");
+      if (sliderRoof) sliderRoof.value = 0;
+
+      // Run dynamic wall occlusion immediately for current camera orientation
+      this.updateDynamicCutaway(state);
+
+      if (btnCutaway) btnCutaway.classList.add("active");
+      if (btnXray) btnXray.classList.remove("active");
+      if (statusText) {
+        statusText.textContent = "✂️ โหมด Cut-away (มองมุมไหน กำแพงหายมุมนั้น) · Dynamic 360°";
+      }
     } else if (mode === "xray") {
-      backWallsGroup.visible = true;
-      partitionWallsGroup.visible = true;
-      frontWallsGroup.visible = true;
-      roofTrussGroup.visible = true;
-      roofShellGroup.visible = true;
+      // In X-Ray mode: ALL exterior walls and full roofs are visible, but see-through!
+      if (wallsNorth) wallsNorth.visible = true;
+      if (wallsSouth) wallsSouth.visible = true;
+      if (wallsWest) wallsWest.visible = true;
+      if (wallsEast) wallsEast.visible = true;
+      if (partitionWallsGroup) partitionWallsGroup.visible = true;
+      if (roofTrussGroup) roofTrussGroup.visible = true;
+      if (roofShellGroup) roofShellGroup.visible = true;
       if (state.frontFacadeGroup) state.frontFacadeGroup.visible = true;
 
+      // X-Ray translucent materials
+      mats.wallSolid.transparent = true;
+      mats.wallSolid.opacity = 0.26;
+      mats.wallSolid.needsUpdate = true;
+
       mats.wallCutawayFront.transparent = true;
-      mats.wallCutawayFront.opacity = 0.28;
+      mats.wallCutawayFront.opacity = 0.26;
       mats.wallCutawayFront.needsUpdate = true;
 
+      mats.wallPartition.transparent = true;
+      mats.wallPartition.opacity = 0.32;
+      mats.wallPartition.needsUpdate = true;
+
       mats.roofSheet.transparent = true;
-      mats.roofSheet.opacity = 0.26;
+      mats.roofSheet.opacity = 0.22;
       mats.roofSheet.needsUpdate = true;
 
       mats.solarPanel.transparent = true;
-      mats.solarPanel.opacity = 0.42;
+      mats.solarPanel.opacity = 0.36;
       mats.solarPanel.needsUpdate = true;
 
-      document.getElementById("slider-roof").value = 40;
-      btnCutaway.classList.add("active");
-      btnRoof.classList.add("active");
-      statusText.textContent = "โหมดโปร่งแสง X-Ray · แสดงโครงหลังคาโค้งและโซลาร์เซลล์ทะลุภายใน";
-    } else if (mode === "open") {
-      backWallsGroup.visible = false;
-      partitionWallsGroup.visible = false;
-      frontWallsGroup.visible = false;
-      roofTrussGroup.visible = false;
-      roofShellGroup.visible = false;
-      if (state.frontFacadeGroup) state.frontFacadeGroup.visible = false;
-      btnCutaway.classList.remove("active");
-      btnRoof.classList.remove("active");
-      statusText.textContent = "โหมดเปิดโล่งไร้ผนัง (Open Floor) · ดูเครื่องจักร 360°";
+      const sliderRoof = document.getElementById("slider-roof");
+      if (sliderRoof) sliderRoof.value = 40;
+
+      if (btnCutaway) btnCutaway.classList.remove("active");
+      if (btnXray) btnXray.classList.add("active");
+      if (statusText) {
+        statusText.textContent = "⚡ โหมด X-ray (มองทะลุกำแพงและหลังคา) · โครงสร้างโปร่งแสง 3D";
+      }
     }
+
+    if (window.__triggerRender) window.__triggerRender();
+  },
+
+  /**
+   * Dynamic Wall Cut-away (มองมุมไหน กำแพงหายมุมนั้น):
+   * Evaluates camera angle relative to factory center in real-time.
+   * Any exterior wall facing towards the camera is automatically hidden,
+   * opening an unobstructed view into the factory interior from that angle!
+   */
+  updateDynamicCutaway(state) {
+    if (state.structureMode !== "cutaway") return;
+    if (!state.camera || !state.archGroups) return;
+
+    const cam = state.camera;
+    const { wallsNorth, wallsSouth, wallsWest, wallsEast } = state.archGroups;
+    if (!wallsNorth || !wallsSouth || !wallsWest || !wallsEast) return;
+
+    // Factory center in 3D coordinates
+    const target =
+      state.controls && state.controls.target
+        ? state.controls.target
+        : new THREE.Vector3(5, 2, 4);
+
+    const dx = cam.position.x - target.x;
+    const dz = cam.position.z - target.z;
+    const len = Math.hypot(dx, dz);
+    if (len < 0.001) return;
+
+    const dirX = dx / len;
+    const dirZ = dz / len;
+
+    // Angular threshold with small margin so corner views hide both adjacent walls
+    const threshold = 0.16;
+
+    // South front walls (facing +Z): hide when camera is to the South
+    wallsSouth.visible = dirZ <= threshold;
+
+    // North back walls (facing -Z): hide when camera is to the North
+    wallsNorth.visible = dirZ >= -threshold;
+
+    // West walls (facing -X): hide when camera is to the West
+    wallsWest.visible = dirX >= -threshold;
+
+    // East walls (facing +X): hide when camera is to the East
+    wallsEast.visible = dirX <= threshold;
   },
 
   cycleStructureMode(state, mats) {
-    const order = ["cutaway", "full", "xray", "open"];
-    const next = order[(order.indexOf(state.structureMode) + 1) % order.length];
+    const next = state.structureMode === "cutaway" ? "xray" : "cutaway";
     this.applyStructureMode(state, mats, next);
   },
 
   toggleSolarRoofPreview(state, mats) {
-    if (state.structureMode !== "full") {
-      this.applyStructureMode(state, mats, "full");
-    } else {
-      this.applyStructureMode(state, mats, "cutaway");
-    }
+    this.cycleStructureMode(state, mats);
   },
 
   updateClipSlider(state, val) {
