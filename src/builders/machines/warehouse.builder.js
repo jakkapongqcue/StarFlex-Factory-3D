@@ -20,9 +20,9 @@ window.Starflex3D.Builders.Warehouse = (function () {
     if (isEW && itemType !== "hanging_rack") {
       // ------------------------------------------------------------------------
       // East-West Long Racks (e.g. WH-MAIN Central Warehouse)
-      // 4 lengthwise rows running along X with forklift aisles along Z
+      // Lengthwise rows running along X with forklift aisles along Z
       // ------------------------------------------------------------------------
-      const numRows = 4;
+      const numRows = Math.max(4, Math.round(r.d / 3.8));
       const tiers = 4;
       const rackL = r.w * 0.94;
       const rackD = 2.0;
@@ -44,8 +44,8 @@ window.Starflex3D.Builders.Warehouse = (function () {
 
       // Driving aisle centerlines between rack rows
       for (let i = 0; i < numRows - 1; i++) {
-        const z1 = -r.d * 0.36 + (r.d * 0.72 * i) / (numRows - 1);
-        const z2 = -r.d * 0.36 + (r.d * 0.72 * (i + 1)) / (numRows - 1);
+        const z1 = -r.d * 0.38 + (r.d * 0.76 * i) / (numRows - 1);
+        const z2 = -r.d * 0.38 + (r.d * 0.76 * (i + 1)) / (numRows - 1);
         const aisleZ = (z1 + z2) * 0.5;
         const aisleLine = new THREE.Mesh(new THREE.PlaneGeometry(rackL * 0.92, 0.10), floorLineMat);
         aisleLine.rotation.x = -Math.PI / 2;
@@ -54,7 +54,7 @@ window.Starflex3D.Builders.Warehouse = (function () {
       }
 
       for (let a = 0; a < numRows; a++) {
-        const rz = -r.d * 0.36 + (r.d * 0.72 * a) / (numRows - 1);
+        const rz = -r.d * 0.38 + (r.d * 0.76 * a) / (numRows - 1);
 
         // Bounding wireframe
         const frame = new THREE.Mesh(new THREE.BoxGeometry(rackL, H, rackD), wireFrameMat);
