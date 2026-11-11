@@ -50,7 +50,8 @@ window.Starflex3D.Builders.FrontFacade = {
         metalness: 0.7
       }),
       tentFabric: new THREE.MeshStandardMaterial({ color: 0x9ca3af, roughness: 0.65, metalness: 0.1 }),
-      ttbOrange: new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.35 })
+      ttbOrange: new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.35 }),
+      darkWindow: new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.25, metalness: 0.4 })
     };
 
     // Helper: create a 2D canvas text texture for signs (STARFLEX / ttb / ISO)
@@ -513,10 +514,10 @@ window.Starflex3D.Builders.FrontFacade = {
     addEdges(ghBody, 0x64748b, 0.7);
 
     // Guardhouse Inspection Windows on West & South faces
-    const ghWinWest = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.2, ghR.d * 0.65), dMats.darkWindow);
+    const ghWinWest = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.2, ghR.d * 0.65), fMats.darkWindow);
     ghWinWest.position.set(ghR.x1 + 0.06, 1.6, ghR.z);
     addEdges(ghWinWest, 0xffffff, 0.9);
-    const ghWinSouth = new THREE.Mesh(new THREE.BoxGeometry(ghR.w * 0.6, 1.2, 0.12), dMats.darkWindow);
+    const ghWinSouth = new THREE.Mesh(new THREE.BoxGeometry(ghR.w * 0.6, 1.2, 0.12), fMats.darkWindow);
     ghWinSouth.position.set(ghR.x, 1.6, ghR.z2 - 0.06);
     addEdges(ghWinSouth, 0xffffff, 0.9);
     frontGroup.add(ghWinWest, ghWinSouth);
