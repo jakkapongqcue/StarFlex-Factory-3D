@@ -623,7 +623,7 @@ window.Starflex3D.Builders.Machines = (function () {
         texture.needsUpdate = true;
         if (window.__triggerRender) window.__triggerRender();
       };
-      img.src = "img/Starflex_loog.png";
+      img.src = "assets/Starflex_logo.png";
     }
 
     return texture;
