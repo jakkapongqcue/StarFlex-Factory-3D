@@ -678,11 +678,12 @@ window.Starflex3D.Builders.FrontFacade = {
     });
 
     // ========================================================================
-    // 2D. East Side Canopy Extension (หลังคาต่อเพิ่มด้านขวาของสำนักงานใหญ่ - Covered Carport & Passageway)
-    // Connects Office-HQ East wall (px: 1018) across the nook to Hall 2 corner wall (px: 1066, py: 1098..1185)
+    // 2D. East Side Canopy Extension (หลังคาต่อเพิ่มด้านขวาของสำนักงานใหญ่)
+    // Connects Office-HQ East wall (px: 1018) across the nook to px: 1106 (py: 1098..1185)
     // Seamlessly integrates with the Hall 2 East Walkway Canopy (px: 1062..1106, py: 815..1098)
+    // to form a continuous L-shaped canopy roof with flat open driveway beneath.
     // ========================================================================
-    const extCanopyR = rect([1018, 1098, 1066, 1185]);
+    const extCanopyR = rect([1018, 1098, 1106, 1185]);
     const extCanopyH = 4.05;
 
     // Roof deck slab
@@ -698,22 +699,12 @@ window.Starflex3D.Builders.FrontFacade = {
 
     // Charcoal fascia trim along the front (South) roof edge
     const extFasciaFront = new THREE.Mesh(
-      new THREE.BoxGeometry(extCanopyR.w + 0.12, 0.38, 0.16),
+      new THREE.BoxGeometry(extCanopyR.w + 0.16, 0.38, 0.16),
       fMats.charcoalFascia
     );
     extFasciaFront.position.set(extCanopyR.x, extCanopyH - 0.06, extCanopyR.z2 + 0.08);
     addEdges(extFasciaFront, 0x94a3b8, 0.75);
     frontGroup.add(extFasciaFront);
-
-    // Slim square steel column supporting the front outer corner (leaves driveway open underneath)
-    const colPost = new THREE.Mesh(
-      new THREE.BoxGeometry(0.32, extCanopyH - 0.11, 0.32),
-      fMats.charcoalFascia
-    );
-    colPost.position.set(extCanopyR.x2 - 0.2, (extCanopyH - 0.11) * 0.5, extCanopyR.z2 - 0.2);
-    colPost.castShadow = true;
-    addEdges(colPost, 0x94a3b8, 0.65);
-    frontGroup.add(colPost);
 
     // Row of AC outdoor condenser units mounted on the canopy roof (as seen in Front_View_3)
     const numAcUnits = 4;
@@ -1172,9 +1163,9 @@ window.Starflex3D.Builders.FrontFacade = {
       dockFacadeGroup.add(createACUnit(ap.x + 0.32, 4.85, ap.z, Math.PI / 2));
     }
 
-    // Cantilevered Covered Walkway Canopy along Hall 2 East Wall (px: 1062..1106, py: 815..1098)
+    // Covered Walkway Canopy along Hall 2 East Wall (px: 1062..1106, py: 815..1098)
     // Seamlessly connects the Office-HQ East Canopy (py: 1098..1185) to the Loading Dock Canopy (py: 815)
-    // as highlighted in user request & References/Loading_Dock_2_CloseUp.jpg
+    // to form a continuous L-shaped roof. Ground underneath is open and flat.
     const walkCanopyR = rect([1062, 815, 1106, 1098]);
     const walkCanopyH = 4.05;
 
@@ -1189,61 +1180,15 @@ window.Starflex3D.Builders.FrontFacade = {
     addEdges(walkCanopyDeck, 0x475569, 0.7);
     dockFacadeGroup.add(walkCanopyDeck);
 
-    // Charcoal fascia trim along the outer (East) roof edge
+    // Continuous charcoal fascia trim along the entire outer (East) roof edge of the L-shaped canopy (py: 815..1185)
+    const lEastFasciaR = rect([1106, 815, 1106, 1185]);
     const walkFasciaEast = new THREE.Mesh(
-      new THREE.BoxGeometry(0.16, 0.38, walkCanopyR.d + 0.1),
+      new THREE.BoxGeometry(0.16, 0.38, lEastFasciaR.d + 0.16),
       fMats.charcoalFascia
     );
-    walkFasciaEast.position.set(walkCanopyR.x2 + 0.08, walkCanopyH - 0.06, walkCanopyR.z);
+    walkFasciaEast.position.set(lEastFasciaR.x + 0.08, walkCanopyH - 0.06, lEastFasciaR.z);
     addEdges(walkFasciaEast, 0x94a3b8, 0.75);
     dockFacadeGroup.add(walkFasciaEast);
-
-    // Cantilever steel rafters & outer support columns along the walkway
-    for (let py = 825; py <= 1095; py += 34) {
-      const rp = pt(1062, py);
-      // Horizontal cantilever beam extending from wall
-      const rafter = new THREE.Mesh(
-        new THREE.BoxGeometry(walkCanopyR.w * 0.96, 0.18, 0.18),
-        fMats.charcoalFascia
-      );
-      rafter.position.set(walkCanopyR.x, walkCanopyH - 0.18, rp.z);
-      dockFacadeGroup.add(rafter);
-
-      // Steel column along outer edge
-      const col = new THREE.Mesh(
-        new THREE.BoxGeometry(0.24, walkCanopyH - 0.11, 0.24),
-        fMats.charcoalFascia
-      );
-      col.position.set(walkCanopyR.x2 - 0.15, (walkCanopyH - 0.11) * 0.5, rp.z);
-      col.castShadow = true;
-      addEdges(col, 0x64748b, 0.6);
-      dockFacadeGroup.add(col);
-    }
-
-    // Elevated concrete walkway platform slab underneath (+1.25m level with loading dock platform)
-    const walkPlatR = rect([1062, 815, 1102, 1098]);
-    const walkPlat = new THREE.Mesh(
-      new THREE.BoxGeometry(walkPlatR.w, 1.25, walkPlatR.d),
-      fMats.whiteTrim
-    );
-    walkPlat.position.set(walkPlatR.x, 0.625, walkPlatR.z);
-    walkPlat.receiveShadow = true;
-    addEdges(walkPlat, 0x94a3b8, 0.7);
-    dockFacadeGroup.add(walkPlat);
-
-    // Safety handrail along the elevated walkway platform outer edge
-    for (let py = 820; py <= 1090; py += 28) {
-      const hp = pt(1101, py);
-      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.95, 8), fMats.charcoalFascia);
-      post.position.set(hp.x, 1.25 + 0.475, hp.z);
-      dockFacadeGroup.add(post);
-    }
-    const handrail = new THREE.Mesh(
-      new THREE.BoxGeometry(0.06, 0.06, walkPlatR.d * 0.98),
-      fMats.charcoalFascia
-    );
-    handrail.position.set(walkPlatR.x2 - 0.1, 1.25 + 0.95, walkPlatR.z);
-    dockFacadeGroup.add(handrail);
 
     // 5D. Right Courtyard Wing (Hall 4 West Wall: Green Windows & 18-Unit AC Condenser Matrix!)
     const rightWallX = pt(1395, 900).x;
