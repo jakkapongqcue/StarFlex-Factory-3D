@@ -100,32 +100,6 @@ window.Starflex3D.Data.Machines.laminating = [
     specs: "Dry Laminating Line SB-04",
     description: "เครื่องเคลือบประกบฟิล์ม Beiren Laminate SB-04 พร้อมชุดอบแห้งด้านบน"
   },
-  {
-    id: "wx_sboard_group",
-    code: "1LB-08 / WX",
-    name: "1LB-08 S-Board M/C, WX-01 & WX-02",
-    category: "lamination",
-    hall: "hall_1",
-    type: "converting_group",
-    bounds: [232, 992, 376, 1044],
-    height: 2.8,
-    orientation: "EW",
-    specs: "ชุดเครื่อง WX-01, WX-02 และ 1LB-08 S-Board",
-    description: "กลุ่มเครื่องเคลือบและแปรรูปพิเศษบริเวณทิศใต้ของโถงผลิตอาคาร 1"
-  },
-  {
-    id: "oven_room_hall1",
-    code: "OVEN-01",
-    name: "OVEN ROOM AREA (ห้องอบบ่มกาวอาคาร 1)",
-    category: "lamination",
-    hall: "hall_1",
-    type: "oven_chamber",
-    bounds: [442, 985, 518, 1024],
-    height: 4.0,
-    orientation: "EW",
-    specs: "Thermal Curing Chamber (45–55°C)",
-    description: "ห้องควบคุมอุณหภูมิสำหรับบ่มกาว (Curing Oven) หลังผ่านการเคลือบประกบฟิล์ม เพื่อให้ชั้นกาวเซ็ตตัวสมบูรณ์"
-  },
 
   // --- Hall 4 ---
   {

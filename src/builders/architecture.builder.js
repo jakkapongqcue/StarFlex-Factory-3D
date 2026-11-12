@@ -116,10 +116,25 @@ window.Starflex3D.Builders.Architecture = {
     addFlatRoofCap(1940, 78, 2038, 198, 5.2, roofShellGroup, mats.roofSheet);
 
     // ========================================================================
-    // 2. INTERNAL PARTITION WALLS (Low/Stepped in Cutaway Mode)
+    // 2. INTERNAL PARTITION WALLS & STRUCTURAL COLUMNS (Low/Stepped in Cutaway Mode)
     // ========================================================================
-    addWallSegment(632, 247, 632, 700, 6.2, partitionWallsGroup, mats.wallPartition, true, 75);
-    addWallSegment(632, 700, 632, 1098, 3.6, partitionWallsGroup, mats.wallPartition, true, 75);
+    // Boundary between Hall 1 and Hall 2 (px = 632):
+    // Open boundary with structural steel H-columns only (no solid partition wall)
+    const h1h2Dist = 1098 - 247;
+    const h1h2Steps = Math.round(h1h2Dist / 70);
+    const p1Col = pt(632, 247);
+    const p2Col = pt(632, 1098);
+    for (let i = 0; i <= h1h2Steps; i++) {
+      const t = i / h1h2Steps;
+      const colMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(0.5, 9.8, 0.5),
+        mats.steelColumn
+      );
+      colMesh.position.set(p1Col.x, 4.9, p1Col.z + (p2Col.z - p1Col.z) * t);
+      colMesh.castShadow = true;
+      partitionWallsGroup.add(colMesh);
+    }
+
     addWallSegment(674, 247, 674, 700, 6.2, partitionWallsGroup, mats.wallPartition, true, 75);
     addWallSegment(674, 700, 674, 1098, 3.6, partitionWallsGroup, mats.wallPartition, true, 75);
 
@@ -132,7 +147,7 @@ window.Starflex3D.Builders.Architecture = {
     addWallSegment(1640, 545, 1895, 545, 6.0, partitionWallsGroup, mats.wallPartition, true, 75);
 
     const lowPartitions = [
-      [200, 1048, 590, 1048], [890, 247, 890, 326], [890, 326, 1062, 326],
+      [890, 247, 890, 326], [890, 326, 1062, 326],
       [738, 398, 995, 398], [738, 540, 995, 540], [738, 398, 738, 540], [995, 398, 995, 540],
       [674, 1048, 922, 1048],
       [1102, 712, 1402, 712], [1102, 815, 1402, 815],

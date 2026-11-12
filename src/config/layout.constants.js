@@ -48,9 +48,10 @@ window.Starflex3D.Config.Layout = {
     WALKWAY_PROD: [1056, 318, 1102, 815] // Main white walkway & North hygiene station
   },
 
-  // 4. Auxiliary Facilities
+  // 4. Auxiliary Facilities & Hall 1 Zones
   AUXILIARY: {
     CHEM_WH: [240, 80, 540, 190],
-    NE_PUMP_ROOM: [1940, 78, 2038, 198]
+    NE_PUMP_ROOM: [1940, 78, 2038, 198],
+    HALL1_SOUTH_OFFICES: [200, 1030, 632, 1098] // SW2, Spare Parts, Data, Production, QA, QA Lab, Fire Exit
   }
 };

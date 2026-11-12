@@ -8,19 +8,97 @@ window.Starflex3D.Data = window.Starflex3D.Data || {};
 window.Starflex3D.Data.Machines = window.Starflex3D.Data.Machines || {};
 
 window.Starflex3D.Data.Machines.facilities = [
-  // --- Hall 1 QA / Office ---
+  // --- Hall 1 South Office Suite ---
   {
-    id: "office_qa_hall1",
-    code: "QA-LAB / OFF-W",
-    name: "สำนักงานฝ่ายผลิต, ประกันคุณภาพ & ห้องแล็ป QA",
+    id: "off_h1_sw2",
+    code: "SW2 (MPN)",
+    name: "ห้องสำนักงาน SW2 (MPN)",
     category: "office_utility",
     hall: "hall_1",
-    type: "office_block",
-    bounds: [200, 1005, 590, 1098],
+    type: "hall1_south_office",
+    bounds: [200, 1030, 255, 1098],
     height: 3.6,
     orientation: "EW",
-    specs: "MTN · อะไหล่ · บันทึกข้อมูล · ฝ่ายผลิต · QA · ห้องแล็ป QA",
-    description: "โซนสำนักงานควบคุมการผลิต ห้องอะไหล่ซ่อมบำรุง และห้องปฏิบัติการตรวจสอบคุณภาพ (QA Lab) ทดสอบแรงดึงและการซึมผ่านของบรรจุภัณฑ์"
+    specs: "SW2 Office · MPN Workstation",
+    description: "ห้องสำนักงาน SW2 (MPN) ประจำโถงผลิตอาคาร 1 ฝั่งทิศตะวันตก"
+  },
+  {
+    id: "off_h1_spareparts",
+    code: "อะไหล่ (Spare Parts)",
+    name: "ห้องอะไหล่และอุปกรณ์ซ่อมบำรุง",
+    category: "office_utility",
+    hall: "hall_1",
+    type: "hall1_south_office",
+    bounds: [255, 1030, 315, 1098],
+    height: 3.6,
+    orientation: "EW",
+    specs: "Maintenance Spare Parts Storage",
+    description: "ห้องจัดเก็บอะไหล่ อุปกรณ์ซ่อมบำรุง และชิ้นส่วนเครื่องจักรอาคาร 1"
+  },
+  {
+    id: "off_h1_data_sw",
+    code: "บันทึกข้อมูล SW",
+    name: "ห้องบันทึกข้อมูล SW (Data Entry)",
+    category: "office_utility",
+    hall: "hall_1",
+    type: "hall1_south_office",
+    bounds: [315, 1030, 375, 1098],
+    height: 3.6,
+    orientation: "EW",
+    specs: "SW Production Data Entry & Tracking",
+    description: "ห้องบันทึกข้อมูลการผลิต ติดตามสถานะงานพิมพ์และเคลือบระบบ SW"
+  },
+  {
+    id: "off_h1_prod_sw",
+    code: "ฝ่ายผลิต SW",
+    name: "ห้องสำนักงานฝ่ายผลิต SW (Production Office)",
+    category: "office_utility",
+    hall: "hall_1",
+    type: "hall1_south_office",
+    bounds: [375, 1030, 435, 1098],
+    height: 3.6,
+    orientation: "EW",
+    specs: "SW Production Management Office",
+    description: "ห้องหัวหน้างานและวิศวกรควบคุมการผลิตสายเคลือบและรีดฟิล์ม SW"
+  },
+  {
+    id: "off_h1_qa_sw",
+    code: "ประกันคุณภาพ SW",
+    name: "ห้องสำนักงานประกันคุณภาพ SW (QA Office)",
+    category: "office_utility",
+    hall: "hall_1",
+    type: "hall1_south_office",
+    bounds: [435, 1030, 505, 1098],
+    height: 3.6,
+    orientation: "EW",
+    specs: "Quality Assurance Office SW",
+    description: "ห้องตรวจสอบและควบคุมคุณภาพบรรจุภัณฑ์ (QA SW Team)"
+  },
+  {
+    id: "off_h1_qa_lab",
+    code: "ห้องแล็ป QA",
+    name: "ห้องปฏิบัติการตรวจสอบคุณภาพ QA Lab",
+    category: "office_utility",
+    hall: "hall_1",
+    type: "hall1_south_office",
+    bounds: [505, 1030, 605, 1098],
+    height: 3.6,
+    orientation: "EW",
+    specs: "QA Laboratory · Inspection & Physical Testing",
+    description: "ห้องปฏิบัติการตรวจสอบคุณภาพ (QA Lab) ทดสอบแรงดึง รอยซีล การซึมผ่านของออกซิเจนและความชื้น"
+  },
+  {
+    id: "off_h1_fire_exit",
+    code: "ทางหนีไฟ",
+    name: "โถงทางหนีไฟอาคาร 1 (Fire Exit Corridor)",
+    category: "office_utility",
+    hall: "hall_1",
+    type: "hall1_south_office",
+    bounds: [605, 1030, 632, 1098],
+    height: 3.6,
+    orientation: "NS",
+    specs: "Emergency Fire Exit Corridor & Escape Route",
+    description: "ช่องทางหนีไฟและทางออกฉุกเฉินเชื่อมสู่ภายนอกอาคารตามมาตรฐานความปลอดภัย"
   },
 
   // --- Hall 2 Warehouse Office SW5 ---

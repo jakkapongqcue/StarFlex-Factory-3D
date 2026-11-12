@@ -21,7 +21,7 @@ window.Starflex3D.Builders.Machines = (function () {
     const { buildBagMakingArray, buildSpoutOrSlitter } = window.Starflex3D.Builders.Converting;
     const { buildPalletRacks } = window.Starflex3D.Builders.Warehouse;
     const { buildLoadingDockTrucks } = window.Starflex3D.Builders.LoadingDock;
-    const { buildLockerRoom, buildStairsAndRestrooms, buildProductionWalkway } = window.Starflex3D.Builders.Facilities;
+    const { buildLockerRoom, buildStairsAndRestrooms, buildProductionWalkway, buildHall1SouthOffice } = window.Starflex3D.Builders.Facilities;
     const { buildFilmRollRacks, buildResinStorage } = window.Starflex3D.Builders.ResinFilmStorage;
     const { buildChemicalWarehouse } = window.Starflex3D.Builders.ChemicalWarehouse;
     const { buildCylinderStorage } = window.Starflex3D.Builders.CylinderStorage;
@@ -106,6 +106,9 @@ window.Starflex3D.Builders.Machines = (function () {
           break;
         case "production_walkway":
           buildProductionWalkway(group, r, H, mats);
+          break;
+        case "hall1_south_office":
+          buildHall1SouthOffice(group, item, r, H, mats);
           break;
         case "highbay_racks":
         case "rack_zone":
