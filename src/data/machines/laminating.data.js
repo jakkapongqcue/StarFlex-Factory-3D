@@ -23,17 +23,17 @@ window.Starflex3D.Data.Machines.laminating = [
     description: "เครื่องเคลือบประกบฟิล์มด้วยเรซินหลอมเหลวระบบ Tandem Extrusion (ET-02) สำหรับสร้างชั้นป้องกันความชื้นและออกซิเจนสูง"
   },
   {
-    id: "sb02_laminate",
-    code: "SB-02",
-    name: "Solvent base SB-02 (เครื่องเคลือบกาวฐานตัวทำละลาย)",
+    id: "bobst_lb10",
+    code: "LB-10",
+    name: "Lamination (Bobst) Nova 800 DA LB-10",
     category: "lamination",
     hall: "hall_1",
     type: "laminator",
-    bounds: [236, 712, 304, 758],
-    height: 3.8,
+    bounds: [236, 706, 334, 766],
+    height: 4.2,
     orientation: "EW",
-    specs: "Dry Laminator (Solvent-Based)",
-    description: "เครื่องเคลือบประกบฟิล์มระบบกาวตัวทำละลาย (Solvent Base SB-02) พร้อมอุโมงค์อบแห้ง"
+    specs: "Bobst Nova 800 DA · Multi-Technology Laminator",
+    description: "เครื่องเคลือบประกบฟิล์มประสิทธิภาพสูง Bobst Nova 800 DA (LB-10) มาตรฐานยุโรป"
   },
   {
     id: "sl01_laminate",
