@@ -22,8 +22,8 @@ window.Starflex3D.Config.Layout = {
 
   // 2. Front Streetscape, Security & Gates
   FACADE: {
-    FRONT_LAWN: [120, 1150, 460, 1545],
-    FLAGPOLES: { x1: 375, x2: 435, py: 1510 },
+    FRONT_LAWN: [185, 1260, 860, 1545], // Polygon garden island conforming to Google Map satellite
+    FLAGPOLES: { x1: 430, x2: 490, py: 1510 },
     PORTE_COCHERE: [806, 1190, 886, 1255],
     SPIRIT_HOUSE: [965, 1225],
     CANOPY_OFFICE_NOOK: [1018, 1098, 1106, 1185],
