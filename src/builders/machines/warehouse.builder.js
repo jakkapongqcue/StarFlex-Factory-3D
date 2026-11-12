@@ -22,6 +22,7 @@ window.Starflex3D.Builders.Warehouse = (function () {
       // ------------------------------------------------------------------------
       // WH-PRD: Production Warehouse Pallet Racks (Hall 1 South)
       // 3 EW Rows × 4 Tiers with 2.0m Longitudinal Aisles + 2.4m Central Cross Walkway
+      // Clean factory floor (no painted green floor or yellow stripes)
       // ------------------------------------------------------------------------
       const numRows = 3;
       const tiers = 4;
@@ -33,60 +34,13 @@ window.Starflex3D.Builders.Warehouse = (function () {
         +(crossWalkW * 0.5 + segL * 0.5)
       ];
 
-      // 1. Central Cross Walkway (ทางเดินคนเดินตัดขวางตรงกลาง rack เชื่อมต่อโถงฝ่ายผลิต)
-      const walkFloorGeo = new THREE.PlaneGeometry(crossWalkW * 0.96, r.d * 0.98);
-      const walkFloorMat = new THREE.MeshStandardMaterial({
-        color: 0x059669,
-        roughness: 0.6,
-        metalness: 0.1
-      });
-      const walkFloor = new THREE.Mesh(walkFloorGeo, walkFloorMat);
-      walkFloor.rotation.x = -Math.PI / 2;
-      walkFloor.position.set(0, 0.015, 0);
-      group.add(walkFloor);
-
-      // White safety borders along the cross walkway
-      const whiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      [-crossWalkW * 0.48, crossWalkW * 0.48].forEach(wx => {
-        const border = new THREE.Mesh(new THREE.PlaneGeometry(0.12, r.d * 0.98), whiteMat);
-        border.rotation.x = -Math.PI / 2;
-        border.position.set(wx, 0.02, 0);
-        group.add(border);
-      });
-
-      // Pedestrian zebra stripes
-      const numStripes = 6;
-      for (let s = 0; s < numStripes; s++) {
-        const sz = -r.d * 0.40 + (r.d * 0.80 * s) / (numStripes - 1);
-        const stripe = new THREE.Mesh(new THREE.PlaneGeometry(crossWalkW * 0.65, 0.28), whiteMat);
-        stripe.rotation.x = -Math.PI / 2;
-        stripe.position.set(0, 0.02, sz);
-        group.add(stripe);
-      }
-
-      // 2. Yellow floor markings for outer boundaries and aisles between rows
-      const floorLineMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.85 });
       const rowZ = [
         -r.d * 0.5 + rackD * 0.5 + 0.12, // North Row
         0,                                // Center Row
         r.d * 0.5 - rackD * 0.5 - 0.12   // South Row
       ];
 
-      // Longitudinal driving/walking aisle lines between row 0-1 and row 1-2
-      const aisleZ = [
-        (rowZ[0] + rowZ[1]) * 0.5,
-        (rowZ[1] + rowZ[2]) * 0.5
-      ];
-      aisleZ.forEach(az => {
-        segCentersX.forEach(cx => {
-          const aLine = new THREE.Mesh(new THREE.PlaneGeometry(segL * 0.92, 0.10), floorLineMat);
-          aLine.rotation.x = -Math.PI / 2;
-          aLine.position.set(cx, 0.02, az);
-          group.add(aLine);
-        });
-      });
-
-      // 3. Rack Shelving, Upright Frames, Pallets & Cargo for each of the 2 Blocks (West & East)
+      // Rack Shelving, Upright Frames, Pallets & Cargo for each of the 2 Blocks (West & East)
       const numBays = 5;
       for (let a = 0; a < numRows; a++) {
         const rz = rowZ[a];
