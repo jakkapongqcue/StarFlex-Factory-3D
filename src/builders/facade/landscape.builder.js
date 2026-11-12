@@ -14,17 +14,17 @@ window.Starflex3D.Builders.Facade.Landscape = {
     const group = new THREE.Group();
     group.name = "FacadeLandscape";
 
-    // 1. Green Front Lawn (Exact shape conforming to user's green line annotation)
+    // 1. Green Front Lawn (Strictly parallel to Hall 1 south wall & Office HQ)
     // Vertices:
-    // 1. (185, 1145) - West fence, leaving ~4.7m driveway north of it along Hall 1
-    // 2. (590, 1175) - Runs east along driveway in front of Hall 1
+    // 1. (185, 1170) - West fence, leaving uniform 7.2m driveway north along Hall 1 (py = 1098)
+    // 2. (590, 1170) - Runs strictly parallel (ขนาน) east along driveway in front of Hall 1
     // 3. (670, 1340) - Diagonally steps down to clear the west side of Office HQ
-    // 4. (1040, 1340) - Extends horizontally east across front of Office HQ (filling the green area)
+    // 4. (1040, 1340) - Extends horizontally east across front of Office HQ (parallel to HQ facade)
     // 5. (1040, 1555) - Turns 90 degrees south to the front fence before the Gate
     // 6. (185, 1555) - Follows the front fence back to the west corner
     const lawnPoly = [
-      pt(185, 1145),
-      pt(590, 1175),
+      pt(185, 1170),
+      pt(590, 1170),
       pt(670, 1340),
       pt(1040, 1340),
       pt(1040, 1555),
@@ -57,8 +57,8 @@ window.Starflex3D.Builders.Facade.Landscape = {
         borderPoints.push(pt(pA[0] + (pB[0] - pA[0]) * t, pA[1] + (pB[1] - pA[1]) * t));
       }
     }
-    addSegPoints([185, 1145], [590, 1175], 10);
-    addSegPoints([590, 1175], [670, 1340], 5);
+    addSegPoints([185, 1170], [590, 1170], 10);
+    addSegPoints([590, 1170], [670, 1340], 5);
     addSegPoints([670, 1340], [1040, 1340], 10);
     addSegPoints([1040, 1340], [1040, 1555], 5);
 

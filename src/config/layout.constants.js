@@ -22,7 +22,7 @@ window.Starflex3D.Config.Layout = {
 
   // 2. Front Streetscape, Security & Gates
   FACADE: {
-    FRONT_LAWN: [185, 1145, 1040, 1555], // Polygon garden island conforming to user's green boundary line
+    FRONT_LAWN: [185, 1170, 1040, 1555], // Polygon garden island strictly parallel to Hall 1 (py = 1170) & Office HQ
     FLAGPOLES: { x1: 875, x2: 945, py: 1515 },
     PORTE_COCHERE: [806, 1190, 886, 1255],
     SPIRIT_HOUSE: [965, 1225],

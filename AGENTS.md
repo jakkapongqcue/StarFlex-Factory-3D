@@ -57,7 +57,7 @@ Conversion:
 | **Sliding Gates & Perimeter Fences** | `src/builders/facade/guardhouse.builder.js` | In Gate, Out Gate, Front West Fence `[185, 1560..695, 1560]` |
 | **Building 4 Glass Facade & V-Columns**| `src/builders/facade/building4.builder.js` | `[1395, 1085, 1895, 1230]`, 5 V-Columns, Fascia, Tent |
 | **Loading Dock Facade & Courtyard** | `src/builders/facade/dock-facade.builder.js` | Canopy `[1062, 815, 1398, 874]`, AC Matrix, Downspouts |
-| **Front Lawn & Flagpoles** | `src/builders/facade/landscape.builder.js` | Garden Island `[185..1040, 1145..1555]`, Trees, 3 Flagpoles `px = 870..950` |
+| **Front Lawn & Flagpoles** | `src/builders/facade/landscape.builder.js` | Garden Island `[185..1040, 1170..1555]`, Trees, 3 Flagpoles `px = 870..950` |
 | **Facade Common Helpers** | `src/builders/facade/common.js` | `createHippedRoofGeometry`, `createACUnit`, `createLogoTexture` |
 | **Facade Orchestrator** | `src/builders/front-facade.builder.js` | Assembles all facade sub-builders into `frontGroup` |
 | **Chemical Warehouse (CHEM-WH)** | `src/builders/machines/chemical-warehouse.builder.js` | `[240, 80, 540, 190]`, North Yard behind Hall 1 |
