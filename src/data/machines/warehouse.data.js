@@ -8,7 +8,7 @@ window.Starflex3D.Data = window.Starflex3D.Data || {};
 window.Starflex3D.Data.Machines = window.Starflex3D.Data.Machines || {};
 
 window.Starflex3D.Data.Machines.warehouse = [
-  // --- Hall 1 WIP Rack ---
+  // --- Hall 1 Warehouse Zones ---
   {
     id: "wip_laminate_rack",
     code: "WIP-RACK",
@@ -16,11 +16,24 @@ window.Starflex3D.Data.Machines.warehouse = [
     category: "warehouse",
     hall: "hall_1",
     type: "hanging_rack",
-    bounds: [235, 702, 328, 795],
+    bounds: [235, 642, 328, 735],
     height: 4.2,
     orientation: "EW",
     specs: "โครงแขวนม้วนฟิล์มระหว่างกระบวนการผลิต (WIP)",
     description: "โครงเหล็กแขวนม้วนฟิล์ม WIP (Work In Process) เพื่อพักม้วนฟิล์มก่อนและหลังเข้ากระบวนการ Extrusion / Lamination"
+  },
+  {
+    id: "wh_prd_hall1",
+    code: "WH-PRD",
+    name: "WH-PRD (คลังเก็บสินค้าและวัตถุดิบฝ่ายผลิต อาคาร 1)",
+    category: "warehouse",
+    hall: "hall_1",
+    type: "warehouse_racks",
+    bounds: [230, 935, 536, 1015],
+    height: 4.8,
+    orientation: "EW",
+    specs: "3 แถวยาว (แนวนอน EW) × 4 ชั้นความสูง · Selective Pallet Racks สำหรับฝ่ายผลิต อาคาร 1",
+    description: "คลังเก็บสินค้า วัตถุดิบ และม้วนฟิล์มระหว่างกระบวนการผลิต (WH-PRD) ประจำโถงฝ่ายผลิตอาคาร 1 จัดวางชั้นวางพาเลทมาตรฐานอุตสาหกรรม 3 แถวยาว"
   },
 
   // --- Hall 2 Warehouses ---

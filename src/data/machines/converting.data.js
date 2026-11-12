@@ -16,7 +16,7 @@ window.Starflex3D.Data.Machines.converting = [
     category: "converting",
     hall: "hall_1",
     type: "slitter_group",
-    bounds: [228, 605, 338, 648],
+    bounds: [228, 545, 338, 588],
     height: 2.6,
     orientation: "EW",
     specs: "4 เครื่องย่อย (SH 02, SH 03, SM 14, SM 05)",
