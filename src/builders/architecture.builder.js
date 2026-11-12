@@ -339,43 +339,6 @@ window.Starflex3D.Builders.Architecture = {
     buildCurvedArchSpan(1062, 1498, 247, 815, 8.8, 0.55, 2, false);
     buildCurvedArchSpan(1498, 1895, 247, 1100, 12.8, 2.8, 2, true);
 
-    // ========================================================================
-    // 5. OVERHEAD YELLOW BRIDGE CRANES
-    // ========================================================================
-    function addBridgeCrane(px1, px2, py, height) {
-      const p1 = pt(px1, py);
-      const p2 = pt(px2, py);
-      const span = Math.abs(p2.x - p1.x);
-      const cx = (p1.x + p2.x) * 0.5;
-      const cz = p1.z;
-
-      const crane = new THREE.Group();
-      [-0.45, 0.45].forEach(dz => {
-        const girder = new THREE.Mesh(new THREE.BoxGeometry(span, 0.55, 0.32), mats.craneYellow);
-        girder.position.set(cx, height, cz + dz);
-        addEdges(girder, 0xa16207, 0.7);
-        crane.add(girder);
-      });
-      [-span * 0.49, span * 0.49].forEach(dx => {
-        const truck = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.65, 1.6), mats.machineDark);
-        truck.position.set(cx + dx, height, cz);
-        crane.add(truck);
-      });
-      const trolley = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.6, 1.3), mats.machineDark);
-      trolley.position.set(cx + span * 0.12, height - 0.35, cz);
-      const hookBlock = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.5, 0.45), mats.craneYellow);
-      hookBlock.position.set(cx + span * 0.12, height - 2.6, cz);
-      const cable = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.2, 6), mats.steelColumn);
-      cable.position.set(cx + span * 0.12, height - 1.5, cz);
-      crane.add(trolley, hookBlock, cable);
-      archGroup.add(crane);
-    }
-
-    addBridgeCrane(215, 618, 415, 8.8);
-    addBridgeCrane(215, 618, 760, 8.8);
-    addBridgeCrane(685, 1045, 600, 8.8);
-    addBridgeCrane(1515, 1880, 690, 10.6);
-
     archGroup.add(
       wallsNorth,
       wallsSouth,
