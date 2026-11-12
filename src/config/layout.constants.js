@@ -45,7 +45,8 @@ window.Starflex3D.Config.Layout = {
     LOADING_DOCK_CANOPY: [1062, 815, 1398, 874],
     FRONT_DRIVEWAY: [460, 1150, 1680, 1565],
     OFFICE_NOOK_APRON: [1018, 1098, 1062, 1150],
-    WALKWAY_PROD: [1056, 318, 1102, 815] // Main white walkway & North hygiene station
+    WALKWAY_PROD: [1056, 318, 1102, 815], // Main white walkway
+    HYGIENE_ROOM: [1056, 320, 1156, 400]  // Hygiene station extending Eastward flush with locker rooms
   },
 
   // 4. Auxiliary Facilities & Hall 1 Zones
@@ -57,6 +58,17 @@ window.Starflex3D.Config.Layout = {
     CHEM_WH_20B: [615, 105, 918, 190],
     RAW_MAT_WH_5: [922, 48, 1060, 190],
     NE_PUMP_ROOM: [1940, 78, 2038, 198],
-    HALL1_SOUTH_OFFICES: [200, 1030, 632, 1098] // SW2, Spare Parts, Data, Production, QA, QA Lab, Fire Exit
+    HALL1_SOUTH_OFFICES: [200, 1030, 632, 1098], // SW2, Spare Parts, Data, Production, QA, QA Lab, Fire Exit
+    HALL1_EAST_WALLS: [
+      { py1: 247, py2: 395, name: "Circle 1: Maintenance & Cylinder" },
+      { py1: 448, py2: 602, name: "Circle 2: Printing & Burner" },
+      { py1: 648, py2: 803, name: "Circle 3: Extrusion & Lamination" },
+      { py1: 851, py2: 904, name: "Circle 4: Solvent & Oven Room" }
+    ],
+    HALL2_WEST_WALLS: [
+      { py1: 348, py2: 542, name: "Circle 1: WH-MAIN Warehouse West Wall" },
+      { py1: 615, py2: 1015, name: "Circle 2: Finish Good & Bag Making BM Line West Wall" },
+      { py1: 1035, py2: 1098, name: "Circle 3: South Office / Fire Exit Corridor West Wall" }
+    ]
   }
 };

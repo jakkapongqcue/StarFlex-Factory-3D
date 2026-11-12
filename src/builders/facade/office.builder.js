@@ -246,15 +246,6 @@ window.Starflex3D.Builders.Facade.Office = {
     addEdges(porchHip, 0xffffff, 0.75);
     group.add(porchHip);
 
-    // Golden Spirit House (ศาลพระภูมิสีทอง) on the right of entrance (Image 1 & 3)
-    const shrinePos = pt(965, 1225);
-    const shrinePedestal = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.9, 1.4), fMats.whiteTrim);
-    shrinePedestal.position.set(shrinePos.x, 0.45, shrinePos.z);
-    const shrineTop = new THREE.Mesh(new THREE.ConeGeometry(0.75, 1.5, 4), fMats.goldLamp);
-    shrineTop.position.set(shrinePos.x, 1.65, shrinePos.z);
-    shrineTop.rotation.y = Math.PI / 4;
-    group.add(shrinePedestal, shrineTop);
-
     // Potted plants along office plinth
     [695, 735, 775, 915, 955, 995].forEach(px => {
       const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.22, 0.45, 8), fMats.charcoalFascia);

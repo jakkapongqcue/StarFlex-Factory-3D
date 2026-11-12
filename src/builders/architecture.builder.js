@@ -118,25 +118,54 @@ window.Starflex3D.Builders.Architecture = {
     // ========================================================================
     // 2. INTERNAL PARTITION WALLS & STRUCTURAL COLUMNS (Low/Stepped in Cutaway Mode)
     // ========================================================================
+    // ========================================================================
     // Boundary between Hall 1 and Hall 2 (px = 632):
-    // Open boundary with structural steel H-columns only (no solid partition wall)
-    const h1h2Dist = 1098 - 247;
-    const h1h2Steps = Math.round(h1h2Dist / 70);
-    const p1Col = pt(632, 247);
-    const p2Col = pt(632, 1098);
-    for (let i = 0; i <= h1h2Steps; i++) {
-      const t = i / h1h2Steps;
+    // 4 Structural Partition Wall Segments (as circled on Hall 1 floor plan):
+    //   Circle 1: North maintenance & cylinder section (py: 247..395, length 14.8m)
+    //   Circle 2: Rotogravure printing & burner section (py: 448..602, length 15.4m)
+    //   Circle 3: Extrusion & lamination section (py: 648..803, length 15.5m)
+    //   Circle 4: Solvent & oven room section (py: 851..904, length 5.3m)
+    // Openings: py: 395..448 (5.3m), 602..648 (4.6m), 803..851 (4.8m), 904..1030 (12.6m)
+    // ========================================================================
+    const hall1EastWalls = [
+      { py1: 247, py2: 395, h: 7.2 }, // Circle 1: North Maintenance & Cylinder Area
+      { py1: 448, py2: 602, h: 7.2 }, // Circle 2: PT-03 / PT-04 Printing Burners
+      { py1: 648, py2: 803, h: 7.2 }, // Circle 3: ET-02 / SW3 / SB-01 Lamination
+      { py1: 851, py2: 904, h: 7.2 }  // Circle 4: SB-04 / Oven Room Area
+    ];
+
+    hall1EastWalls.forEach(w => {
+      addWallSegment(632, w.py1, 632, w.py2, w.h, partitionWallsGroup, mats.wallPartition, true, 50);
+    });
+
+    // Structural portal columns along the open passage bay at px = 632 to support roof trusses
+    [967].forEach(py => {
+      const pCol = pt(632, py);
       const colMesh = new THREE.Mesh(
-        new THREE.BoxGeometry(0.5, 9.8, 0.5),
+        new THREE.BoxGeometry(0.46, 7.35, 0.46),
         mats.steelColumn
       );
-      colMesh.position.set(p1Col.x, 4.9, p1Col.z + (p2Col.z - p1Col.z) * t);
+      colMesh.position.set(pCol.x, 7.2 * 0.5, pCol.z);
       colMesh.castShadow = true;
       partitionWallsGroup.add(colMesh);
-    }
+    });
 
-    addWallSegment(674, 247, 674, 700, 6.2, partitionWallsGroup, mats.wallPartition, true, 75);
-    addWallSegment(674, 700, 674, 1098, 3.6, partitionWallsGroup, mats.wallPartition, true, 75);
+    // ========================================================================
+    // 3 Partition Wall Segments along px = 674 (Hall 2 West dividing walls, as circled in orange):
+    //   Circle 1: West wall of WH-MAIN Warehouse (py: 348..542, length: 19.4m)
+    //   Circle 2: West wall of Finish Good Area & Bag Making line (py: 615..1015, length: 40.0m)
+    //   Circle 3: West wall of South Office & Fire Exit corridor (py: 1035..1098, length: 6.3m)
+    // Openings: py: 247..348 (North passage: 10.1m), py: 542..615 (Forklift crossing: 7.3m), py: 1015..1035 (2.0m)
+    // ========================================================================
+    const hall2WestWalls = [
+      { py1: 348, py2: 542, h: 6.2 },  // Circle 1: WH-MAIN Warehouse
+      { py1: 615, py2: 1015, h: 4.8 }, // Circle 2: Finish Good & Bag Making BM line
+      { py1: 1035, py2: 1098, h: 3.6 } // Circle 3: South Office / Fire Exit corridor
+    ];
+
+    hall2WestWalls.forEach(w => {
+      addWallSegment(674, w.py1, 674, w.py2, w.h, partitionWallsGroup, mats.wallPartition, true, 60);
+    });
 
     // Partition between Hall 2 and Hall 3 corridor (px = 1062) with opening for Finished Goods double doors (py: 330..365)
     addWallSegment(1062, 247, 1062, 330, 7.2, partitionWallsGroup, mats.wallPartition, true, 75);

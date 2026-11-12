@@ -340,21 +340,26 @@ window.Starflex3D.Builders.Facilities = (function () {
     walkGroup.add(doorWestGroup);
 
     // ========================================================================
-    // 4. ปลายทาง: ห้องสำหรับทำความสะอาดก่อนเข้าไลน์ผลิต (Air Shower & Hygiene Anteroom)
-    //    พร้อม 2 ประตูเข้าสู่สายการผลิต (Door 1 & Door 2 into Production Line)
+    // 4. ปลายทาง: ห้องสุขอนามัยก่อนเข้าไลน์ผลิต (Hygiene & Air Shower Anteroom)
+    //    - ขนาดห้องกว้าง 10.0m ยาวไปทางตะวันออกเสมอกำแพงห้องเปลี่ยนชุด (East wall at px = 1156)
+    //    - อ่างล้างมือรูปตัว L อยู่ทางขวามือ (East & South-East walls)
+    //    - ประตู Air Shower ออกทางทิศตะวันตกเข้าสู่ไลน์ผลิต (ประตูขังคนเป่าลมไล่ฝุ่น)
+    //    - ประตูธรรมดาออกทางทิศเหนือสู่โถงทางเดิน
+    //    - ไม่ใส่ป้ายหน้าห้องตามความต้องการของผู้ใช้งาน
     // ========================================================================
-    const hygW = floorW;
-    const hygD = 6.8;
+    const hygW = 10.0; // Spans from Corridor 6 west edge (px: 1056) to Locker room east wall (px: 1156)
+    const hygD = 8.0;  // Length along Z (py: 320..400)
     const hygH = 3.3;
     const hygZ = -floorD * 0.5 + hygD * 0.5;
-
+    // Walkway center is px = 1079; room center is px = 1106 -> offset along X is +2.7m
     const hygGroup = new THREE.Group();
-    hygGroup.position.set(0, 0, hygZ);
+    hygGroup.position.set(2.7, 0, hygZ);
     walkGroup.add(hygGroup);
 
     const cleanWallMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.35 });
     const cleanFloorMat = new THREE.MeshStandardMaterial({ color: 0xe0f2fe, roughness: 0.25 });
     const stainlessMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 0.85, roughness: 0.2 });
+    const chromeMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, metalness: 0.95, roughness: 0.1 });
     const blueFrameMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.5, roughness: 0.3 });
     const greenFrameMat = new THREE.MeshStandardMaterial({ color: 0x059669, metalness: 0.5, roughness: 0.3 });
     const visionGlassMat = new THREE.MeshPhysicalMaterial({
@@ -365,7 +370,7 @@ window.Starflex3D.Builders.Facilities = (function () {
       opacity: 0.55
     });
 
-    // 4A. Cleanroom Floor Slab (พื้นคลีนรูมสีฟ้าอ่อน ปลอดเชื้อ)
+    // 4A. Cleanroom Floor Slab (พื้นคลีนรูมสีฟ้าอ่อน ปลอดเชื้อ กว้าง 10.0m x 8.0m)
     const hygFloor = new THREE.Mesh(new THREE.BoxGeometry(hygW - 0.05, 0.04, hygD - 0.05), cleanFloorMat);
     hygFloor.position.y = 0.02;
     hygGroup.add(hygFloor);
@@ -375,8 +380,8 @@ window.Starflex3D.Builders.Facilities = (function () {
     hygCeiling.position.y = hygH + 0.09;
     hygGroup.add(hygCeiling);
 
-    [-hygW * 0.26, hygW * 0.26].forEach(lx => {
-      [-hygD * 0.25, hygD * 0.25].forEach(lz => {
+    [-3.2, -1.0, 1.2, 3.4].forEach(lx => {
+      [-2.4, 0.0, 2.4].forEach(lz => {
         const led = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.7), new THREE.MeshBasicMaterial({ color: 0xffffff }));
         led.rotation.x = Math.PI / 2;
         led.position.set(lx, hygH - 0.01, lz);
@@ -384,252 +389,313 @@ window.Starflex3D.Builders.Facilities = (function () {
       });
     });
 
-    // 4C. Perimeter Cleanroom Walls (ผนังไอโซวอลล์คลีนรูมสีขาว)
-    // East wall (+X) with vision observation window
-    const eastWall = new THREE.Mesh(new THREE.BoxGeometry(0.14, hygH, hygD), cleanWallMat);
-    eastWall.position.set(hygW * 0.5 - 0.07, hygH * 0.5, 0);
-    addEdges(eastWall, 0x94a3b8, 0.6);
-    hygGroup.add(eastWall);
-
-    const eastWin = new THREE.Mesh(new THREE.BoxGeometry(0.18, 1.2, 2.4), visionGlassMat);
-    eastWin.position.set(hygW * 0.5 - 0.07, 1.8, 0);
-    addEdges(eastWin, 0xffffff, 0.8);
-    hygGroup.add(eastWin);
-
-    // West wall (-X)
-    const westWall = new THREE.Mesh(new THREE.BoxGeometry(0.14, hygH, hygD), cleanWallMat);
-    westWall.position.set(-hygW * 0.5 + 0.07, hygH * 0.5, 0);
-    addEdges(westWall, 0x94a3b8, 0.6);
-    hygGroup.add(westWall);
-
-    // 4D. South Entrance Wall (facing the white walkway, at +Z): Double Glass Door + Sign
-    const southWallZ = hygD * 0.5 - 0.07;
-    // Left & right wall pillars of South wall
-    [-hygW * 0.38, hygW * 0.38].forEach(sx => {
-      const sp = new THREE.Mesh(new THREE.BoxGeometry(hygW * 0.24, hygH, 0.14), cleanWallMat);
-      sp.position.set(sx, hygH * 0.5, southWallZ);
-      addEdges(sp, 0x94a3b8, 0.5);
-      hygGroup.add(sp);
+    // 4C. Middle Structural Steel Columns along Corridor boundary (x = -0.4m, corresponding to px = 1102)
+    const midColX = -0.4;
+    [-hygD * 0.5, 0, hygD * 0.5].forEach(cz => {
+      const col = new THREE.Mesh(
+        new THREE.BoxGeometry(0.46, hygH, 0.46),
+        mats.steelColumn || new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.6 })
+      );
+      col.position.set(midColX, hygH * 0.5, cz);
+      addEdges(col, 0x475569, 0.8);
+      hygGroup.add(col);
     });
-    // Header wall above South door
-    const southTopWall = new THREE.Mesh(new THREE.BoxGeometry(hygW * 0.52, hygH - 2.5, 0.14), cleanWallMat);
-    southTopWall.position.set(0, 2.5 + (hygH - 2.5) * 0.5, southWallZ);
-    hygGroup.add(southTopWall);
 
-    // South Entrance Double Glass Door into Cleaning Room
-    const sDoorFrame = new THREE.Mesh(new THREE.BoxGeometry(2.3, 2.5, 0.16), blueFrameMat);
-    sDoorFrame.position.set(0, 1.25, southWallZ);
+    // 4D. South Wall (+Z = +4.0m): Entrance from White Walkway (Corridor 6)
+    // Walkway center is aligned at x = -2.7m; NO FRONT SIGNBOARD per user instruction
+    const southWallZ = hygD * 0.5 - 0.07;
+    const sDoorX = -2.7;
+    const sDoorW = 2.0;
+    const sDoorH = 2.4;
+
+    // Wall left of entrance door (x: -5.0m .. -3.7m)
+    const sWallLeftW = Math.max(0.1, (sDoorX - sDoorW * 0.5) - (-hygW * 0.5));
+    const sWallLeft = new THREE.Mesh(new THREE.BoxGeometry(sWallLeftW, hygH, 0.14), cleanWallMat);
+    sWallLeft.position.set(-hygW * 0.5 + sWallLeftW * 0.5, hygH * 0.5, southWallZ);
+    addEdges(sWallLeft, 0x94a3b8, 0.5);
+    hygGroup.add(sWallLeft);
+
+    // Wall right of entrance door (x: -1.7m .. +5.0m, spans across middle column behind L-sink return)
+    const sWallRightW = Math.max(0.1, (hygW * 0.5) - (sDoorX + sDoorW * 0.5));
+    const sWallRight = new THREE.Mesh(new THREE.BoxGeometry(sWallRightW, hygH, 0.14), cleanWallMat);
+    sWallRight.position.set(hygW * 0.5 - sWallRightW * 0.5, hygH * 0.5, southWallZ);
+    addEdges(sWallRight, 0x94a3b8, 0.5);
+    hygGroup.add(sWallRight);
+
+    // Header wall above South door
+    const sWallTop = new THREE.Mesh(new THREE.BoxGeometry(sDoorW, hygH - sDoorH, 0.14), cleanWallMat);
+    sWallTop.position.set(sDoorX, sDoorH + (hygH - sDoorH) * 0.5, southWallZ);
+    hygGroup.add(sWallTop);
+
+    // South Entrance Double Glass Door (no sign above)
+    const sDoorFrame = new THREE.Mesh(new THREE.BoxGeometry(sDoorW, sDoorH, 0.16), blueFrameMat);
+    sDoorFrame.position.set(sDoorX, sDoorH * 0.5, southWallZ);
     addEdges(sDoorFrame, 0x38bdf8, 0.7);
     hygGroup.add(sDoorFrame);
 
-    [-0.52, 0.52].forEach(dx => {
-      const leaf = new THREE.Mesh(new THREE.BoxGeometry(0.98, 2.38, 0.08), visionGlassMat);
-      leaf.position.set(dx, 1.25, southWallZ);
+    [-sDoorW * 0.25, sDoorW * 0.25].forEach(dx => {
+      const leaf = new THREE.Mesh(new THREE.BoxGeometry(sDoorW * 0.46, sDoorH - 0.08, 0.06), visionGlassMat);
+      leaf.position.set(sDoorX + dx, sDoorH * 0.5, southWallZ);
       addEdges(leaf, 0xffffff, 0.9);
       const pushBar = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.9, 8), stainlessMat);
-      pushBar.position.set(dx > 0 ? -0.38 : 0.38, 1.15, 0.06);
-      leaf.add(pushBar);
-      hygGroup.add(leaf);
+      pushBar.position.set(sDoorX + dx + (dx > 0 ? -0.32 : 0.32), 1.15, southWallZ + 0.05);
+      hygGroup.add(leaf, pushBar);
     });
 
-    // Illuminated Header Signboard for the Cleaning Room
-    const roomSign = createSignboardMesh(
-      3.4,
-      0.58,
-      "ห้องทำความสะอาดสุขอนามัย (Air Shower)",
-      "HYGIENE & SANITIZATION ROOM",
-      "#0284c7",
-      "#ffffff",
-      "#38bdf8"
-    );
-    roomSign.position.set(0, 2.85, southWallZ + 0.12);
-    hygGroup.add(roomSign);
+    // 4E. East Wall (+X = +5.0m): Flush with Locker Room East Wall (px = 1156)
+    const eastWallX = hygW * 0.5 - 0.07;
+    const eastWall = new THREE.Mesh(new THREE.BoxGeometry(0.14, hygH, hygD), cleanWallMat);
+    eastWall.position.set(eastWallX, hygH * 0.5, 0);
+    addEdges(eastWall, 0x94a3b8, 0.6);
+    hygGroup.add(eastWall);
 
-    // 4E. Interior Sanitizing & Cleaning Equipment (อุปกรณ์ทำความสะอาดภายใน)
-    // 1) Air Shower Booth (ตู้เป่าลมแอร์ชาวเวอร์)
-    const airShowerGroup = new THREE.Group();
-    airShowerGroup.position.set(0, 0, 0.8);
+    const eastWin = new THREE.Mesh(new THREE.BoxGeometry(0.18, 1.2, 2.6), visionGlassMat);
+    eastWin.position.set(eastWallX, 1.9, -1.8);
+    addEdges(eastWin, 0xffffff, 0.8);
+    hygGroup.add(eastWin);
 
-    const asFrameL = new THREE.Mesh(new THREE.BoxGeometry(0.25, 2.6, 1.6), stainlessMat);
-    asFrameL.position.set(-1.0, 1.3, 0);
-    const asFrameR = new THREE.Mesh(new THREE.BoxGeometry(0.25, 2.6, 1.6), stainlessMat);
-    asFrameR.position.set(1.0, 1.3, 0);
-    const asTop = new THREE.Mesh(new THREE.BoxGeometry(2.25, 0.35, 1.6), stainlessMat);
-    asTop.position.set(0, 2.75, 0);
-    airShowerGroup.add(asFrameL, asFrameR, asTop);
+    // --- L-SHAPED SINK COUNTER ON THE RIGHT (East + South-East) ---
+    // "ใหนห้องนั้นมีอ้างข้างมืออยู่ทางขวาเป็นรูปตัว L"
+    const lSinkGroup = new THREE.Group();
+    hygGroup.add(lSinkGroup);
 
-    // Circular air jet nozzles on side walls
-    for (let nz = -0.55; nz <= 0.55; nz += 0.36) {
-      for (let ny = 0.8; ny <= 2.2; ny += 0.45) {
-        [-0.86, 0.86].forEach(nx => {
-          const nozzle = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.04, 0.04, 0.08, 8),
-            new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.9 })
-          );
-          nozzle.rotation.z = Math.PI / 2;
-          nozzle.position.set(nx, ny, nz);
-          airShowerGroup.add(nozzle);
-        });
-      }
-    }
+    // Arm 1: Main Arm along East wall (+X)
+    const arm1L = 5.2; // length along Z
+    const arm1W = 0.68;
+    const arm1Z = 0.6;  // spans from south wall to z = -2.0
+    const arm1X = eastWallX - arm1W * 0.5 - 0.07;
+    const arm1Mesh = new THREE.Mesh(new THREE.BoxGeometry(arm1W, 0.85, arm1L), stainlessMat);
+    arm1Mesh.position.set(arm1X, 0.425, arm1Z);
+    addEdges(arm1Mesh, 0x64748b, 0.7);
+    lSinkGroup.add(arm1Mesh);
 
-    // Air Shower overhead sensor & status beacon
-    const asBeacon = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.08, 0.08, 0.16, 8),
-      new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x16a34a, emissiveIntensity: 0.8 })
-    );
-    asBeacon.position.set(0, 3.0, 0);
-    airShowerGroup.add(asBeacon);
-    hygGroup.add(airShowerGroup);
+    // Arm 2: Return Arm along South wall (+Z) forming the "L"
+    const arm2L = 3.6; // length along X
+    const arm2W = 0.68;
+    const arm2Z = southWallZ - arm2W * 0.5 - 0.07;
+    const arm2X = arm1X - arm1W * 0.5 - arm2L * 0.5;
+    const arm2Mesh = new THREE.Mesh(new THREE.BoxGeometry(arm2L, 0.85, arm2W), stainlessMat);
+    arm2Mesh.position.set(arm2X, 0.425, arm2Z);
+    addEdges(arm2Mesh, 0x64748b, 0.7);
+    lSinkGroup.add(arm2Mesh);
 
-    // 2) Automated Handwashing & Sanitizing Sink Counter (อ่างล้างมือฆ่าเชื้อสแตนเลส)
-    const sinkCounter = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.85, 0.55), stainlessMat);
-    sinkCounter.position.set(-hygW * 0.5 + 0.38, 0.425, -1.2);
-    addEdges(sinkCounter, 0x64748b, 0.7);
-    hygGroup.add(sinkCounter);
+    // Stainless splashbacks / mirrors along the L walls
+    const splashEast = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.75, arm1L), visionGlassMat);
+    splashEast.position.set(eastWallX - 0.09, 1.25, arm1Z);
+    addEdges(splashEast, 0x38bdf8, 0.6);
+    lSinkGroup.add(splashEast);
 
-    // 2 Faucets & Dispensers
-    [-0.45, 0.45].forEach(fx => {
-      const faucet = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.02, 0.02, 0.28, 8),
-        stainlessMat
+    const splashSouth = new THREE.Mesh(new THREE.BoxGeometry(arm2L + arm1W, 0.75, 0.04), visionGlassMat);
+    splashSouth.position.set(arm2X + arm1W * 0.5, 1.25, southWallZ - 0.09);
+    addEdges(splashSouth, 0x38bdf8, 0.6);
+    lSinkGroup.add(splashSouth);
+
+    // 4 Sinks + Faucets + Soap Dispensers on Arm 1 (East wall)
+    [-1.8, -0.6, 0.6, 1.8].forEach(fz => {
+      const basin = new THREE.Mesh(
+        new THREE.BoxGeometry(0.48, 0.18, 0.58),
+        new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9, roughness: 0.15 })
       );
-      faucet.position.set(-hygW * 0.5 + 0.38 + fx, 0.95, -1.2);
+      basin.position.set(arm1X, 0.85, arm1Z + fz);
+      lSinkGroup.add(basin);
+
+      const faucetPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.28, 8), chromeMat);
+      faucetPipe.position.set(arm1X + 0.2, 1.02, arm1Z + fz);
+      const faucetSpout = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.03, 0.03), chromeMat);
+      faucetSpout.position.set(arm1X + 0.13, 1.15, arm1Z + fz);
+      lSinkGroup.add(faucetPipe, faucetSpout);
+
       const dispenser = new THREE.Mesh(
-        new THREE.BoxGeometry(0.14, 0.28, 0.1),
-        new THREE.MeshStandardMaterial({ color: 0x0284c7 })
+        new THREE.BoxGeometry(0.1, 0.24, 0.12),
+        new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.2, roughness: 0.3 })
       );
-      dispenser.position.set(-hygW * 0.5 + 0.15, 1.4, -1.2 + fx * 0.8);
-      hygGroup.add(faucet, dispenser);
+      dispenser.position.set(eastWallX - 0.11, 1.35, arm1Z + fz);
+      lSinkGroup.add(dispenser);
     });
 
-    // 3) High-Speed Hand Dryers on East wall
-    [-1.0, -1.6].forEach(dz => {
+    // 2 Sinks + Dispensers on Arm 2 (South wall return)
+    [-0.9, 0.6].forEach(fx => {
+      const basinS = new THREE.Mesh(
+        new THREE.BoxGeometry(0.58, 0.18, 0.48),
+        new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9, roughness: 0.15 })
+      );
+      basinS.position.set(arm2X + fx, 0.85, arm2Z);
+      const faucetS = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.28, 8), chromeMat);
+      faucetS.position.set(arm2X + fx, 1.02, arm2Z + 0.2);
+      const dispenserS = new THREE.Mesh(
+        new THREE.BoxGeometry(0.12, 0.24, 0.1),
+        new THREE.MeshStandardMaterial({ color: 0x059669, metalness: 0.2, roughness: 0.3 })
+      );
+      dispenserS.position.set(arm2X + fx, 1.35, southWallZ - 0.11);
+      lSinkGroup.add(basinS, faucetS, dispenserS);
+    });
+
+    // High-speed automatic hand dryers on East wall north of sink
+    [-2.4].forEach(dz => {
       const dryer = new THREE.Mesh(
-        new THREE.BoxGeometry(0.18, 0.38, 0.28),
+        new THREE.BoxGeometry(0.2, 0.44, 0.32),
         new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 })
       );
-      dryer.position.set(hygW * 0.5 - 0.18, 1.35, dz);
+      dryer.position.set(eastWallX - 0.15, 1.25, dz);
       addEdges(dryer, 0x94a3b8, 0.7);
-      hygGroup.add(dryer);
+      lSinkGroup.add(dryer);
     });
 
-    // 4) Cleanroom Step-Over Stainless Bench (ม้านั่งสแตนเลสเปลี่ยนรองเท้า)
-    const bench = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.45, 1.8), stainlessMat);
-    bench.position.set(0, 0.225, -0.6);
+    // 4F. West Wall (-X = -5.0m): Air Shower Booth into Production Line
+    // "มีประตูออกทางทิศตะวันตก (ประตูที่ขังคน แล้วมีพัดลมมาเป่า)"
+    const westWallX = -hygW * 0.5 + 0.07;
+    const asCenterZ = -0.6;
+    const asW = 1.8;  // length along Z
+    const asD = 1.8;  // depth along X (passes through West wall directly into Hall 2 production area)
+    const asH = 2.65;
+
+    // West wall sections around the Air Shower
+    const wWallNorthL = Math.max(0.2, (asCenterZ - asW * 0.5) - (-hygD * 0.5));
+    const wWallNorth = new THREE.Mesh(new THREE.BoxGeometry(0.14, hygH, wWallNorthL), cleanWallMat);
+    wWallNorth.position.set(westWallX, hygH * 0.5, -hygD * 0.5 + wWallNorthL * 0.5);
+    addEdges(wWallNorth, 0x94a3b8, 0.6);
+    hygGroup.add(wWallNorth);
+
+    const wWallSouthL = Math.max(0.2, (hygD * 0.5) - (asCenterZ + asW * 0.5));
+    const wWallSouth = new THREE.Mesh(new THREE.BoxGeometry(0.14, hygH, wWallSouthL), cleanWallMat);
+    wWallSouth.position.set(westWallX, hygH * 0.5, hygD * 0.5 - wWallSouthL * 0.5);
+    addEdges(wWallSouth, 0x94a3b8, 0.6);
+    hygGroup.add(wWallSouth);
+
+    const wWallTop = new THREE.Mesh(new THREE.BoxGeometry(0.14, hygH - asH, asW), cleanWallMat);
+    wWallTop.position.set(westWallX, asH + (hygH - asH) * 0.5, asCenterZ);
+    hygGroup.add(wWallTop);
+
+    // --- AIR SHOWER BOOTH CABIN ---
+    const airShowerGroup = new THREE.Group();
+    airShowerGroup.position.set(westWallX, 0, asCenterZ);
+    hygGroup.add(airShowerGroup);
+
+    // Stainless structural chamber walls
+    [-asW * 0.45, asW * 0.45].forEach(sz => {
+      const asSideWall = new THREE.Mesh(new THREE.BoxGeometry(asD, asH, 0.16), stainlessMat);
+      asSideWall.position.set(0, asH * 0.5, sz);
+      addEdges(asSideWall, 0x64748b, 0.8);
+      airShowerGroup.add(asSideWall);
+
+      // Jet nozzles array (16 high-velocity circular nozzles on each side, total 32 nozzles)
+      for (let nx = -asD * 0.35; nx <= asD * 0.35; nx += 0.28) {
+        for (let ny = 0.75; ny <= 2.2; ny += 0.45) {
+          const nozzle = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.035, 0.035, 0.06, 8),
+            new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.95, roughness: 0.1 })
+          );
+          nozzle.rotation.x = Math.PI / 2;
+          nozzle.position.set(nx, ny, sz + (sz > 0 ? -0.09 : 0.09));
+          airShowerGroup.add(nozzle);
+        }
+      }
+    });
+
+    // Air Shower Top HEPA Fan / Blower Casing ("มีพัดลมมาเป่า")
+    const asBlowerTop = new THREE.Mesh(new THREE.BoxGeometry(asD + 0.1, 0.38, asW), stainlessMat);
+    asBlowerTop.position.set(0, asH + 0.19, 0);
+    addEdges(asBlowerTop, 0x475569, 0.8);
+    airShowerGroup.add(asBlowerTop);
+
+    // Fan circular intake grilles on top
+    [-asD * 0.24, asD * 0.24].forEach(fx => {
+      const fanGrille = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.24, 0.24, 0.06, 16),
+        new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 })
+      );
+      fanGrille.position.set(fx, asH + 0.41, 0);
+      airShowerGroup.add(fanGrille);
+    });
+
+    // Anti-dust sticky mat inside
+    const asFloorMat = new THREE.Mesh(
+      new THREE.PlaneGeometry(asD * 0.75, asW * 0.75),
+      new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.3 })
+    );
+    asFloorMat.rotation.x = -Math.PI / 2;
+    asFloorMat.position.y = 0.035;
+    airShowerGroup.add(asFloorMat);
+
+    // Inner Door (East door, entering from hygiene room)
+    const inDoorX = asD * 0.5;
+    const inDoorFrame = new THREE.Mesh(new THREE.BoxGeometry(0.12, asH, asW * 0.8), blueFrameMat);
+    inDoorFrame.position.set(inDoorX, asH * 0.5, 0);
+    addEdges(inDoorFrame, 0x38bdf8, 0.8);
+    const inDoorLeaf = new THREE.Mesh(new THREE.BoxGeometry(0.04, asH - 0.15, asW * 0.72), visionGlassMat);
+    inDoorLeaf.position.set(inDoorX, asH * 0.5, 0);
+    addEdges(inDoorLeaf, 0xffffff, 0.9);
+    airShowerGroup.add(inDoorFrame, inDoorLeaf);
+
+    // Outer Door (West door, exiting directly into Hall 2 production line)
+    // "มีประตูออกทางทิศตะวันตก (ประตูที่ขังคน แล้วมีพัดลมมาเป่า)"
+    const outDoorX = -asD * 0.5;
+    const outDoorFrame = new THREE.Mesh(new THREE.BoxGeometry(0.12, asH, asW * 0.8), blueFrameMat);
+    outDoorFrame.position.set(outDoorX, asH * 0.5, 0);
+    addEdges(outDoorFrame, 0x38bdf8, 0.8);
+    const outDoorLeaf = new THREE.Mesh(new THREE.BoxGeometry(0.04, asH - 0.15, asW * 0.72), visionGlassMat);
+    outDoorLeaf.position.set(outDoorX, asH * 0.5, 0);
+    addEdges(outDoorLeaf, 0xffffff, 0.9);
+    airShowerGroup.add(outDoorFrame, outDoorLeaf);
+
+    // Air Shower Status Beacon
+    const asBeacon = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08, 0.08, 0.22, 10),
+      new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x16a34a, emissiveIntensity: 0.9 })
+    );
+    asBeacon.position.set(inDoorX - 0.1, asH + 0.35, 0);
+    airShowerGroup.add(asBeacon);
+
+    // 4G. North Wall (-Z = -4.0m): Regular Exit Door ("และทิศเหนือ (ประตูธรรมดา)")
+    const northWallZ = -hygD * 0.5 + 0.07;
+    const nDoorX = 2.2; // In East bay, matching the blueprint arrow leading North to area 3
+    const nDoorW = 1.7;
+    const nDoorH = 2.4;
+
+    // Wall sections around North Door
+    const nWallLeftW = Math.max(0.2, (nDoorX - nDoorW * 0.5) - (-hygW * 0.5));
+    const nWallLeft = new THREE.Mesh(new THREE.BoxGeometry(nWallLeftW, hygH, 0.14), cleanWallMat);
+    nWallLeft.position.set(-hygW * 0.5 + nWallLeftW * 0.5, hygH * 0.5, northWallZ);
+    addEdges(nWallLeft, 0x94a3b8, 0.6);
+    hygGroup.add(nWallLeft);
+
+    const nWallRightW = Math.max(0.2, (hygW * 0.5) - (nDoorX + nDoorW * 0.5));
+    const nWallRight = new THREE.Mesh(new THREE.BoxGeometry(nWallRightW, hygH, 0.14), cleanWallMat);
+    nWallRight.position.set(hygW * 0.5 - nWallRightW * 0.5, hygH * 0.5, northWallZ);
+    addEdges(nWallRight, 0x94a3b8, 0.6);
+    hygGroup.add(nWallRight);
+
+    const nWallTop = new THREE.Mesh(new THREE.BoxGeometry(nDoorW, hygH - nDoorH, 0.14), cleanWallMat);
+    nWallTop.position.set(nDoorX, nDoorH + (hygH - nDoorH) * 0.5, northWallZ);
+    hygGroup.add(nWallTop);
+
+    // Regular North Door Frame & Leaf (No exterior header sign)
+    const nDoorFrame = new THREE.Mesh(new THREE.BoxGeometry(nDoorW, nDoorH, 0.16), greenFrameMat);
+    nDoorFrame.position.set(nDoorX, nDoorH * 0.5, northWallZ);
+    addEdges(nDoorFrame, 0x34d399, 0.8);
+    hygGroup.add(nDoorFrame);
+
+    const nDoorLeaf = new THREE.Mesh(new THREE.BoxGeometry(nDoorW - 0.1, nDoorH - 0.08, 0.06), visionGlassMat);
+    nDoorLeaf.position.set(nDoorX, nDoorH * 0.5, northWallZ);
+    addEdges(nDoorLeaf, 0xffffff, 0.9);
+    const nDoorHandle = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.8, 8), stainlessMat);
+    nDoorHandle.position.set(nDoorX + (nDoorW * 0.35), 1.15, northWallZ + 0.05);
+    hygGroup.add(nDoorLeaf, nDoorHandle);
+
+    // 4H. Cleanroom Step-Over Stainless Bench & Sticky Mats
+    const bench = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.45, 2.2), stainlessMat);
+    bench.position.set(-1.4, 0.225, 1.2);
     addEdges(bench, 0x475569, 0.6);
     hygGroup.add(bench);
 
-    // 5) Blue Sticky Mats (แผ่นกาวดักฝุ่นก่อนถึงประตู)
-    [-hygW * 0.26, hygW * 0.26].forEach(mx => {
-      const stickyMat = new THREE.Mesh(
-        new THREE.PlaneGeometry(1.2, 0.8),
-        new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.3 })
-      );
-      stickyMat.rotation.x = -Math.PI / 2;
-      stickyMat.position.set(mx, 0.045, -hygD * 0.5 + 1.2);
-      hygGroup.add(stickyMat);
-    });
-
-    // ========================================================================
-    // 4F. สองประตูเข้าสู่ LINE ผลิต (TWO DOORS ENTERING THE PRODUCTION LINE)
-    // ========================================================================
-    const northWallZ = -hygD * 0.5 + 0.07;
-
-    // Center divider pillar between Door 1 and Door 2
-    const centerPillar = new THREE.Mesh(new THREE.BoxGeometry(0.48, hygH, 0.14), cleanWallMat);
-    centerPillar.position.set(0, hygH * 0.5, northWallZ);
-    addEdges(centerPillar, 0x94a3b8, 0.6);
-    hygGroup.add(centerPillar);
-
-    // Outer edge pillars (left & right of doors)
-    [-hygW * 0.5 + 0.18, hygW * 0.5 - 0.18].forEach(px => {
-      const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.36, hygH, 0.14), cleanWallMat);
-      pillar.position.set(px, hygH * 0.5, northWallZ);
-      addEdges(pillar, 0x94a3b8, 0.6);
-      hygGroup.add(pillar);
-    });
-
-    // Wall header above both North doors
-    const northHeader = new THREE.Mesh(new THREE.BoxGeometry(hygW, hygH - 2.5, 0.14), cleanWallMat);
-    northHeader.position.set(0, 2.5 + (hygH - 2.5) * 0.5, northWallZ);
-    hygGroup.add(northHeader);
-
-    // --- DOOR 1 (ประตูที่ 1 ฝั่งซ้าย: เข้าไลน์ผลิต Line 1) ---
-    const door1X = -hygW * 0.26;
-    const door1Frame = new THREE.Mesh(new THREE.BoxGeometry(1.68, 2.5, 0.16), blueFrameMat);
-    door1Frame.position.set(door1X, 1.25, northWallZ);
-    addEdges(door1Frame, 0x38bdf8, 0.8);
-    hygGroup.add(door1Frame);
-
-    const door1Leaf = new THREE.Mesh(new THREE.BoxGeometry(1.55, 2.38, 0.06), visionGlassMat);
-    door1Leaf.position.set(door1X, 1.25, northWallZ);
-    addEdges(door1Leaf, 0xffffff, 0.9);
-    const bar1 = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.9, 8), stainlessMat);
-    bar1.position.set(0.35, 1.15, 0.05);
-    door1Leaf.add(bar1);
-    hygGroup.add(door1Leaf);
-
-    const signDoor1 = createSignboardMesh(
-      1.75,
-      0.48,
-      "ประตู 1: เข้าสายการผลิต",
-      "DOOR 1 · PRODUCTION LINE",
-      "#0284c7",
-      "#ffffff",
-      "#38bdf8"
+    // Floor sticky mat in front of North exit door
+    const nStickyMat = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.4, 0.85),
+      new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.3 })
     );
-    signDoor1.position.set(door1X, 2.78, northWallZ - 0.1);
-    signDoor1.rotation.y = Math.PI; // Faces into line
-    const signDoor1In = signDoor1.clone();
-    signDoor1In.rotation.y = 0;
-    signDoor1In.position.set(door1X, 2.78, northWallZ + 0.1);
-    hygGroup.add(signDoor1, signDoor1In);
-
-    const beacon1 = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.08, 0.1, 0.18, 10),
-      new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x16a34a, emissiveIntensity: 0.85 })
-    );
-    beacon1.position.set(door1X, 3.12, northWallZ);
-    hygGroup.add(beacon1);
-
-    // --- DOOR 2 (ประตูที่ 2 ฝั่งขวา: เข้าไลน์ผลิต Line 2) ---
-    const door2X = hygW * 0.26;
-    const door2Frame = new THREE.Mesh(new THREE.BoxGeometry(1.68, 2.5, 0.16), greenFrameMat);
-    door2Frame.position.set(door2X, 1.25, northWallZ);
-    addEdges(door2Frame, 0x34d399, 0.8);
-    hygGroup.add(door2Frame);
-
-    const door2Leaf = new THREE.Mesh(new THREE.BoxGeometry(1.55, 2.38, 0.06), visionGlassMat);
-    door2Leaf.position.set(door2X, 1.25, northWallZ);
-    addEdges(door2Leaf, 0xffffff, 0.9);
-    const bar2 = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.9, 8), stainlessMat);
-    bar2.position.set(-0.35, 1.15, 0.05);
-    door2Leaf.add(bar2);
-    hygGroup.add(door2Leaf);
-
-    const signDoor2 = createSignboardMesh(
-      1.75,
-      0.48,
-      "ประตู 2: เข้าสายการผลิต",
-      "DOOR 2 · PRODUCTION LINE",
-      "#059669",
-      "#ffffff",
-      "#6ee7b7"
-    );
-    signDoor2.position.set(door2X, 2.78, northWallZ - 0.1);
-    signDoor2.rotation.y = Math.PI; // Faces into line
-    const signDoor2In = signDoor2.clone();
-    signDoor2In.rotation.y = 0;
-    signDoor2In.position.set(door2X, 2.78, northWallZ + 0.1);
-    hygGroup.add(signDoor2, signDoor2In);
-
-    const beacon2 = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.08, 0.1, 0.18, 10),
-      new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x16a34a, emissiveIntensity: 0.85 })
-    );
-    beacon2.position.set(door2X, 3.12, northWallZ);
-    hygGroup.add(beacon2);
+    nStickyMat.rotation.x = -Math.PI / 2;
+    nStickyMat.position.set(nDoorX, 0.035, northWallZ + 0.8);
+    hygGroup.add(nStickyMat);
   }
 
   // ========================================================================

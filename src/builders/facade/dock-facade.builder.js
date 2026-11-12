@@ -194,15 +194,6 @@ window.Starflex3D.Builders.Facade.DockFacade = {
       dockFacadeGroup.add(createACUnit(rightWallX - 0.32, 6.3, ap.z, -Math.PI / 2, fMats));
     });
 
-    // 5. Courtyard Yellow Dashed Truck Guidance Lines
-    const dashMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
-    for (let i = 0; i < 7; i++) {
-      const cz = pt(1228, 885 + i * 28).z;
-      const dash = new THREE.Mesh(new THREE.PlaneGeometry(0.25, 1.8), dashMat);
-      dash.rotation.x = -Math.PI / 2;
-      dash.position.set(pt(1228, 0).x, 0.02, cz);
-      dockFacadeGroup.add(dash);
-    }
 
     return dockFacadeGroup;
   }
