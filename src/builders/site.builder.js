@@ -202,25 +202,7 @@ window.Starflex3D.Builders.Site = {
       siteGroup.add(canGroup);
     });
 
-    // 8. Row of 7 Green Trees along Central Passage (px: 1095, py: 500..700)
-    for (let py = 500; py <= 700; py += 33) {
-      const p = pt(1095, py);
-      const tree = new THREE.Group();
-      const trunk = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.12, 0.18, 1.2, 7),
-        new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.9 })
-      );
-      trunk.position.y = 0.6;
-      const foliage = new THREE.Mesh(
-        new THREE.SphereGeometry(0.85, 10, 8),
-        new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.75 })
-      );
-      foliage.position.y = 1.65;
-      foliage.scale.set(1, 0.85, 1);
-      tree.add(trunk, foliage);
-      tree.position.set(p.x, 0, p.z);
-      siteGroup.add(tree);
-    }
+
 
     scene.add(siteGroup);
     return siteGroup;
