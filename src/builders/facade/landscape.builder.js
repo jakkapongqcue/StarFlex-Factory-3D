@@ -14,17 +14,21 @@ window.Starflex3D.Builders.Facade.Landscape = {
     const group = new THREE.Group();
     group.name = "FacadeLandscape";
 
-    // 1. Green Front Lawn (Authentic Island Shape from Google Maps & User Annotation)
-    // Runs from west fence (px: 185) along the south front fence to the main sign wall (px: 860)
-    // Leaves driveway open north of py: 1260 in front of Hall 1, and curves gracefully toward Office HQ apron
+    // 1. Green Front Lawn (Exact shape conforming to user's green line annotation)
+    // Vertices:
+    // 1. (185, 1145) - West fence, leaving ~4.7m driveway north of it along Hall 1
+    // 2. (590, 1175) - Runs east along driveway in front of Hall 1
+    // 3. (670, 1340) - Diagonally steps down to clear the west side of Office HQ
+    // 4. (1040, 1400) - Runs east in front of Office HQ & Porte-Cochere
+    // 5. (1040, 1555) - Turns 90 degrees south to the front fence before the Gate
+    // 6. (185, 1555) - Follows the front fence back to the west corner
     const lawnPoly = [
-      pt(185, 1260),
-      pt(460, 1260),
-      pt(670, 1310),
-      pt(780, 1360),
-      pt(860, 1430),
-      pt(860, 1545),
-      pt(185, 1545)
+      pt(185, 1145),
+      pt(590, 1175),
+      pt(670, 1340),
+      pt(1040, 1400),
+      pt(1040, 1555),
+      pt(185, 1555)
     ];
 
     const lawnShape = new THREE.Shape();
@@ -41,12 +45,18 @@ window.Starflex3D.Builders.Facade.Landscape = {
     lawnMesh.receiveShadow = true;
     group.add(lawnMesh);
 
-    // 2. Ornamental Curbs and Bushes along the curving driveway border
-    const borderPoints = [
-      pt(185, 1260), pt(250, 1260), pt(320, 1260), pt(390, 1260), pt(460, 1260),
-      pt(530, 1275), pt(600, 1290), pt(670, 1310), pt(730, 1335), pt(780, 1360),
-      pt(820, 1395), pt(860, 1430), pt(860, 1490), pt(860, 1545)
-    ];
+    // 2. Ornamental Curbs and Bushes along the green border boundary
+    const borderPoints = [];
+    function addSegPoints(pA, pB, count) {
+      for (let i = 0; i <= count; i++) {
+        const t = i / count;
+        borderPoints.push(pt(pA[0] + (pB[0] - pA[0]) * t, pA[1] + (pB[1] - pA[1]) * t));
+      }
+    }
+    addSegPoints([185, 1145], [590, 1175], 10);
+    addSegPoints([590, 1175], [670, 1340], 5);
+    addSegPoints([670, 1340], [1040, 1400], 10);
+    addSegPoints([1040, 1400], [1040, 1555], 5);
 
     borderPoints.forEach(bp => {
       const curb = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.16, 0.7), fMats.whiteTrim);
@@ -56,14 +66,14 @@ window.Starflex3D.Builders.Facade.Landscape = {
       group.add(curb, bush);
     });
 
-    // Landscaping shade trees inside the front lawn garden (matching Google Map satellite)
+    // Landscaping shade trees inside the front lawn (matching circles in user's diagram)
     const gardenTrees = [
-      pt(260, 1400),
-      pt(340, 1460),
-      pt(480, 1380),
-      pt(560, 1440),
-      pt(680, 1420),
-      pt(750, 1470)
+      pt(260, 1350),
+      pt(360, 1450),
+      pt(520, 1400),
+      pt(620, 1440),
+      pt(750, 1460),
+      pt(830, 1500)
     ];
     gardenTrees.forEach(tp => {
       const treeGroup = new THREE.Group();
@@ -84,10 +94,11 @@ window.Starflex3D.Builders.Facade.Landscape = {
     });
 
     // 3. Three Tall Flagpoles (Thai National Flag in center + 2 Corporate Flags)
+    // Located in front right of the lawn island behind the STARFLEX sign wall (matching user's orange flag drawing)
     const flagPositions = [
-      { px: 430, py: 1510, h: 11.5, type: "corp" },
-      { px: 460, py: 1510, h: 12.8, type: "thai" },
-      { px: 490, py: 1510, h: 11.5, type: "corp" }
+      { px: 870, py: 1515, h: 11.5, type: "corp" },
+      { px: 910, py: 1505, h: 12.8, type: "thai" },
+      { px: 950, py: 1515, h: 11.5, type: "corp" }
     ];
 
     flagPositions.forEach(fp => {
