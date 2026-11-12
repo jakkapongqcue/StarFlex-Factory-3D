@@ -14,36 +14,18 @@ window.Starflex3D.Builders.Facade.Landscape = {
     const group = new THREE.Group();
     group.name = "FacadeLandscape";
 
-    // 1. Green Front Lawn (Polygon shape conforming to diagonal road / fence line)
-    // Vertices:
-    // NW: pt(140, 1150)
-    // NE: pt(460, 1150)
-    // SE: pt(460, 1530)
-    // S-Diagonal to Sign Wall: pt(690, 1560)
-    // SW-Corner: pt(140, 1780)
-    const lawnPoly = [
-      pt(140, 1150),
-      pt(460, 1150),
-      pt(460, 1530),
-      pt(690, 1555),
-      pt(140, 1775)
-    ];
-
-    const lawnShape = new THREE.Shape();
-    lawnShape.moveTo(lawnPoly[0].x, -lawnPoly[0].z);
-    for (let i = 1; i < lawnPoly.length; i++) {
-      lawnShape.lineTo(lawnPoly[i].x, -lawnPoly[i].z);
-    }
-    lawnShape.closePath();
-
-    const lawnGeo = new THREE.ShapeGeometry(lawnShape);
-    const lawnMesh = new THREE.Mesh(lawnGeo, fMats.lawnGreen);
-    lawnMesh.rotation.x = -Math.PI / 2;
-    lawnMesh.position.y = -0.32;
+    // 1. Green Front Lawn (px: 120..460, py: 1150..1545)
+    // Leaves open paved driveway in front of Office HQ
+    const lawnRect = rect([120, 1150, 460, 1545]);
+    const lawnMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(lawnRect.w, 0.16, lawnRect.d),
+      fMats.lawnGreen
+    );
+    lawnMesh.position.set(lawnRect.x, -0.32, lawnRect.z);
     lawnMesh.receiveShadow = true;
     group.add(lawnMesh);
 
-    // 2. Ornamental bushes and trees along the driveway and perimeter
+    // 2. Ornamental bushes lining the lawn border along the driveway (py: 1170..1520)
     for (let py = 1170; py <= 1520; py += 35) {
       const bp = pt(460, py);
       const curb = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.16, 0.7), fMats.whiteTrim);
@@ -54,34 +36,11 @@ window.Starflex3D.Builders.Facade.Landscape = {
     }
 
     // Bushes along the rear lawn boundary (py: 1150)
-    for (let px = 150; px < 460; px += 40) {
+    for (let px = 140; px < 460; px += 40) {
       const bp = pt(px, 1150);
       const bush = new THREE.Mesh(new THREE.SphereGeometry(0.35, 8, 8), fMats.hedgeGreen);
       bush.position.set(bp.x, 0.25, bp.z);
       group.add(bush);
-    }
-
-    // Trees along the diagonal southwest front fence line (matching satellite foliage)
-    for (let t = 0.08; t <= 0.92; t += 0.12) {
-      const px = 140 + (690 - 140) * t;
-      const py = 1775 + (1555 - 1775) * t;
-      const tp = pt(px, py);
-      // Offset slightly inward from fence line into lawn
-      const treeGroup = new THREE.Group();
-      const trunk = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.14, 0.2, 1.4, 7),
-        new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.9 })
-      );
-      trunk.position.y = 0.7;
-      const foliage = new THREE.Mesh(
-        new THREE.SphereGeometry(1.1, 8, 8),
-        fMats.hedgeGreen
-      );
-      foliage.position.y = 1.9;
-      foliage.scale.set(1, 0.85, 1);
-      treeGroup.add(trunk, foliage);
-      treeGroup.position.set(tp.x + 1.2, -0.32, tp.z - 1.2);
-      group.add(treeGroup);
     }
 
     // 3. Three Tall Flagpoles (Thai National Flag in center + 2 Corporate Flags)
