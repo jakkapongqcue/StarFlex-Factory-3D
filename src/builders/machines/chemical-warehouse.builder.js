@@ -100,6 +100,7 @@ window.Starflex3D.Builders.ChemicalWarehouse = (function () {
       // HORIZONTAL EAST-WEST ORIENTATION (Ridge runs along X)
       // =====================================================================
       // 3. South Wall Entrances & Doors (facing factory Hall 1 for forklift loading)
+      const southWallZ = halfD * 0.96;
       const doorW = 3.2;
       const doorH = 3.0;
       [-r.w * 0.24, r.w * 0.24].forEach(dx => {
@@ -107,7 +108,7 @@ window.Starflex3D.Builders.ChemicalWarehouse = (function () {
           new THREE.BoxGeometry(doorW, doorH, 0.15),
           shutterMat
         );
-        door.position.set(dx, doorH * 0.5 + 0.3, halfD * 0.485);
+        door.position.set(dx, doorH * 0.5 + 0.3, southWallZ + 0.05);
         addEdges(door, 0x0369a1, 0.7);
         bldgGroup.add(door);
 
@@ -115,7 +116,7 @@ window.Starflex3D.Builders.ChemicalWarehouse = (function () {
           new THREE.BoxGeometry(doorW + 0.3, doorH + 0.2, 0.2),
           yellowMat
         );
-        trim.position.set(dx, (doorH + 0.2) * 0.5 + 0.2, halfD * 0.48);
+        trim.position.set(dx, (doorH + 0.2) * 0.5 + 0.2, southWallZ + 0.06);
         addEdges(trim, 0xb45309, 0.6);
         bldgGroup.add(trim);
 
@@ -123,7 +124,7 @@ window.Starflex3D.Builders.ChemicalWarehouse = (function () {
           new THREE.BoxGeometry(doorW + 0.8, 0.12, 1.6),
           darkSteelMat
         );
-        canopy.position.set(dx, doorH + 0.6, halfD * 0.48 + 0.8);
+        canopy.position.set(dx, doorH + 0.6, southWallZ + 0.8);
         addEdges(canopy, 0x0f172a, 0.7);
         bldgGroup.add(canopy);
       });
@@ -136,15 +137,16 @@ window.Starflex3D.Builders.ChemicalWarehouse = (function () {
         0.9,
         0xdc2626
       );
-      sign.position.set(0, 3.4, halfD * 0.49 + 0.08);
+      sign.position.set(0, 3.4, southWallZ + 0.08);
       bldgGroup.add(sign);
 
       // 4. West & East Gable End Walls (Triangular Tympanums)
-      [-halfW * 0.48, halfW * 0.48].forEach(gx => {
+      const gableX = halfW * 0.96;
+      [-gableX + 0.07, gableX - 0.07].forEach(gx => {
         const tympanumShape = new THREE.Shape();
-        tympanumShape.moveTo(-halfD * 0.48, eaveH);
-        tympanumShape.lineTo(0, ridgeH);
-        tympanumShape.lineTo(halfD * 0.48, eaveH);
+        tympanumShape.moveTo(-halfD * 0.96, eaveH);
+        tympanumShape.lineTo(0, ridgeH - 0.02);
+        tympanumShape.lineTo(halfD * 0.96, eaveH);
         tympanumShape.closePath();
 
         const extrudeSettings = { depth: 0.14, bevelEnabled: false };
@@ -158,42 +160,46 @@ window.Starflex3D.Builders.ChemicalWarehouse = (function () {
           new THREE.BoxGeometry(0.2, 0.65, 1.8),
           darkSteelMat
         );
-        louver.position.set(gx, (eaveH + ridgeH) * 0.5 - 0.1, 0);
+        louver.position.set(gx + (gx > 0 ? 0.04 : -0.04), (eaveH + ridgeH) * 0.5 - 0.1, 0);
         addEdges(louver, 0x64748b, 0.6);
         bldgGroup.add(louver);
       });
 
-      // 5. Sloped Gable Roof (Two sloping planes running East-West)
-      const slopeD = Math.sqrt(Math.pow(halfD * 0.55, 2) + Math.pow(ridgeH - eaveH, 2)) + 0.4;
-      const roofLenX = r.w * 1.02;
-      const slopeAngle = Math.atan2(ridgeH - eaveH, halfD * 0.5);
+      // 5. Authentic Sloped Gable Roof (Two sloping planes running East-West)
+      const overhangZ = 0.45;
+      const overhangX = 0.45;
+      const runZ = halfD + overhangZ;
+      const riseH = ridgeH - eaveH;
+      const slopeD = Math.hypot(runZ, riseH);
+      const slopeAngle = Math.atan2(riseH, runZ);
+      const roofLenX = r.w + overhangX * 2;
 
-      // North Slope (-Z)
+      // North Slope (-Z): peaks at ridge (z = 0), slopes down to North eave (z = -runZ)
       const northSlope = new THREE.Mesh(
         new THREE.BoxGeometry(roofLenX, 0.14, slopeD),
         roofMat
       );
-      northSlope.position.set(0, (eaveH + ridgeH) * 0.5 + 0.06, -halfD * 0.26);
+      northSlope.position.set(0, (eaveH + ridgeH) * 0.5 + 0.06, -runZ * 0.5);
       northSlope.rotation.x = -slopeAngle;
       addEdges(northSlope, 0x1e293b, 0.65);
       bldgGroup.add(northSlope);
 
-      // South Slope (+Z)
+      // South Slope (+Z): peaks at ridge (z = 0), slopes down to South eave (z = +runZ)
       const southSlope = new THREE.Mesh(
         new THREE.BoxGeometry(roofLenX, 0.14, slopeD),
         roofMat
       );
-      southSlope.position.set(0, (eaveH + ridgeH) * 0.5 + 0.06, halfD * 0.26);
+      southSlope.position.set(0, (eaveH + ridgeH) * 0.5 + 0.06, runZ * 0.5);
       southSlope.rotation.x = slopeAngle;
       addEdges(southSlope, 0x1e293b, 0.65);
       bldgGroup.add(southSlope);
 
       // Apex Ridge Cap along X
       const ridgeCap = new THREE.Mesh(
-        new THREE.BoxGeometry(roofLenX, 0.14, 0.45),
+        new THREE.BoxGeometry(roofLenX, 0.14, 0.52),
         darkSteelMat
       );
-      ridgeCap.position.set(0, ridgeH + 0.08, 0);
+      ridgeCap.position.set(0, ridgeH + 0.07, 0);
       bldgGroup.add(ridgeCap);
 
       // Industrial Gravity Roof Exhaust Ventilators along X ridge
@@ -283,6 +289,7 @@ window.Starflex3D.Builders.ChemicalWarehouse = (function () {
       // VERTICAL NORTH-SOUTH ORIENTATION (Ridge runs along Z)
       // =====================================================================
       // 3. East Wall Entrances & Doors (facing factory Hall 1 for forklift loading)
+      const eastWallX = halfW * 0.96;
       const doorW = 2.4;
       const doorH = 3.0;
       [-r.d * 0.24, r.d * 0.24].forEach((dz) => {
@@ -290,7 +297,7 @@ window.Starflex3D.Builders.ChemicalWarehouse = (function () {
           new THREE.BoxGeometry(0.15, doorH, doorW),
           shutterMat
         );
-        door.position.set(halfW * 0.485, doorH * 0.5 + 0.3, dz);
+        door.position.set(eastWallX + 0.05, doorH * 0.5 + 0.3, dz);
         addEdges(door, 0x0369a1, 0.7);
         bldgGroup.add(door);
 
@@ -298,7 +305,7 @@ window.Starflex3D.Builders.ChemicalWarehouse = (function () {
           new THREE.BoxGeometry(0.2, doorH + 0.2, doorW + 0.3),
           yellowMat
         );
-        trim.position.set(halfW * 0.48, (doorH + 0.2) * 0.5 + 0.2, dz);
+        trim.position.set(eastWallX + 0.06, (doorH + 0.2) * 0.5 + 0.2, dz);
         addEdges(trim, 0xb45309, 0.6);
         bldgGroup.add(trim);
 
@@ -306,7 +313,7 @@ window.Starflex3D.Builders.ChemicalWarehouse = (function () {
           new THREE.BoxGeometry(1.6, 0.12, doorW + 0.8),
           darkSteelMat
         );
-        canopy.position.set(halfW * 0.48 + 0.8, doorH + 0.6, dz);
+        canopy.position.set(eastWallX + 0.8, doorH + 0.6, dz);
         addEdges(canopy, 0x0f172a, 0.7);
         bldgGroup.add(canopy);
       });
@@ -319,60 +326,65 @@ window.Starflex3D.Builders.ChemicalWarehouse = (function () {
         0xdc2626
       );
       sign.rotation.y = Math.PI / 2;
-      sign.position.set(halfW * 0.49 + 0.08, 3.4, 0);
+      sign.position.set(eastWallX + 0.08, 3.4, 0);
       bldgGroup.add(sign);
 
       // 4. North & South Gable End Walls (Triangular Tympanums)
-      [-halfD * 0.48, halfD * 0.48].forEach(gz => {
+      const gableZ = halfD * 0.96;
+      [-gableZ + 0.07, gableZ - 0.07].forEach(gz => {
         const tympanumShape = new THREE.Shape();
-        tympanumShape.moveTo(-halfW * 0.48, eaveH);
-        tympanumShape.lineTo(0, ridgeH);
-        tympanumShape.lineTo(halfW * 0.48, eaveH);
+        tympanumShape.moveTo(-halfW * 0.96, eaveH);
+        tympanumShape.lineTo(0, ridgeH - 0.02);
+        tympanumShape.lineTo(halfW * 0.96, eaveH);
         tympanumShape.closePath();
 
         const extrudeSettings = { depth: 0.14, bevelEnabled: false };
         const tympanumGeo = new THREE.ExtrudeGeometry(tympanumShape, extrudeSettings);
         const tympanum = new THREE.Mesh(tympanumGeo, wallMat);
-        tympanum.position.set(0, 0, gz - 0.07);
+        tympanum.position.set(0, 0, gz + (gz > 0 ? -0.07 : 0.07));
         bldgGroup.add(tympanum);
 
         const louver = new THREE.Mesh(
           new THREE.BoxGeometry(1.8, 0.65, 0.2),
           darkSteelMat
         );
-        louver.position.set(0, (eaveH + ridgeH) * 0.5 - 0.1, gz);
+        louver.position.set(0, (eaveH + ridgeH) * 0.5 - 0.1, gz + (gz > 0 ? 0.04 : -0.04));
         addEdges(louver, 0x64748b, 0.6);
         bldgGroup.add(louver);
       });
 
-      // 5. Sloped Gable Roof (Two sloping planes running North-South)
-      const slopeW = Math.sqrt(Math.pow(halfW * 0.55, 2) + Math.pow(ridgeH - eaveH, 2)) + 0.4;
-      const roofLen = r.d * 1.02;
-      const slopeAngle = Math.atan2(ridgeH - eaveH, halfW * 0.5);
+      // 5. Authentic Sloped Gable Roof (Two sloping planes running North-South)
+      const overhangX = 0.45;
+      const overhangZ = 0.45;
+      const runX = halfW + overhangX;
+      const riseH = ridgeH - eaveH;
+      const slopeW = Math.hypot(runX, riseH);
+      const slopeAngle = Math.atan2(riseH, runX);
+      const roofLenZ = r.d + overhangZ * 2;
 
       const westSlope = new THREE.Mesh(
-        new THREE.BoxGeometry(slopeW, 0.14, roofLen),
+        new THREE.BoxGeometry(slopeW, 0.14, roofLenZ),
         roofMat
       );
-      westSlope.position.set(-halfW * 0.26, (eaveH + ridgeH) * 0.5 + 0.06, 0);
+      westSlope.position.set(-runX * 0.5, (eaveH + ridgeH) * 0.5 + 0.06, 0);
       westSlope.rotation.z = slopeAngle;
       addEdges(westSlope, 0x1e293b, 0.65);
       bldgGroup.add(westSlope);
 
       const eastSlope = new THREE.Mesh(
-        new THREE.BoxGeometry(slopeW, 0.14, roofLen),
+        new THREE.BoxGeometry(slopeW, 0.14, roofLenZ),
         roofMat
       );
-      eastSlope.position.set(halfW * 0.26, (eaveH + ridgeH) * 0.5 + 0.06, 0);
+      eastSlope.position.set(runX * 0.5, (eaveH + ridgeH) * 0.5 + 0.06, 0);
       eastSlope.rotation.z = -slopeAngle;
       addEdges(eastSlope, 0x1e293b, 0.65);
       bldgGroup.add(eastSlope);
 
       const ridgeCap = new THREE.Mesh(
-        new THREE.BoxGeometry(0.45, 0.14, roofLen),
+        new THREE.BoxGeometry(0.52, 0.14, roofLenZ),
         darkSteelMat
       );
-      ridgeCap.position.set(0, ridgeH + 0.08, 0);
+      ridgeCap.position.set(0, ridgeH + 0.07, 0);
       bldgGroup.add(ridgeCap);
 
       [-r.d * 0.32, 0, r.d * 0.32].forEach(vz => {
