@@ -52,14 +52,57 @@ window.Starflex3D.Builders.Warehouse = (function () {
       metalness: 0.05
     });
 
+    // 1b. Metallized Foil / Dark Grey Film Roll End-Face Texture (matching WH-PRD photo)
+    const foilCanvas = document.createElement("canvas");
+    foilCanvas.width = 256;
+    foilCanvas.height = 256;
+    const fctx = foilCanvas.getContext("2d");
+
+    fctx.fillStyle = "#475569";
+    fctx.fillRect(0, 0, 256, 256);
+
+    for (let rad = 124; rad > 38; rad -= 3) {
+      fctx.beginPath();
+      fctx.arc(cx, cy, rad, 0, Math.PI * 2);
+      fctx.strokeStyle = rad % 6 === 0 ? "#64748b" : "#334155";
+      fctx.lineWidth = 1.4;
+      fctx.stroke();
+    }
+
+    // White/Pink QC Spec Label on the dark foil roll face (as seen in WH-PRD photo)
+    fctx.fillStyle = "#fce7f3";
+    fctx.fillRect(148, 86, 46, 28);
+    fctx.strokeStyle = "#db2777";
+    fctx.lineWidth = 2;
+    fctx.strokeRect(148, 86, 46, 28);
+
+    // Brown Kraft paperboard core
+    fctx.beginPath();
+    fctx.arc(cx, cy, 38, 0, Math.PI * 2);
+    fctx.fillStyle = "#854d0e";
+    fctx.fill();
+
+    // Dark hollow bore for steel hanging shaft
+    fctx.beginPath();
+    fctx.arc(cx, cy, 20, 0, Math.PI * 2);
+    fctx.fillStyle = "#0f172a";
+    fctx.fill();
+
+    const foilEndTex = new THREE.CanvasTexture(foilCanvas);
+    const foilEndCapMat = new THREE.MeshStandardMaterial({
+      map: foilEndTex,
+      roughness: 0.28,
+      metalness: 0.38
+    });
+
     // 2. Colorful Printed Packaging Film Sleeve Textures (matching reference photo)
     const palettes = [
-      { main: "#2563eb", sub: "#38bdf8", accent: "#1e40af" }, // Sky/Ocean Blue packaging
-      { main: "#dc2626", sub: "#f87171", accent: "#991b1b" }, // Crimson Red packaging
-      { main: "#7c3aed", sub: "#c4b5fd", accent: "#5b21b6" }, // Lavender/Purple packaging
-      { main: "#16a34a", sub: "#86efac", accent: "#14532d" }, // Emerald/Lime Green packaging
-      { main: "#db2777", sub: "#f9a8d4", accent: "#9d174d" }, // Rose Pink packaging
-      { main: "#ea580c", sub: "#fdba74", accent: "#78350f" }  // Amber/Orange character packaging
+      { main: "#16a34a", sub: "#86efac", accent: "#14532d", foilEnd: true },  // Green "USA" packaging (prominent in WH-PRD photo)
+      { main: "#db2777", sub: "#f9a8d4", accent: "#9d174d", foilEnd: true },  // Rose Pink laminated roll
+      { main: "#2563eb", sub: "#38bdf8", accent: "#1e40af", foilEnd: false }, // Sky/Ocean Blue packaging
+      { main: "#dc2626", sub: "#f87171", accent: "#991b1b", foilEnd: false }, // Crimson Red packaging
+      { main: "#7c3aed", sub: "#c4b5fd", accent: "#5b21b6", foilEnd: true },  // Lavender/Purple packaging
+      { main: "#ea580c", sub: "#fdba74", accent: "#78350f", foilEnd: true }   // Amber/Gold laminated roll
     ];
 
     const printedRollMats = palettes.map(pal => {
@@ -68,8 +111,8 @@ window.Starflex3D.Builders.Warehouse = (function () {
       c.height = 256;
       const g = c.getContext("2d");
 
-      // White film base & selvage margins
-      g.fillStyle = "#f8fafc";
+      // White/Silver film base & selvage margins
+      g.fillStyle = pal.foilEnd ? "#e2e8f0" : "#f8fafc";
       g.fillRect(0, 0, 256, 256);
 
       // Printed web lanes (3 lanes across roll width, repeating panels around circumference)
@@ -98,16 +141,18 @@ window.Starflex3D.Builders.Warehouse = (function () {
       const sideMat = new THREE.MeshStandardMaterial({
         map: tex,
         roughness: 0.22,
-        metalness: 0.12
+        metalness: pal.foilEnd ? 0.22 : 0.10
       });
-      return [sideMat, endCapMat, endCapMat];
+      const cap = pal.foilEnd ? foilEndCapMat : endCapMat;
+      return [sideMat, cap, cap];
     });
 
     cachedWIPMats = {
       printedRollMats,
       royalBlueRackMat: new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.35, metalness: 0.45 }),
       darkBlueBraceMat: new THREE.MeshStandardMaterial({ color: 0x0369a1, roughness: 0.4, metalness: 0.45 }),
-      steelShaftMat: new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.25, metalness: 0.78 }),
+      orangeBeamMat: new THREE.MeshStandardMaterial({ color: 0xea580c, roughness: 0.35, metalness: 0.35 }),
+      steelShaftMat: new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.22, metalness: 0.82 }),
       loscamRedMat: new THREE.MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.55, metalness: 0.1 }),
       blackPalletMat: new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.65, metalness: 0.1 }),
       pinkTagMat: new THREE.MeshBasicMaterial({ color: 0xf472b6 }),
@@ -334,13 +379,15 @@ window.Starflex3D.Builders.Warehouse = (function () {
 
     if (isWHPRD) {
       // ------------------------------------------------------------------------
-      // WH-PRD: Production Warehouse Pallet Racks (Hall 1 South)
-      // 3 EW Rows × 4 Tiers with 2.0m Longitudinal Aisles + 2.4m Central Cross Walkway
-      // Clean factory floor (no painted green floor or yellow stripes)
+      // WH-PRD: High-Density 5-Tier Hanging Film Roll Racks (Hall 1 South)
+      // Matches factory photo: Royal-Blue Upright Frames + Orange Saddle Beams +
+      // Suspended Laminated/Printed Jumbo Film Rolls on Steel Pipe Shafts (5 Tiers)
       // ------------------------------------------------------------------------
+      const wm = getWIPRollMaterials();
       const numRows = 3;
-      const tiers = 4;
-      const rackD = 1.25;
+      const tiers = 5;
+      const rackD = 1.22;
+      const rackH = Math.max(H || 5.4, 5.4);
       const crossWalkW = 2.4;
       const segL = (r.w * 0.94 - crossWalkW) * 0.5;
       const segCentersX = [
@@ -354,58 +401,98 @@ window.Starflex3D.Builders.Warehouse = (function () {
         r.d * 0.5 - rackD * 0.5 - 0.12   // South Row
       ];
 
-      // Rack Shelving, Upright Frames, Pallets & Cargo for each of the 2 Blocks (West & East)
-      const numBays = 5;
+      const numBays = 8; // 8 closely-spaced roll bays per block (16 bays per full row)
+      const bayW = (segL * 0.96) / numBays;
+      const halfSpanZ = rackD * 0.44;
+
       for (let a = 0; a < numRows; a++) {
         const rz = rowZ[a];
+        const zFront = rz + halfSpanZ;
+        const zBack = rz - halfSpanZ;
 
         segCentersX.forEach((cx, segIdx) => {
-          // Bounding wireframe
-          const frame = new THREE.Mesh(new THREE.BoxGeometry(segL, H, rackD), wireFrameMat);
-          frame.position.set(cx, H * 0.5, rz);
-          group.add(frame);
-
-          // Upright ladder columns
+          // 1. Blue Perforated Upright Columns & Diagonal Lattice Bracing at every bay
           for (let b = 0; b <= numBays; b++) {
-            const bx = cx - segL * 0.48 + (segL * 0.96 * b) / numBays;
-            const post = new THREE.Mesh(new THREE.BoxGeometry(0.08, H, rackD * 0.98), bluePostMat);
-            post.position.set(bx, H * 0.5, rz);
-            group.add(post);
+            const bx = cx - segL * 0.48 + b * bayW;
+
+            // Front & Back Blue Upright Posts
+            [zFront, zBack].forEach(pz => {
+              const post = new THREE.Mesh(
+                new THREE.BoxGeometry(0.085, rackH, 0.085),
+                wm.royalBlueRackMat
+              );
+              post.position.set(bx, rackH * 0.5, pz);
+              group.add(post);
+            });
+
+            // Horizontal & Diagonal Blue Frame Bracing between front and back posts
+            for (let t = 0; t < tiers; t++) {
+              const braceY = 0.55 + t * 0.98;
+              const hTie = new THREE.Mesh(
+                new THREE.BoxGeometry(0.05, 0.05, rackD * 0.88),
+                wm.darkBlueBraceMat
+              );
+              hTie.position.set(bx, braceY, rz);
+              group.add(hTie);
+
+              const dBrace = new THREE.Mesh(
+                new THREE.BoxGeometry(0.04, 0.04, rackD * 0.95),
+                wm.darkBlueBraceMat
+              );
+              dBrace.position.set(bx, braceY + 0.46, rz);
+              dBrace.rotation.x = (t % 2 === 0 ? 1 : -1) * 0.45;
+              group.add(dBrace);
+            }
           }
 
-          // Tiers (horizontal orange beams)
-          for (let t = 1; t <= tiers; t++) {
-            const ty = 0.5 + ((H - 1.45) * (t - 1)) / Math.max(1, tiers - 1);
-            const shelf = new THREE.Mesh(new THREE.BoxGeometry(segL * 0.98, 0.12, rackD * 0.96), beamMat);
-            shelf.position.set(cx, ty, rz);
-            group.add(shelf);
+          // 2. Five Vertical Tiers of Orange Load Beams, Saddle Brackets & Suspended Film Rolls
+          for (let t = 0; t < tiers; t++) {
+            const beamY = 0.62 + t * 0.98;
+            const rollY = beamY + 0.16;
+            const rollRad = 0.37;
 
-            // Cargo in each bay
+            // Front & Back Orange Longitudinal Beams along X
+            [zFront, zBack].forEach(bz => {
+              const oBeam = new THREE.Mesh(
+                new THREE.BoxGeometry(segL * 0.97, 0.10, 0.07),
+                wm.orangeBeamMat
+              );
+              oBeam.position.set(cx, beamY, bz);
+              group.add(oBeam);
+            });
+
+            // Suspended Jumbo Film Roll on Hollow Steel Pipe Shaft in each bay
             for (let b = 0; b < numBays; b++) {
-              const px = cx - segL * 0.48 + (segL * 0.96 * (b + 0.5)) / numBays;
+              const px = cx - segL * 0.48 + (b + 0.5) * bayW;
 
-              // Wooden pallet base
-              const pallet = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.10, rackD * 0.78), mats.palletWood);
-              pallet.position.set(px, ty + 0.05, rz);
-              group.add(pallet);
+              // Orange U-Cradle Saddle Brackets supporting the shaft on front & back beams
+              [zFront, zBack].forEach(bz => {
+                const bracket = new THREE.Mesh(
+                  new THREE.BoxGeometry(0.16, 0.14, 0.12),
+                  wm.orangeBeamMat
+                );
+                bracket.position.set(px, beamY + 0.09, bz);
+                group.add(bracket);
+              });
 
-              const isRoll = (a + t + b + segIdx) % 2 === 0;
-              if (isRoll) {
-                const roll = new THREE.Mesh(
-                  new THREE.CylinderGeometry(0.42, 0.42, rackD * 0.70, 14),
-                  mats.filmRollWhite
-                );
-                roll.rotation.x = Math.PI / 2;
-                roll.position.set(px, ty + 0.47, rz);
-                group.add(roll);
-              } else {
-                const carton = new THREE.Mesh(
-                  new THREE.BoxGeometry(1.2, 0.80, rackD * 0.74),
-                  mats.cartonBox
-                );
-                carton.position.set(px, ty + 0.45, rz);
-                group.add(carton);
-              }
+              // Steel Hanging Pipe Shaft passing through the roll core
+              const shaft = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.038, 0.038, rackD + 0.16, 10),
+                wm.steelShaftMat
+              );
+              shaft.rotation.x = Math.PI / 2;
+              shaft.position.set(px, rollY, rz);
+              group.add(shaft);
+
+              // Suspended Printed & Laminated Jumbo Film Roll (No pallets or boxes)
+              const matIdx = (a * 3 + t * 2 + b + segIdx) % wm.printedRollMats.length;
+              const roll = new THREE.Mesh(
+                new THREE.CylinderGeometry(rollRad, rollRad, rackD * 0.76, 18),
+                wm.printedRollMats[matIdx]
+              );
+              roll.rotation.x = Math.PI / 2;
+              roll.position.set(px, rollY, rz);
+              group.add(roll);
             }
           }
         });
