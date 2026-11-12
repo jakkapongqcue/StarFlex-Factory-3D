@@ -15,7 +15,7 @@
     structureMode: "cutaway",    // legacy string support
     floorMode: "clean",          // 'clean' | 'blueprint_soft' | 'blueprint_full' | 'overlay' | 'satellite'
     showLabels: true,
-    showFlows: true,
+    showFlows: false,
     selectedCategory: "all",
     selectedItemId: null,
     tourIndex: 0,
