@@ -16,7 +16,7 @@ window.Starflex3D.Data.Machines.warehouse = [
     category: "warehouse",
     hall: "hall_1",
     type: "hanging_rack",
-    bounds: [235, 642, 328, 735],
+    bounds: [235, 592, 328, 685],
     height: 4.2,
     orientation: "EW",
     specs: "โครงแขวนม้วนฟิล์มระหว่างกระบวนการผลิต (WIP)",
@@ -29,11 +29,11 @@ window.Starflex3D.Data.Machines.warehouse = [
     category: "warehouse",
     hall: "hall_1",
     type: "warehouse_racks",
-    bounds: [230, 935, 536, 1015],
+    bounds: [230, 885, 536, 965],
     height: 4.8,
     orientation: "EW",
     specs: "3 แถวยาว (แนวนอน EW) × 4 ชั้นความสูง · Selective Pallet Racks สำหรับฝ่ายผลิต อาคาร 1",
-    description: "คลังเก็บสินค้า วัตถุดิบ และม้วนฟิล์มระหว่างกระบวนการผลิต (WH-PRD) ประจำโถงฝ่ายผลิตอาคาร 1 จัดวางชั้นวางพาเลทมาตรฐานอุตสาหกรรม 3 แถวยาว"
+    description: "คลังเก็บสินค้า วัตถุดิบ และม้วนฟิล์มระหว่างกระบวนการผลิต (WH-PRD) ประจำโถงฝ่ายผลิตอาคาร 1 จัดวางชั้นวางพาเลทมาตรฐานอุตสาหกรรม 3 แถวยาว พร้อมทางเดินสัญจรโฟล์คลิฟต์และคนเดินกว้างขวาง"
   },
 
   // --- Hall 2 Warehouses ---
