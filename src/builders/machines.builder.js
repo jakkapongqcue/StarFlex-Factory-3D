@@ -15,7 +15,7 @@ window.Starflex3D.Builders.Machines = (function () {
     const categories = window.Starflex3D.Categories;
 
     const { createSignboardMesh, buildRoomBlock } = window.Starflex3D.Builders.MachineCommon;
-    const { buildGravurePress } = window.Starflex3D.Builders.Printing;
+    const { buildGravurePress, buildInkDispenserStation } = window.Starflex3D.Builders.Printing;
     const { buildBlowFilmTower } = window.Starflex3D.Builders.BlownFilm;
     const { buildExtrusionLine, buildLaminator, buildOvenChamber } = window.Starflex3D.Builders.Laminating;
     const { buildBagMakingArray, buildSpoutOrSlitter } = window.Starflex3D.Builders.Converting;
@@ -100,6 +100,11 @@ window.Starflex3D.Builders.Machines = (function () {
         case "slitter_array":
         case "slitter_group":
           buildSpoutOrSlitter(group, item.type, r, mats, accentMat);
+          break;
+        case "ink_dispenser":
+          if (typeof buildInkDispenserStation === "function") {
+            buildInkDispenserStation(group, r, H, mats);
+          }
           break;
         case "locker_room_yellow":
           buildLockerRoom(group, r, H, mats, 0xf59e0b, "ห้องเปลี่ยนชุดพนักงาน #2 (หญิง)", "GOWNING ROOM 2");
