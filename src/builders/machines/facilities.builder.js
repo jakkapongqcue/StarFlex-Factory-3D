@@ -292,30 +292,7 @@ window.Starflex3D.Builders.Facilities = (function () {
     rightStripe.position.set(floorW * 0.5 - 0.06, 0.016, 0);
     walkGroup.add(rightStripe);
 
-    // 2. 6 Planter Pots (แนวต้นไม้ 6 กระถาง beside SW5 Office)
-    const potMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6 });
-    const stemMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.7 });
-    const leafMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.35 });
-
-    for (let p = 0; p < 6; p++) {
-      const potZ = 0.0 + (r.d * 0.22 * p) / 5;
-      const potX = -floorW * 0.42;
-
-      const pot = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.6, 0.55), potMat);
-      pot.position.set(potX, 0.3, potZ);
-      walkGroup.add(pot);
-
-      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 0.9, 8), stemMat);
-      trunk.position.set(potX, 0.9, potZ);
-      walkGroup.add(trunk);
-
-      const crown = new THREE.Mesh(new THREE.DodecahedronGeometry(0.38, 1), leafMat);
-      crown.position.set(potX, 1.45, potZ);
-      crown.scale.set(1.0, 1.3, 1.0);
-      walkGroup.add(crown);
-    }
-
-    // 3. West Door: Entrance to Finished Goods / คลังสินค้าสำเร็จรูป
+    // 2. West Door: Entrance to Finished Goods / คลังสินค้าสำเร็จรูป
     const doorWestZ = -r.d * 0.38;
     const doorWestX = -floorW * 0.5;
     const doorWestGroup = new THREE.Group();
