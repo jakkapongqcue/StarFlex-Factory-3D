@@ -23,19 +23,19 @@ window.Starflex3D.Config.Layout = {
   // 2. Front Streetscape, Security & Gates
   FACADE: {
     FRONT_LAWN: [185, 1145, 1040, 1555], // Polygon garden island conforming to user's green boundary line
-    FLAGPOLES: { x1: 870, x2: 950, py: 1515 },
+    FLAGPOLES: { x1: 875, x2: 945, py: 1515 },
     PORTE_COCHERE: [806, 1190, 886, 1255],
     SPIRIT_HOUSE: [965, 1225],
     CANOPY_OFFICE_NOOK: [1018, 1098, 1106, 1185],
     CANOPY_HALL2_WALKWAY: [1062, 815, 1106, 1098],
     CANOPY_L_EAST_EDGE: 1106, // Continuous east fascia edge py: 815..1185
     BUILDING_4_FRONT: [1395, 1085, 1895, 1230],
-    SIGN_WALL: [695, 1552, 878, 1568],
-    GATE_IN: [878, 1558, 1145, 1564],
+    SIGN_WALL: [820, 1552, 1000, 1568], // Directly in front of the 3 Flagpoles
+    GATE_IN: [1000, 1558, 1145, 1564],
     ATM_TTB: [1140, 1546, 1165, 1572],
     GUARDHOUSE: [1165, 1445, 1295, 1560],
     GATE_OUT: [1295, 1558, 1450, 1564],
-    FENCE_FRONT_WEST: [185, 1560, 695, 1560],
+    FENCE_FRONT_WEST: [185, 1560, 820, 1560],
     FENCE_FRONT_EAST: [1450, 1560, 2035, 1560]
   },
 

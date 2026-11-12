@@ -55,8 +55,8 @@ window.Starflex3D.Builders.Facade.Guardhouse = {
       }
     }
 
-    // West Front Fence (px: 185..695, py = 1560) & West Return Fence (px = 185, py: 1098..1560)
-    buildFenceRun(185, 1560, 695, 1560, 52);
+    // West Front Fence (px: 185..820, py = 1560) & West Return Fence (px = 185, py: 1098..1560)
+    buildFenceRun(185, 1560, 820, 1560, 52);
     buildFenceRun(185, 1098, 185, 1560, 52);
 
     // East Front Fence (px: 1450..2035, py = 1560) & East Return Fence (px = 2035, py: 1080..1560)
@@ -64,7 +64,8 @@ window.Starflex3D.Builders.Facade.Guardhouse = {
     buildFenceRun(2035, 1560, 2035, 1080, 52);
 
     // 2. Royal-Blue "STARFLEX PUBLIC COMPANY LIMITED" Sign Wall
-    const signR = rect([695, 1552, 878, 1568]);
+    // Shifted east directly in front of the 3 Flagpoles (px: 820..1000)
+    const signR = rect([820, 1552, 1000, 1568]);
     const signBase = new THREE.Mesh(new THREE.BoxGeometry(signR.w, 0.65, 0.48), fMats.stonePillar);
     signBase.position.set(signR.x, 0.32, signR.z);
     const signWall = new THREE.Mesh(new THREE.BoxGeometry(signR.w, 1.6, 0.38), fMats.blueSign);
@@ -86,8 +87,8 @@ window.Starflex3D.Builders.Facade.Guardhouse = {
     signFace.position.set(signR.x, 1.45, signR.z + 0.21);
     group.add(signBase, signWall, signFace);
 
-    // 3. Main Entrance "In" Sliding Gate (px: 878..1145, py: 1560)
-    const gateInR = rect([878, 1558, 1145, 1564]);
+    // 3. Main Entrance "In" Sliding Gate (px: 1000..1145, py: 1560)
+    const gateInR = rect([1000, 1558, 1145, 1564]);
     const gateInMesh = new THREE.Mesh(
       new THREE.BoxGeometry(gateInR.w, 1.75, 0.16),
       fMats.whiteTrim

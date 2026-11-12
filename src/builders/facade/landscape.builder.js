@@ -19,14 +19,14 @@ window.Starflex3D.Builders.Facade.Landscape = {
     // 1. (185, 1145) - West fence, leaving ~4.7m driveway north of it along Hall 1
     // 2. (590, 1175) - Runs east along driveway in front of Hall 1
     // 3. (670, 1340) - Diagonally steps down to clear the west side of Office HQ
-    // 4. (1040, 1400) - Runs east in front of Office HQ & Porte-Cochere
+    // 4. (1040, 1340) - Extends horizontally east across front of Office HQ (filling the green area)
     // 5. (1040, 1555) - Turns 90 degrees south to the front fence before the Gate
     // 6. (185, 1555) - Follows the front fence back to the west corner
     const lawnPoly = [
       pt(185, 1145),
       pt(590, 1175),
       pt(670, 1340),
-      pt(1040, 1400),
+      pt(1040, 1340),
       pt(1040, 1555),
       pt(185, 1555)
     ];
@@ -38,10 +38,14 @@ window.Starflex3D.Builders.Facade.Landscape = {
     }
     lawnShape.closePath();
 
-    const lawnGeo = new THREE.ShapeGeometry(lawnShape);
+    // Solid Extruded Slab to eliminate Z-fighting and flickering against driveway/ground plane
+    const lawnGeo = new THREE.ExtrudeGeometry(lawnShape, {
+      depth: 0.12,
+      bevelEnabled: false
+    });
     const lawnMesh = new THREE.Mesh(lawnGeo, fMats.lawnGreen);
-    lawnMesh.rotation.x = -Math.PI / 2;
-    lawnMesh.position.y = -0.32;
+    lawnMesh.rotation.x = Math.PI / 2;
+    lawnMesh.position.y = -0.22; // Elevated securely above road surface (-0.32m) to kill Z-fighting
     lawnMesh.receiveShadow = true;
     group.add(lawnMesh);
 
@@ -55,8 +59,8 @@ window.Starflex3D.Builders.Facade.Landscape = {
     }
     addSegPoints([185, 1145], [590, 1175], 10);
     addSegPoints([590, 1175], [670, 1340], 5);
-    addSegPoints([670, 1340], [1040, 1400], 10);
-    addSegPoints([1040, 1400], [1040, 1555], 5);
+    addSegPoints([670, 1340], [1040, 1340], 10);
+    addSegPoints([1040, 1340], [1040, 1555], 5);
 
     borderPoints.forEach(bp => {
       const curb = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.16, 0.7), fMats.whiteTrim);
@@ -73,7 +77,7 @@ window.Starflex3D.Builders.Facade.Landscape = {
       pt(520, 1400),
       pt(620, 1440),
       pt(750, 1460),
-      pt(830, 1500)
+      pt(830, 1485)
     ];
     gardenTrees.forEach(tp => {
       const treeGroup = new THREE.Group();
@@ -89,16 +93,16 @@ window.Starflex3D.Builders.Facade.Landscape = {
       foliage.position.y = 2.2;
       foliage.scale.set(1, 0.88, 1);
       treeGroup.add(trunk, foliage);
-      treeGroup.position.set(tp.x, -0.32, tp.z);
+      treeGroup.position.set(tp.x, -0.22, tp.z);
       group.add(treeGroup);
     });
 
     // 3. Three Tall Flagpoles (Thai National Flag in center + 2 Corporate Flags)
-    // Located in front right of the lawn island behind the STARFLEX sign wall (matching user's orange flag drawing)
+    // Directly behind the moved STARFLEX sign wall (Sign px: 820..1000, Flagpoles center at px: 910)
     const flagPositions = [
-      { px: 870, py: 1515, h: 11.5, type: "corp" },
+      { px: 875, py: 1515, h: 11.5, type: "corp" },
       { px: 910, py: 1505, h: 12.8, type: "thai" },
-      { px: 950, py: 1515, h: 11.5, type: "corp" }
+      { px: 945, py: 1515, h: 11.5, type: "corp" }
     ];
 
     flagPositions.forEach(fp => {

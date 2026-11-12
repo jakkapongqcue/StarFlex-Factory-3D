@@ -43,11 +43,12 @@ window.Starflex3D.Builders.Site = {
     // 3. Internal Roads, Truck Courtyard & Gate Approach Slab
     const courtyardRects = [
       [1062, 815, 1410, 1430], // Central Truck Loading Courtyard
-      [185, 1098, 674, 1150],  // West Front Driveway along Hall 1
-      [460, 1150, 1680, 1565], // Front East-West internal driveway, Office Apron & Parking
+      [185, 1098, 674, 1145],  // West Front Driveway along Hall 1
+      [1040, 1150, 1680, 1565],// Front East internal driveway & Parking
+      [590, 1145, 1040, 1340], // Office HQ front apron connecting west driveway to central courtyard
       [1018, 1098, 1062, 1150],// Office Nook Apron connecting to driveway
-      [875, 1430, 1455, 1575], // Main gate In/Out entrance & exit road approach
-      [215, 60, 565, 247]       // North Chemical Storage Service Yard & Apron behind Hall 1
+      [1000, 1430, 1455, 1575],// Main gate In/Out entrance & exit road approach
+      [215, 60, 565, 247]      // North Chemical Storage Service Yard & Apron behind Hall 1
     ];
     courtyardRects.forEach(b => {
       const r = rect(b);
