@@ -12,10 +12,138 @@ window.Starflex3D.Builders.Warehouse = (function () {
     const item = typeof itemOrType === "object" ? itemOrType : { type: itemOrType };
     const itemType = item.type;
     const isEW = item.orientation === "EW" || itemType === "warehouse_racks" || itemType === "warehouse_zone";
+    const isWHPRD = item.code === "WH-PRD" || item.id === "wh_prd_hall1";
 
     const beamMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.4, metalness: 0.3 });
     const bluePostMat = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.4, metalness: 0.3 });
     const wireFrameMat = new THREE.MeshBasicMaterial({ color: 0x2563eb, wireframe: true, transparent: true, opacity: 0.35 });
+
+    if (isWHPRD) {
+      // ------------------------------------------------------------------------
+      // WH-PRD: Production Warehouse Pallet Racks (Hall 1 South)
+      // 3 EW Rows × 4 Tiers with 2.0m Longitudinal Aisles + 2.4m Central Cross Walkway
+      // ------------------------------------------------------------------------
+      const numRows = 3;
+      const tiers = 4;
+      const rackD = 1.25;
+      const crossWalkW = 2.4;
+      const segL = (r.w * 0.94 - crossWalkW) * 0.5;
+      const segCentersX = [
+        -(crossWalkW * 0.5 + segL * 0.5),
+        +(crossWalkW * 0.5 + segL * 0.5)
+      ];
+
+      // 1. Central Cross Walkway (ทางเดินคนเดินตัดขวางตรงกลาง rack เชื่อมต่อโถงฝ่ายผลิต)
+      const walkFloorGeo = new THREE.PlaneGeometry(crossWalkW * 0.96, r.d * 0.98);
+      const walkFloorMat = new THREE.MeshStandardMaterial({
+        color: 0x059669,
+        roughness: 0.6,
+        metalness: 0.1
+      });
+      const walkFloor = new THREE.Mesh(walkFloorGeo, walkFloorMat);
+      walkFloor.rotation.x = -Math.PI / 2;
+      walkFloor.position.set(0, 0.015, 0);
+      group.add(walkFloor);
+
+      // White safety borders along the cross walkway
+      const whiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      [-crossWalkW * 0.48, crossWalkW * 0.48].forEach(wx => {
+        const border = new THREE.Mesh(new THREE.PlaneGeometry(0.12, r.d * 0.98), whiteMat);
+        border.rotation.x = -Math.PI / 2;
+        border.position.set(wx, 0.02, 0);
+        group.add(border);
+      });
+
+      // Pedestrian zebra stripes
+      const numStripes = 6;
+      for (let s = 0; s < numStripes; s++) {
+        const sz = -r.d * 0.40 + (r.d * 0.80 * s) / (numStripes - 1);
+        const stripe = new THREE.Mesh(new THREE.PlaneGeometry(crossWalkW * 0.65, 0.28), whiteMat);
+        stripe.rotation.x = -Math.PI / 2;
+        stripe.position.set(0, 0.02, sz);
+        group.add(stripe);
+      }
+
+      // 2. Yellow floor markings for outer boundaries and aisles between rows
+      const floorLineMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.85 });
+      const rowZ = [
+        -r.d * 0.5 + rackD * 0.5 + 0.12, // North Row
+        0,                                // Center Row
+        r.d * 0.5 - rackD * 0.5 - 0.12   // South Row
+      ];
+
+      // Longitudinal driving/walking aisle lines between row 0-1 and row 1-2
+      const aisleZ = [
+        (rowZ[0] + rowZ[1]) * 0.5,
+        (rowZ[1] + rowZ[2]) * 0.5
+      ];
+      aisleZ.forEach(az => {
+        segCentersX.forEach(cx => {
+          const aLine = new THREE.Mesh(new THREE.PlaneGeometry(segL * 0.92, 0.10), floorLineMat);
+          aLine.rotation.x = -Math.PI / 2;
+          aLine.position.set(cx, 0.02, az);
+          group.add(aLine);
+        });
+      });
+
+      // 3. Rack Shelving, Upright Frames, Pallets & Cargo for each of the 2 Blocks (West & East)
+      const numBays = 5;
+      for (let a = 0; a < numRows; a++) {
+        const rz = rowZ[a];
+
+        segCentersX.forEach((cx, segIdx) => {
+          // Bounding wireframe
+          const frame = new THREE.Mesh(new THREE.BoxGeometry(segL, H, rackD), wireFrameMat);
+          frame.position.set(cx, H * 0.5, rz);
+          group.add(frame);
+
+          // Upright ladder columns
+          for (let b = 0; b <= numBays; b++) {
+            const bx = cx - segL * 0.48 + (segL * 0.96 * b) / numBays;
+            const post = new THREE.Mesh(new THREE.BoxGeometry(0.08, H, rackD * 0.98), bluePostMat);
+            post.position.set(bx, H * 0.5, rz);
+            group.add(post);
+          }
+
+          // Tiers (horizontal orange beams)
+          for (let t = 1; t <= tiers; t++) {
+            const ty = 0.5 + ((H - 1.45) * (t - 1)) / Math.max(1, tiers - 1);
+            const shelf = new THREE.Mesh(new THREE.BoxGeometry(segL * 0.98, 0.12, rackD * 0.96), beamMat);
+            shelf.position.set(cx, ty, rz);
+            group.add(shelf);
+
+            // Cargo in each bay
+            for (let b = 0; b < numBays; b++) {
+              const px = cx - segL * 0.48 + (segL * 0.96 * (b + 0.5)) / numBays;
+
+              // Wooden pallet base
+              const pallet = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.10, rackD * 0.78), mats.palletWood);
+              pallet.position.set(px, ty + 0.05, rz);
+              group.add(pallet);
+
+              const isRoll = (a + t + b + segIdx) % 2 === 0;
+              if (isRoll) {
+                const roll = new THREE.Mesh(
+                  new THREE.CylinderGeometry(0.42, 0.42, rackD * 0.70, 14),
+                  mats.filmRollWhite
+                );
+                roll.rotation.x = Math.PI / 2;
+                roll.position.set(px, ty + 0.47, rz);
+                group.add(roll);
+              } else {
+                const carton = new THREE.Mesh(
+                  new THREE.BoxGeometry(1.2, 0.80, rackD * 0.74),
+                  mats.cartonBox
+                );
+                carton.position.set(px, ty + 0.45, rz);
+                group.add(carton);
+              }
+            }
+          }
+        });
+      }
+      return;
+    }
 
     if (isEW && itemType !== "hanging_rack") {
       // ------------------------------------------------------------------------
