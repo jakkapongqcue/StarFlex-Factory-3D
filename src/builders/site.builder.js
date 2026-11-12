@@ -48,7 +48,7 @@ window.Starflex3D.Builders.Site = {
       [590, 1170, 1040, 1340], // Office HQ front apron connecting west driveway to central courtyard
       [1018, 1098, 1062, 1150],// Office Nook Apron connecting to driveway
       [1000, 1430, 1455, 1575],// Main gate In/Out entrance & exit road approach
-      [200, 45, 1062, 247]     // North Rear Service Yard & Asphalt Road behind Hall 1 & Hall 2
+      [140, 42, 1065, 247]     // North Rear Service Yard & Asphalt Road behind Hall 1 & Hall 2 (Zones 14, 15, 20, 13, 5)
     ];
     courtyardRects.forEach(b => {
       const r = rect(b);
@@ -84,8 +84,13 @@ window.Starflex3D.Builders.Site = {
     });
 
     const exteriorAuxSections = [
-      { bounds: [1940, 78, 2038, 198],    h: 0.35, y: 0.175 }, // NE Pump Room
-      { bounds: [240, 80, 540, 190],      h: 0.30, y: 0.15 }   // North Chemical Storage Building Plinth
+      { bounds: [1940, 78, 2038, 198],    h: 0.35, y: 0.175 }, // NE Pump Room (Zone 24)
+      { bounds: [152, 138, 198, 190],     h: 0.30, y: 0.15 },  // Zone 14: Solvent Distillation Room Plinth
+      { bounds: [200, 108, 268, 190],     h: 0.30, y: 0.15 },  // Zone 15: Solvent Mixing Room Plinth
+      { bounds: [282, 58, 495, 190],      h: 0.30, y: 0.15 },  // Zone 20A: Chemical Storage 1 & Waste Sorting Plinth
+      { bounds: [502, 115, 608, 190],     h: 0.30, y: 0.15 },  // Zone 13: LPG Bulk Tank Station Plinth
+      { bounds: [615, 105, 918, 190],     h: 0.30, y: 0.15 },  // Zone 20B: Chemical Storage 2 Plinth
+      { bounds: [922, 48, 1060, 190],     h: 0.30, y: 0.15 }   // Zone 5: Raw Material Storage Warehouse Plinth
     ];
 
     exteriorAuxSections.forEach(sec => {

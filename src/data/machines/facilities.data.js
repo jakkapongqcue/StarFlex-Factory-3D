@@ -241,16 +241,81 @@ window.Starflex3D.Data.Machines.facilities = [
     description: "อาคารป้อม รปภ. ตั้งอยู่ภายในแนวรั้วโรงงานทางฝั่งทิศตะวันออกของประตูทางเข้าหลัก มีกันสาดยื่นคลุมเลนตรวจรถ เกาะทางเข้าทาสีขอบขาว-แดง ตู้ ATM ttb และป้ายชื่อบริษัท STARFLEX หน้าแนวรั้วตรงตามมุมมองภาพถ่ายจริง Loading_Dock_1_StreetView.jpg"
   },
   {
+    id: "distill_room_14",
+    code: "14 · โรงกลั่น",
+    name: "14 · โรงกลั่นตัวทำละลาย (Solvent Distillation Room)",
+    category: "office_utility",
+    hall: "exterior",
+    type: "solvent_distillation",
+    bounds: [152, 138, 198, 190],
+    height: 4.2,
+    orientation: "EW",
+    specs: "โซน 14 · โรงกลั่นตัวทำละลายและรีไซเคิลสารเคมี · ระบบควบแน่นและกักเก็บการรั่วไหล",
+    description: "อาคารโรงกลั่นตัวทำละลาย (Solvent Distillation & Recovery Room) โซน 14 ด้านหลังโรงงานฝั่งทิศตะวันตกเฉียงเหนือ ใช้สำหรับกลั่นแยกและนำตัวทำละลายกลับมาใช้ใหม่ตามมาตรฐานความปลอดภัยและสิ่งแวดล้อม"
+  },
+  {
+    id: "solvent_mix_15",
+    code: "15 · โรงผสม Solvent",
+    name: "15 · โรงผสม Solvent และห้องน้ำภายนอก (Solvent Mixing Room)",
+    category: "office_utility",
+    hall: "exterior",
+    type: "solvent_mixing",
+    bounds: [200, 108, 268, 190],
+    height: 4.6,
+    orientation: "EW",
+    specs: "โซน 15 · โรงผสมสารละลาย Solvent · ถังกวนผสมสแตนเลสคู่ · ห้องน้ำพนักงานด้านหลัง",
+    description: "อาคารโรงผสมสารละลาย (Solvent Mixing & Preparation Room) โซน 15 พร้อมถังกวนผสมสแตนเลส ระบบระบายอากาศกันระเบิด คันกั้นสารเคมีรั่วไหล และอาคารห้องน้ำภายนอกทางฝั่งทิศเหนือ"
+  },
+  {
     id: "chem_storage_building",
-    code: "CHEM-WH",
-    name: "อาคารจัดเก็บสารเคมี (Chemical Storage Warehouse)",
+    code: "20 · คลังเคมี 1 / คัดแยกขยะ",
+    name: "20 · อาคารจัดเก็บสารเคมี 1 และโรงคัดแยกขยะ (Chemical Storage 1 & Waste Sorting)",
     category: "office_utility",
     hall: "exterior",
     type: "chemical_warehouse",
-    bounds: [240, 80, 540, 190],
+    bounds: [282, 58, 495, 190],
     height: 5.6,
     orientation: "EW",
-    specs: "อาคารเก็บสารเคมีเดี่ยวภายนอก · หลังคาทรงจั่ว · ระบบระบายอากาศและกักเก็บสารเคมีรั่วไหล",
-    description: "อาคารจัดเก็บสารเคมีและตัวทำละลาย (Chemicals & Solvent Storage) ตั้งอยู่ภายนอกโรงงานด้านหลังฝั่งทิศเหนือ โครงสร้างแยกเดี่ยวเพื่อความปลอดภัย มีคันกั้นสารเคมีรั่วไหล (Spill Containment) ประตูม้วนขนถ่ายสารเคมีหันสู่ Hall 1 บานเกล็ดระบายไอสารเคมี และจัดเก็บถังเคมี 200 ลิตรพร้อมถัง IBC 1,000L ตามมาตรฐานความปลอดภัยโรงงาน"
+    specs: "โซน 20 · อาคารเก็บสารเคมี 1 + ห้องของเหลวไวไฟ + โรงคัดแยกขยะรีไซเคิลฝั่งเหนือ",
+    description: "อาคารจัดเก็บสารเคมีและของเหลวไวไฟ โซน 20 (ฝั่งตะวันตก) ประกอบด้วยโถงจัดเก็บสารเคมีหลัก ห้องแยกเก็บของเหลวไวไฟ/วัตถุอันตรายทางฝั่งตะวันออก และโรงคัดแยกขยะ (Waste Sorting & Recycle Shed) ทางฝั่งทิศเหนือ"
+  },
+  {
+    id: "lpg_station_13",
+    code: "13 · สถานี LPG",
+    name: "13 · สถานีถังก๊าซ LPG (LPG Bulk Tank Station)",
+    category: "office_utility",
+    hall: "exterior",
+    type: "lpg_station",
+    bounds: [502, 115, 608, 190],
+    height: 4.2,
+    orientation: "EW",
+    specs: "โซน 13 · ถังก๊าซ LPG แคปซูลคู่ · กำแพงกันไฟ 3 ด้าน · ระบบท่อสเปรย์น้ำดับเพลิง Deluge",
+    description: "สถานีถังก๊าซปิโตรเลียมเหลว (LPG Bulk Storage Station) โซน 13 ประกอบด้วยถังก๊าซ LPG ทรงแคปซูลแนวนอนสีขาว 2 ถัง ตั้งบนฐานคอนกรีตสีเหลืองนิรภัย ล้อมด้วยกำแพงกันไฟ 3 ด้าน เสากันชน และระบบท่อน้ำดับเพลิงเหนือถัง"
+  },
+  {
+    id: "chem_storage_20b",
+    code: "20 · คลังเคมี 2",
+    name: "20 · อาคารจัดเก็บสารเคมี 2 (Chemical & Solvent Storage 2)",
+    category: "office_utility",
+    hall: "exterior",
+    type: "chemical_warehouse",
+    bounds: [615, 105, 918, 190],
+    height: 5.4,
+    orientation: "EW",
+    specs: "โซน 20 · อาคารจัดเก็บสารเคมี 2 แนวยาวหลัง Hall 2 · ประตูม้วนขนถ่าย 3 ช่อง",
+    description: "อาคารจัดเก็บสารเคมีและตัวทำละลายแห่งที่ 2 (โซน 20 ฝั่งตะวันออก) ตั้งอยู่ด้านหลังอาคาร Hall 2 โครงสร้างหลังคาทรงจั่วแนวยาว พร้อมลูกหมุนระบายอากาศ คันกั้นสารเคมีรั่วไหล และพาเลทจัดเก็บถังเคมี 200 ลิตร"
+  },
+  {
+    id: "raw_material_wh_5",
+    code: "5 · คลังวัตถุดิบ",
+    name: "5 · คลังจัดเก็บวัตถุดิบ (Raw Material Storage Warehouse)",
+    category: "warehouse",
+    hall: "exterior",
+    type: "raw_material_warehouse",
+    bounds: [922, 48, 1060, 190],
+    height: 6.2,
+    orientation: "EW",
+    specs: "โซน 5 · อาคารคลังจัดเก็บวัตถุดิบภายนอก · ชั้นวางพาเลท 3 แถว × 3 ชั้น",
+    description: "อาคารคลังจัดเก็บวัตถุดิบ (Raw Material Storage Warehouse) โซน 5 ตั้งอยู่ด้านหลังอาคาร Hall 2 ฝั่งตะวันออก จัดเก็บเม็ดพลาสติกเรซิน ม้วนฟิล์มวัตถุดิบ และวัสดุบรรจุภัณฑ์ก่อนนำเข้าสู่สายการผลิต"
   }
 ];

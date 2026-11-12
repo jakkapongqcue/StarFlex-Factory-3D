@@ -50,7 +50,12 @@ window.Starflex3D.Config.Layout = {
 
   // 4. Auxiliary Facilities & Hall 1 Zones
   AUXILIARY: {
-    CHEM_WH: [240, 80, 540, 190],
+    DISTILL_14: [152, 138, 198, 190],
+    SOLVENT_MIX_15: [200, 108, 268, 190],
+    CHEM_WH_20A: [282, 58, 495, 190],
+    LPG_STATION_13: [502, 115, 608, 190],
+    CHEM_WH_20B: [615, 105, 918, 190],
+    RAW_MAT_WH_5: [922, 48, 1060, 190],
     NE_PUMP_ROOM: [1940, 78, 2038, 198],
     HALL1_SOUTH_OFFICES: [200, 1030, 632, 1098] // SW2, Spare Parts, Data, Production, QA, QA Lab, Fire Exit
   }

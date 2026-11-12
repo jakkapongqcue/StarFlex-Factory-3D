@@ -60,7 +60,7 @@ Conversion:
 | **Front Lawn & Flagpoles** | `src/builders/facade/landscape.builder.js` | Garden Island `[185..1040, 1170..1555]`, Trees, 3 Flagpoles `px = 870..950` |
 | **Facade Common Helpers** | `src/builders/facade/common.js` | `createHippedRoofGeometry`, `createACUnit`, `createLogoTexture` |
 | **Facade Orchestrator** | `src/builders/front-facade.builder.js` | Assembles all facade sub-builders into `frontGroup` |
-| **Chemical Warehouse (CHEM-WH)** | `src/builders/machines/chemical-warehouse.builder.js` | `[240, 80, 540, 190]`, North Yard behind Hall 1 |
+| **North Yard Facilities (Zones 5, 13, 14, 15, 20)** | `src/builders/machines/chemical-warehouse.builder.js` | `[152..1060, 48..190]`, Distillation, Solvent Mix, Chem 1/2, LPG, Raw Mat |
 | **Hall 1 Production Warehouse (WH-PRD)** | `src/data/machines/warehouse.data.js` | `[230, 885, 536, 965]`, 3 Pallet Rack Rows EW with 2.0m Aisles & 2.4m Center Crosswalk, 6.5m Corridor |
 | **Hall 1 South Office Suite** | `src/builders/machines/facilities.builder.js` | `[200..632, 1030..1098]`, SW2, Spare, Data, Prod, QA, Lab, Fire Exit |
 | **Main Warehouse (WH-MAIN Racks)** | `src/builders/machines/warehouse.builder.js` | `[674, 348, 1005, 542]`, 5 Rack Rows, 12 Bays |

@@ -23,7 +23,13 @@ window.Starflex3D.Builders.Machines = (function () {
     const { buildLoadingDockTrucks } = window.Starflex3D.Builders.LoadingDock;
     const { buildLockerRoom, buildStairsAndRestrooms, buildProductionWalkway, buildHall1SouthOffice } = window.Starflex3D.Builders.Facilities;
     const { buildFilmRollRacks, buildResinStorage } = window.Starflex3D.Builders.ResinFilmStorage;
-    const { buildChemicalWarehouse } = window.Starflex3D.Builders.ChemicalWarehouse;
+    const {
+      buildChemicalWarehouse,
+      buildSolventDistillation,
+      buildSolventMixing,
+      buildLPGStation,
+      buildRawMaterialWarehouse
+    } = window.Starflex3D.Builders.ChemicalWarehouse;
     const { buildCylinderStorage } = window.Starflex3D.Builders.CylinderStorage;
 
     const itemsGroup = new THREE.Group();
@@ -128,7 +134,19 @@ window.Starflex3D.Builders.Machines = (function () {
           buildResinStorage(group, r, H, mats);
           break;
         case "chemical_warehouse":
-          buildChemicalWarehouse(group, r, H, mats);
+          buildChemicalWarehouse(group, r, H, mats, item);
+          break;
+        case "solvent_distillation":
+          buildSolventDistillation(group, r, H, mats, item);
+          break;
+        case "solvent_mixing":
+          buildSolventMixing(group, r, H, mats, item);
+          break;
+        case "lpg_station":
+          buildLPGStation(group, r, H, mats, item);
+          break;
+        case "raw_material_warehouse":
+          buildRawMaterialWarehouse(group, r, H, mats, item);
           break;
         case "cylinder_storage":
           buildCylinderStorage(group, r, H, mats);
