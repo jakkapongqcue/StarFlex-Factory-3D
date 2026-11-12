@@ -54,10 +54,10 @@ Conversion:
 | **Office Porte-Cochere & Spirit House** | `src/builders/facade/office.builder.js` | `[806, 1190, 886, 1255]`, Stone Pillars, Stairs, Spirit House |
 | **L-Shaped Canopy (หลังคารูปตัว L)** | `src/builders/facade/canopy.builder.js` | Nook `[1018..1106, 1098..1185]`, Walkway `[1062..1106, 815..1098]` |
 | **Security Guardhouse & ATM** | `src/builders/facade/guardhouse.builder.js` | `[1165, 1445, 1295, 1560]`, ATM `[1140..1165]`, Curb |
-| **Sliding Gates & Perimeter Fences** | `src/builders/facade/guardhouse.builder.js` | In Gate `[878..1145]`, Out Gate `[1295..1450]`, Fences |
+| **Sliding Gates & Perimeter Fences** | `src/builders/facade/guardhouse.builder.js` | In Gate, Out Gate, Diagonal SW Fence `[140, 1780..695, 1560]` |
 | **Building 4 Glass Facade & V-Columns**| `src/builders/facade/building4.builder.js` | `[1395, 1085, 1895, 1230]`, 5 V-Columns, Fascia, Tent |
 | **Loading Dock Facade & Courtyard** | `src/builders/facade/dock-facade.builder.js` | Canopy `[1062, 815, 1398, 874]`, AC Matrix, Downspouts |
-| **Front Lawn & Flagpoles** | `src/builders/facade/landscape.builder.js` | Lawn `[120, 1150, 460, 1545]`, 3 Flagpoles `py = 1510` |
+| **Front Lawn & Flagpoles** | `src/builders/facade/landscape.builder.js` | Lawn Polygon `[140, 1150..1780]`, Trees, 3 Flagpoles `py = 1510` |
 | **Facade Common Helpers** | `src/builders/facade/common.js` | `createHippedRoofGeometry`, `createACUnit`, `createLogoTexture` |
 | **Facade Orchestrator** | `src/builders/front-facade.builder.js` | Assembles all facade sub-builders into `frontGroup` |
 | **Chemical Warehouse (CHEM-WH)** | `src/builders/machines/chemical-warehouse.builder.js` | `[240, 80, 540, 190]`, North Yard behind Hall 1 |

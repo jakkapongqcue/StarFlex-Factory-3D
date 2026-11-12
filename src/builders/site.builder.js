@@ -21,12 +21,14 @@ window.Starflex3D.Builders.Site = {
     gridHelper.position.set(10, -0.46, 5);
     siteGroup.add(gridHelper);
 
-    // 2. Dashed Property Boundary Line
+    // 2. Dashed Property Boundary Line (Following authentic property shape)
     const boundaryPts = [
       pt(30, 45),
       pt(2080, 45),
       pt(2080, 1575),
-      pt(30, 1575),
+      pt(695, 1575),
+      pt(140, 1780),
+      pt(140, 45),
       pt(30, 45)
     ].map(p => new THREE.Vector3(p.x, -0.38, p.z));
     const boundaryGeo = new THREE.BufferGeometry().setFromPoints(boundaryPts);

@@ -22,7 +22,7 @@ window.Starflex3D.Config.Layout = {
 
   // 2. Front Streetscape, Security & Gates
   FACADE: {
-    FRONT_LAWN: [120, 1150, 460, 1545],
+    FRONT_LAWN: [140, 1150, 460, 1780], // Polygon lawn conforming to diagonal road
     FLAGPOLES: { x1: 375, x2: 435, py: 1510 },
     PORTE_COCHERE: [806, 1190, 886, 1255],
     SPIRIT_HOUSE: [965, 1225],
@@ -35,7 +35,9 @@ window.Starflex3D.Config.Layout = {
     ATM_TTB: [1140, 1546, 1165, 1572],
     GUARDHOUSE: [1165, 1445, 1295, 1560],
     GATE_OUT: [1295, 1558, 1450, 1564],
-    FENCE_FRONT_WEST: [185, 1560, 695, 1560],
+    FENCE_FRONT_WEST_DIAGONAL: [140, 1780, 695, 1560], // Diagonal front fence along main road
+    FENCE_FRONT_WEST: [140, 1780, 695, 1560],
+    FENCE_WEST_SIDE: [140, 1098, 140, 1780],
     FENCE_FRONT_EAST: [1450, 1560, 2035, 1560]
   },
 

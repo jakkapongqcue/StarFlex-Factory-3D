@@ -55,9 +55,10 @@ window.Starflex3D.Builders.Facade.Guardhouse = {
       }
     }
 
-    // West Front Fence (px: 185..695, py = 1560) & West Return Fence (px = 185, py: 1098..1560)
-    buildFenceRun(185, 1560, 695, 1560, 52);
-    buildFenceRun(185, 1098, 185, 1560, 52);
+    // West Diagonal Front Fence along the main road (from SW corner px: 140, py: 1780 up to sign wall px: 695, py: 1560)
+    // and West Boundary Fence along Hall 1 (px: 140, py: 1098..1780)
+    buildFenceRun(140, 1780, 695, 1560, 52);
+    buildFenceRun(140, 1098, 140, 1780, 52);
 
     // East Front Fence (px: 1450..2035, py = 1560) & East Return Fence (px = 2035, py: 1080..1560)
     buildFenceRun(1450, 1560, 2035, 1560, 52);
