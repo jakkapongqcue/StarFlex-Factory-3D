@@ -44,7 +44,7 @@ window.Starflex3D.Builders.Facade.Landscape = {
       bevelEnabled: false
     });
     const lawnMesh = new THREE.Mesh(lawnGeo, fMats.lawnGreen);
-    lawnMesh.rotation.x = Math.PI / 2;
+    lawnMesh.rotation.x = -Math.PI / 2; // Flat on ground facing up (Z+ south in front of factory)
     lawnMesh.position.y = -0.22; // Elevated securely above road surface (-0.32m) to kill Z-fighting
     lawnMesh.receiveShadow = true;
     group.add(lawnMesh);
