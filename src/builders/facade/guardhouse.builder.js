@@ -87,34 +87,8 @@ window.Starflex3D.Builders.Facade.Guardhouse = {
     signFace.position.set(signR.x, 1.45, signR.z + 0.21);
     group.add(signBase, signWall, signFace);
 
-    // 3. Main Entrance "In" Sliding Gate (px: 1000..1145, py: 1560)
-    const gateInR = rect([1000, 1558, 1145, 1564]);
-    const gateInMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(gateInR.w, 1.75, 0.16),
-      fMats.whiteTrim
-    );
-    gateInMesh.position.set(gateInR.x, 0.9, gateInR.z);
-    addEdges(gateInMesh, 0x64748b, 0.8);
-    group.add(gateInMesh);
-
-    // 4. Blue "ttb" ATM Booth at Main Gate Entrance
-    const atmR = rect([1140, 1546, 1165, 1572]);
-    const atmBody = new THREE.Mesh(new THREE.BoxGeometry(atmR.w, 2.5, atmR.d), fMats.blueBrand);
-    atmBody.position.set(atmR.x, 1.25, atmR.z);
-    addEdges(atmBody, 0xffffff, 0.8);
-    const atmHeader = new THREE.Mesh(
-      new THREE.BoxGeometry(atmR.w + 0.16, 0.42, atmR.d + 0.16),
-      fMats.whiteTrim
-    );
-    atmHeader.position.set(atmR.x, 2.55, atmR.z);
-    const atmAccent = new THREE.Mesh(
-      new THREE.BoxGeometry(atmR.w * 0.5, 0.22, 0.08),
-      fMats.ttbOrange
-    );
-    atmAccent.position.set(atmR.x, 2.55, atmR.z + atmR.d * 0.55);
-    group.add(atmBody, atmHeader, atmAccent);
-
-    // 5. Hipped-Roof Security Guardhouse Pavilion (px: 1165..1295, py: 1445..1560)
+    // 3. Hipped-Roof Security Guardhouse Pavilion (px: 1165..1295, py: 1445..1560)
+    // (In/Out Gate lanes left open and ATM booth removed per user layout request)
     const ghR = rect([1165, 1445, 1295, 1560]);
     const ghWallH = 3.1;
     const ghBody = new THREE.Mesh(
@@ -168,16 +142,6 @@ window.Starflex3D.Builders.Facade.Guardhouse = {
     }
 
     group.add(ghBody, ghRoof, ghAwning, curbPlinth);
-
-    // 6. Main Exit "Out" Sliding Gate (px: 1295..1450, py: 1560)
-    const gateOutR = rect([1295, 1558, 1450, 1564]);
-    const gateOutMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(gateOutR.w, 1.75, 0.16),
-      fMats.whiteTrim
-    );
-    gateOutMesh.position.set(gateOutR.x, 0.9, gateOutR.z);
-    addEdges(gateOutMesh, 0x64748b, 0.8);
-    group.add(gateOutMesh);
 
     return group;
   }
