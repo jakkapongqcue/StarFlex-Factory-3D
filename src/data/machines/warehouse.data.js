@@ -17,10 +17,10 @@ window.Starflex3D.Data.Machines.warehouse = [
     hall: "hall_1",
     type: "hanging_rack",
     bounds: [235, 592, 328, 685],
-    height: 4.2,
+    height: 3.6,
     orientation: "EW",
-    specs: "โครงแขวนม้วนฟิล์มระหว่างกระบวนการผลิต (WIP)",
-    description: "โครงเหล็กแขวนม้วนฟิล์ม WIP (Work In Process) เพื่อพักม้วนฟิล์มก่อนและหลังเข้ากระบวนการ Extrusion / Lamination"
+    specs: "โครงเหล็กสีน้ำเงินแขวนม้วนฟิล์มบนเพลาเหล็ก 2 ชั้น + พาเลทพื้น LOSCAM · พร้อมรถยก Stacker ไฟฟ้า DLX",
+    description: "โครงเหล็กสีน้ำเงินสำหรับแขวนพักม้วนฟิล์มพิมพ์ลายระหว่างกระบวนการผลิต (WIP Hanging Racks) ประกอบด้วยคานรับเพลาเหล็กแขวนม้วนฟิล์มจัมโบ้ 2 ระดับ (ชั้นกลางและชั้นบน) ค้ำยันมุมเสา พาเลทสีแดง LOSCAM และพาเลทดำวางม้วนฟิล์มรอเคลือบด้านล่าง พร้อมรถยกไฟฟ้า Walkie Stacker (DLX) ประจำจุด"
   },
   {
     id: "wh_prd_hall1",
