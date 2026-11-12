@@ -49,6 +49,7 @@ Conversion:
 
 | If you need to edit... | Primary File to Edit | Key Coordinates / Symbols |
 | :--- | :--- | :--- |
+| **Reusable 3D Primitives & Assets** | `src/builders/common/*.js` | `signboard.helper.js`, `pallets.helper.js`, `truck.builder.js` |
 | **All Building & Facility Coordinates** | `src/config/layout.constants.js` | `BUILDINGS`, `FACADE`, `COURTYARD`, `AUXILIARY` |
 | **Office HQ (สำนักงานใหญ่)** | `src/builders/facade/office.builder.js` | `[674, 1098, 1018, 1190]`, Arch Roof, Logo, Entrance Doors |
 | **Office Porte-Cochere & Spirit House** | `src/builders/facade/office.builder.js` | `[806, 1190, 886, 1255]`, Stone Pillars, Stairs, Spirit House |
@@ -57,14 +58,25 @@ Conversion:
 | **Sliding Gates & Perimeter Fences** | `src/builders/facade/guardhouse.builder.js` | In Gate, Out Gate, Front West Fence `[185, 1560..695, 1560]` |
 | **Building 4 Glass Facade & V-Columns**| `src/builders/facade/building4.builder.js` | `[1395, 1085, 1895, 1230]`, 5 V-Columns, Fascia, Tent |
 | **Loading Dock Facade & Courtyard** | `src/builders/facade/dock-facade.builder.js` | Canopy `[1062, 815, 1398, 874]`, AC Matrix, Downspouts |
+| **Loading Dock Bays & Platform** | `src/builders/machines/loading-dock.builder.js` | Bays 1..7, ramps, stairs, dock bumpers |
+| **Starflex Logistics Trucks** | `src/builders/common/truck.builder.js` | Container trucks, trailer logos, animated side doors, cabs |
 | **Front Lawn & Flagpoles** | `src/builders/facade/landscape.builder.js` | Garden Island `[185..1040, 1170..1555]`, Trees, 3 Flagpoles `px = 870..950` |
 | **Facade Common Helpers** | `src/builders/facade/common.js` | `createHippedRoofGeometry`, `createACUnit`, `createLogoTexture` |
 | **Facade Orchestrator** | `src/builders/front-facade.builder.js` | Assembles all facade sub-builders into `frontGroup` |
-| **North Yard Facilities (Zones 5, 13, 14, 15, 20)** | `src/builders/machines/chemical-warehouse.builder.js` | `[152..1060, 48..190]`, Distillation, Solvent Mix, Chem 1/2, LPG, Raw Mat |
+| **Gowning & Locker Rooms (Blue/Yellow)** | `src/builders/facilities/locker-rooms.builder.js` | Locker benches, Z-barriers, double door partitions |
+| **Stairs & Restrooms (WC Mens/Ladies)** | `src/builders/facilities/restrooms-stairs.builder.js` | 12-step staircase to 2F, handrails, men/women WC |
+| **Hygiene Room & Air Shower (WALK-HYGIENE)** | `src/builders/facilities/hygiene.builder.js` | Transparent cleanroom framing, L-sink counter, 32-nozzle air shower |
+| **Production Walkway (WALK-PROD)** | `src/builders/facilities/walkway.builder.js` | Industrial gray walkway, safety stripes, finished goods door |
+| **Hall 1 South Office Suite** | `src/builders/facilities/south-offices.builder.js` | `[200..632, 1030..1098]`, SW2, Spare, Data, Prod, QA, Lab |
+| **Facilities Coordinator** | `src/builders/machines/facilities.builder.js` | Aggregator forwarding to `src/builders/facilities/*` |
+| **North Yard - Common & Shells** | `src/builders/north-yard/north-yard.common.js` | Gabled shells, shutter doors, roof ventilators, hazchem mats |
+| **North Yard - Solvents (Zones 14 & 15)** | `src/builders/north-yard/solvent-facilities.builder.js` | Distillation kettle, condenser, mixing tanks, North WC |
+| **North Yard - LPG Station (Zone 13)** | `src/builders/north-yard/lpg-station.builder.js` | 2 bullet tanks, deluge piping, 3-sided blast wall |
+| **North Yard - Raw Material (Zone 5)** | `src/builders/north-yard/raw-material.builder.js` | Selective pallet racks, jumbo film rolls, carton boxes |
+| **North Yard - Chem Storage (Zone 20)** | `src/builders/north-yard/chemical-storage.builder.js` | Storage 1 & 2, waste sorting shed, color-coded bins |
+| **North Yard Coordinator** | `src/builders/machines/chemical-warehouse.builder.js` | Aggregator forwarding to `src/builders/north-yard/*` |
 | **Hall 1 Production Warehouse (WH-PRD)** | `src/data/machines/warehouse.data.js` | `[230, 885, 536, 965]`, 3 Pallet Rack Rows EW with 2.0m Aisles & 2.4m Center Crosswalk, 6.5m Corridor |
-| **Hall 1 South Office Suite** | `src/builders/machines/facilities.builder.js` | `[200..632, 1030..1098]`, SW2, Spare, Data, Prod, QA, Lab, Fire Exit |
 | **Main Warehouse (WH-MAIN Racks)** | `src/builders/machines/warehouse.builder.js` | `[674, 348, 1005, 542]`, 5 Rack Rows, 12 Bays |
-| **Main Walkway & Hygiene Room (WALK-PROD)** | `src/builders/machines/facilities.builder.js` | `[1056, 318, 1102, 815]`, White Path, Air Shower, 2 Doors |
 | **Factory Outer Walls & Solar Roofs** | `src/builders/architecture.builder.js` | Outer Walls, Solar Panels, Gabled Roofs, Cutaway |
 | **Ground Pavements, Roads & Plinths** | `src/builders/site.builder.js` | `courtyardRects`, `factoryInteriorSections`, Grid |
 | **Machine Data / Metadata / Specs** | `src/data/machines/*.data.js` | Machine IDs, Dimensions, Spec Sheets, Descriptions |

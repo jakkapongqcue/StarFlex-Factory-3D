@@ -146,7 +146,7 @@ window.Starflex3D.Builders.CylinderStorage = (function () {
     // 1. Clean Concrete Floor Pad (No yellow lines, no dividing borders)
     const floorPad = new THREE.Mesh(
       new THREE.BoxGeometry(r.w * 0.98, 0.04, r.d * 0.98),
-      new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.35 })
+      mats.slab
     );
     floorPad.position.y = 0.02;
     cylGroup.add(floorPad);
@@ -285,11 +285,13 @@ window.Starflex3D.Builders.CylinderStorage = (function () {
 
     // 5. Signboard
     const sign = createSignboardMesh(
-      "คลังจัดเก็บลูกกลิ้งแม่พิมพ์กราเวียร์ (CYLINDER STORAGE)",
-      "GRAVURE PRINTING CYLINDERS STOCK",
       5.2,
       0.9,
-      0x7c3aed
+      "คลังจัดเก็บลูกกลิ้งแม่พิมพ์กราเวียร์ (CYLINDER STORAGE)",
+      "GRAVURE PRINTING CYLINDERS STOCK",
+      "#7c3aed",
+      "#ffffff",
+      "#a78bfa"
     );
     sign.position.set(0, 3.2, -halfD * 0.48);
     cylGroup.add(sign);

@@ -140,18 +140,5 @@ window.Starflex3D.Data.Machines.laminating = [
     orientation: "EW",
     specs: "Fuji Kikai Dry Laminator 2LB-06 · มาตรฐานญี่ปุ่น",
     description: "เครื่องเคลือบประกบฟิล์มระดับพรีเมียม Fuji Kikai 2LB-06 พร้อมเชื่อมต่อห้องอบบ่มกาวด้านข้าง"
-  },
-  {
-    id: "oven_room_east",
-    code: "OVEN-E",
-    name: "Oven Room (ห้องอบบ่มกาว อาคารตะวันออก)",
-    category: "lamination",
-    hall: "hall_4",
-    type: "oven_chamber",
-    bounds: [1895, 920, 1968, 1055],
-    height: 4.8,
-    orientation: "NS",
-    specs: "Large Capacity Curing Oven Room",
-    description: "ห้องอบบ่มม้วนฟิล์มลามิเนตขนาดใหญ่ ยื่นออกจากผนังด้านตะวันออกใกล้เครื่อง Bobst 08 และ Fuji Kikai 2LB-06"
   }
 ];

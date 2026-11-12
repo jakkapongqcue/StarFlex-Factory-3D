@@ -98,15 +98,11 @@ window.Starflex3D.Builders.Architecture = {
     // West Outer Wall of Hall 1 (px = 200, py: 247..1098)
     addWallSegment(200, 247, 200, 1098, 10.5, wallsWest, mats.wallSolid, true, 65);
 
-    // East Outer Wall of Hall 4 + East MDB & East Oven Room (px = 1895)
+    // East Outer Wall of Hall 4 + East MDB Room (px = 1895)
     addWallSegment(1895, 465, 1895, 1100, 12.8, wallsEast, mats.wallSolid, true, 65);
     addWallSegment(1895, 490, 1950, 490, 4.5, wallsNorth, mats.wallSolid, false);
     addWallSegment(1950, 490, 1950, 545, 4.5, wallsEast, mats.wallSolid, false);
     addWallSegment(1895, 545, 1950, 545, 4.5, wallsSouth, mats.wallSolid, false);
-
-    addWallSegment(1895, 885, 1968, 885, 4.8, wallsNorth, mats.wallSolid, false);
-    addWallSegment(1968, 885, 1968, 1055, 4.8, wallsEast, mats.wallSolid, false);
-    addWallSegment(1895, 1055, 1968, 1055, 4.8, wallsSouth, mats.wallSolid, false);
 
     // Pump Room Walls
     addWallSegment(1940, 78, 2038, 78, 5.2, wallsNorth, mats.wallSolid, true, 50);
@@ -245,9 +241,8 @@ window.Starflex3D.Builders.Architecture = {
       wallsNorth.add(triFillBack);
     }
 
-    // East MDB & East Oven Room Roof Caps
+    // East MDB Room Roof Cap
     addFlatRoofCap(1895, 490, 1950, 545, 4.5, roofShellGroup, mats.roofSheet);
-    addFlatRoofCap(1895, 885, 1968, 1055, 4.8, roofShellGroup, mats.roofSheet);
 
     // NE High-Bay Blow Film Penthouse Full 4-Sided Enclosure + Roof Cap (px: 1755..1895, py: 247..465)
     addWallSegment(1755, 247, 1895, 247, 16.2, wallsNorth, mats.wallSolid, false);

@@ -69,8 +69,7 @@ window.Starflex3D.Builders.Site = {
       [1498, 247, 1895, 1148], // Hall 4 East Plant (Blow Film, Printing, Lamination)
       [1395, 765, 1498, 1230], // Hall 4 West Ramp Corridor
       [1395, 1148, 1705, 1235],// Hall 4 South Shipping Bay
-      [1895, 490, 1950, 545],  // East MDB Room
-      [1895, 885, 1968, 1055]  // East Oven Room
+      [1895, 490, 1950, 545]   // East MDB Room
     ];
 
     factoryInteriorSections.forEach(b => {
@@ -79,7 +78,7 @@ window.Starflex3D.Builders.Site = {
       const slabMesh = new THREE.Mesh(slabGeo, mats.slab);
       slabMesh.position.set(r.x, dockElevH * 0.5, r.z);
       slabMesh.receiveShadow = true;
-      addEdges(slabMesh, 0x94a3b8, 0.7);
+      addEdges(slabMesh, 0x475569, 0.75);
       siteGroup.add(slabMesh);
     });
 
@@ -99,7 +98,7 @@ window.Starflex3D.Builders.Site = {
       const slabMesh = new THREE.Mesh(slabGeo, mats.slab);
       slabMesh.position.set(r.x, sec.y, r.z);
       slabMesh.receiveShadow = true;
-      addEdges(slabMesh, 0xcbd5e1, 0.7);
+      addEdges(slabMesh, 0x475569, 0.75);
       siteGroup.add(slabMesh);
     });
 

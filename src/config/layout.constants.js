@@ -58,7 +58,7 @@ window.Starflex3D.Config.Layout = {
     CHEM_WH_20B: [615, 105, 918, 190],
     RAW_MAT_WH_5: [922, 48, 1060, 190],
     NE_PUMP_ROOM: [1940, 78, 2038, 198],
-    HALL1_SOUTH_OFFICES: [200, 1030, 632, 1098], // SW2, Spare Parts, Data, Production, QA, QA Lab, Fire Exit
+    HALL1_SOUTH_OFFICES: [200, 1030, 605, 1098], // SW2, Spare Parts, Data, Production, QA, QA Lab
     HALL1_EAST_WALLS: [
       { py1: 247, py2: 395, name: "Circle 1: Maintenance & Cylinder" },
       { py1: 448, py2: 602, name: "Circle 2: Printing & Burner" },

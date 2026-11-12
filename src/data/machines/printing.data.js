@@ -89,19 +89,6 @@ window.Starflex3D.Data.Machines.printing = [
     specs: "High-Speed Rotogravure Printing Line",
     description: "เครื่องพิมพ์กราเวียร์ CAIDA PT-06 บริเวณทิศเหนือของอาคาร 2"
   },
-  {
-    id: "alu_temp_room",
-    code: "ALU-ROOM",
-    name: "Cylinder Area & ห้องควบคุมอุณหภูมิพื้นที่ ALU",
-    category: "printing",
-    hall: "hall_2",
-    type: "prep_room",
-    bounds: [890, 248, 1062, 326],
-    height: 3.8,
-    orientation: "EW",
-    specs: "Climate-Controlled Aluminum Foil & Cylinder Storage",
-    description: "ห้องควบคุมอุณหภูมิและความชื้นสำหรับจัดเก็บฟอยล์อลูมิเนียม (ALU) และลูกกลิ้งแม่พิมพ์"
-  },
 
   // --- Hall 4 ---
   {

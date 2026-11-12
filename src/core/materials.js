@@ -10,8 +10,8 @@ window.Starflex3D.Materials = {
     const clipProps = clippingPlanes ? { clippingPlanes, clipShadows: true } : {};
 
     return {
-      slab: new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.85, metalness: 0.05 }),
-      slabEdge: new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.8, metalness: 0.08 }),
+      slab: new THREE.MeshStandardMaterial({ color: 0x7e8b9b, roughness: 0.75, metalness: 0.06 }),
+      slabEdge: new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.8, metalness: 0.08 }),
       road: new THREE.MeshStandardMaterial({ color: 0xeef2f6, roughness: 0.9, metalness: 0.02 }),
 
       wallSolid: new THREE.MeshStandardMaterial({
