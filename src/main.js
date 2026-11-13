@@ -137,6 +137,9 @@
   function renderFrame() {
     App.SceneManager.updateCameraFlight(state);
     App.Builders.Flows.updateParticles(state);
+    if (App.Builders.Converting && App.Builders.Converting.updateAnimations) {
+      App.Builders.Converting.updateAnimations();
+    }
     state.controls.update();
     App.UI.Toolbar.updateDynamicCutaway(state);
     state.renderer.render(state.scene, state.camera);

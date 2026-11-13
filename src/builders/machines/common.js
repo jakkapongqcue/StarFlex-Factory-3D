@@ -102,8 +102,45 @@ window.Starflex3D.Builders.MachineCommon = (function () {
     group.add(header);
   }
 
+  /**
+   * Build a 100% visible, orientation-proof DoubleSide 3D quad ribbon connecting p1 to p2.
+   * Supports both solid colors and patterned film textures along the web run.
+   */
+  function createWebRibbon(p1, p2, width, material) {
+    const halfW = width * 0.5;
+    const geom = new THREE.BufferGeometry();
+    const vertices = new Float32Array([
+      p1.x, p1.y, p1.z - halfW,
+      p1.x, p1.y, p1.z + halfW,
+      p2.x, p2.y, p2.z - halfW,
+
+      p2.x, p2.y, p2.z - halfW,
+      p1.x, p1.y, p1.z + halfW,
+      p2.x, p2.y, p2.z + halfW
+    ]);
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const dz = p2.z - p1.z;
+    const len = Math.max(0.1, Math.hypot(dx, dy, dz));
+    const uvs = new Float32Array([
+      0, 0,
+      0, 1,
+      len, 0,
+
+      len, 0,
+      0, 1,
+      len, 1
+    ]);
+    geom.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
+    geom.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
+    geom.computeVertexNormals();
+    geom.computeBoundingSphere();
+    return new THREE.Mesh(geom, material);
+  }
+
   return {
     createSignboardMesh,
-    buildRoomBlock
+    buildRoomBlock,
+    createWebRibbon
   };
 })();

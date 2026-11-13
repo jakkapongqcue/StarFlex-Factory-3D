@@ -25,15 +25,15 @@ window.Starflex3D.Data.Machines.laminating = [
   {
     id: "bobst_lb10",
     code: "LB-10",
-    name: "Lamination (Bobst) Nova 800 DA LB-10",
+    name: "Lamination (Bobst) NOVALAM D 800 LB-10",
     category: "lamination",
     hall: "hall_1",
     type: "laminator",
     bounds: [236, 706, 334, 766],
     height: 4.2,
     orientation: "EW",
-    specs: "Bobst Nova 800 DA · Multi-Technology Laminator",
-    description: "เครื่องเคลือบประกบฟิล์มประสิทธิภาพสูง Bobst Nova 800 DA (LB-10) มาตรฐานยุโรป"
+    specs: "Bobst NOVALAM D 800 · High-Speed Multi-Technology Laminator",
+    description: "เครื่องเคลือบประกบฟิล์มประสิทธิภาพสูง Bobst NOVALAM D 800 (LB-10) มาตรฐานยุโรป พร้อมซุ้มสะพานเปิดโล่ง หน้าจอควบคุม HMI และชุดลูกกลิ้ง Turret ความเร็วสูง"
   },
   {
     id: "sl01_laminate",
@@ -64,15 +64,16 @@ window.Starflex3D.Data.Machines.laminating = [
   {
     id: "bobst_1lb09",
     code: "1LB-09",
-    name: "Lamination (Bobst) Nova 800 DA 1LB-09",
+    name: "Lamination (Bobst) VISIONLAM 800 1LB-09",
     category: "lamination",
     hall: "hall_1",
     type: "laminator",
     bounds: [236, 812, 334, 872],
     height: 4.2,
     orientation: "EW",
-    specs: "Bobst Nova 800 DA · Multi-Technology Laminator",
-    description: "เครื่องเคลือบประกบฟิล์มประสิทธิภาพสูง Bobst Nova 800 DA (1LB-09) มาตรฐานยุโรป"
+    rotationY: Math.PI,
+    specs: "Bobst VISIONLAM 800 · Multi-Technology Laminator",
+    description: "เครื่องเคลือบประกบฟิล์มประสิทธิภาพสูง Bobst VISIONLAM 800 (1LB-09) มาตรฐานยุโรป พร้อมตู้ควบคุม HMI ระบบสัมผัสและสะพานโครงสร้าง Bobst เหนือแท่นเครื่อง"
   },
   {
     id: "comaxi_1ll07",
@@ -90,15 +91,15 @@ window.Starflex3D.Data.Machines.laminating = [
   {
     id: "beiren_sb04",
     code: "SB-04",
-    name: "Beiren Laminate SB-04",
+    name: "Beiren Laminate SB-04 (SLII400)",
     category: "lamination",
     hall: "hall_1",
     type: "laminator",
     bounds: [444, 818, 526, 862],
     height: 3.8,
     orientation: "EW",
-    specs: "Dry Laminating Line SB-04",
-    description: "เครื่องเคลือบประกบฟิล์ม Beiren Laminate SB-04 พร้อมชุดอบแห้งด้านบน"
+    specs: "Shaanxi Beiren SLII400 · Dry Laminating Line",
+    description: "เครื่องเคลือบประกบฟิล์ม Shaanxi Beiren รุ่น SLII400 (SB-04) พร้อมอุโมงค์อบแห้งด้านบน หน้าจอความเร็ว LED ดิจิทัล และตู้ควบคุมความตึงอัตโนมัติ"
   },
 
   // --- Hall 4 ---

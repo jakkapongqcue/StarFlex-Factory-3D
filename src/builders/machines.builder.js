@@ -18,7 +18,8 @@ window.Starflex3D.Builders.Machines = (function () {
     const { buildGravurePress, buildInkDispenserStation } = window.Starflex3D.Builders.Printing;
     const { buildBlowFilmTower } = window.Starflex3D.Builders.BlownFilm;
     const { buildExtrusionLine, buildLaminator, buildOvenChamber } = window.Starflex3D.Builders.Laminating;
-    const { buildBagMakingArray, buildSpoutOrSlitter } = window.Starflex3D.Builders.Converting;
+    const { buildBagMakingArray, buildSpoutOrSlitter, resetAnimations } = window.Starflex3D.Builders.Converting;
+    if (typeof resetAnimations === "function") resetAnimations();
     const { buildPalletRacks } = window.Starflex3D.Builders.Warehouse;
     const { buildLoadingDockTrucks } = window.Starflex3D.Builders.LoadingDock;
     const { buildLockerRoom, buildStairsAndRestrooms, buildProductionWalkway, buildHall1SouthOffice } = window.Starflex3D.Builders.Facilities;
@@ -74,10 +75,11 @@ window.Starflex3D.Builders.Machines = (function () {
 
       const inner = new THREE.Group();
       if (isNS) inner.rotation.y = Math.PI / 2;
+      if (typeof item.rotationY === "number") inner.rotation.y += item.rotationY;
 
       switch (item.type) {
         case "gravure_press":
-          buildGravurePress(inner, L, W, H, mats, accentMat, lightAccentMat);
+          buildGravurePress(inner, L, W, H, mats, accentMat, lightAccentMat, item);
           break;
         case "blow_film_tower":
           buildBlowFilmTower(inner, L, W, H, mats, accentMat);
@@ -87,7 +89,7 @@ window.Starflex3D.Builders.Machines = (function () {
           break;
         case "laminator":
         case "converting_group":
-          buildLaminator(inner, L, W, H, mats, accentMat);
+          buildLaminator(inner, L, W, H, mats, accentMat, item);
           break;
         case "oven_chamber":
         case "burner_unit":
@@ -99,6 +101,7 @@ window.Starflex3D.Builders.Machines = (function () {
         case "spout_array":
         case "slitter_array":
         case "slitter_group":
+        case "inspection_group":
           buildSpoutOrSlitter(group, item.type, r, mats, accentMat);
           break;
         case "ink_dispenser":

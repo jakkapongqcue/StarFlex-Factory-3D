@@ -8,19 +8,19 @@ window.Starflex3D.Data = window.Starflex3D.Data || {};
 window.Starflex3D.Data.Machines = window.Starflex3D.Data.Machines || {};
 
 window.Starflex3D.Data.Machines.converting = [
-  // --- Hall 1 Slitter Group ---
+  // --- Hall 1 Inspection & Rewinder Group ---
   {
     id: "sm_hall1_group",
     code: "SH/SM-W",
     name: "SH 02, SH 03, SM 14, SM 05 (เครื่องตรวจสอบและกรอม้วน)",
     category: "converting",
     hall: "hall_1",
-    type: "slitter_group",
+    type: "inspection_group",
     bounds: [228, 545, 338, 588],
     height: 2.6,
     orientation: "EW",
-    specs: "4 เครื่องย่อย (SH 02, SH 03, SM 14, SM 05)",
-    description: "กลุ่มเครื่องตรวจสอบคุณภาพฟิล์มพิมพ์และกรอม้วนย่อยในอาคาร 1"
+    specs: "4 เครื่องย่อย Inspection & Rewinder (SH 02, SH 03, SM 14, SM 05)",
+    description: "กลุ่มเครื่องตรวจสอบคุณภาพฟิล์มพิมพ์และกรอม้วนย่อยในอาคาร 1 (SH 02, SH 03, SM 14, SM 05)"
   },
 
   // --- Hall 2 Bag Making Lines ---
@@ -31,11 +31,11 @@ window.Starflex3D.Data.Machines.converting = [
     category: "converting",
     hall: "hall_2",
     type: "bag_making_array",
-    bounds: [724, 755, 1042, 955],
+    bounds: [680, 742, 1055, 892],
     height: 2.8,
     orientation: "NS",
-    specs: "14 สายการผลิตขนาน (BM 14, Spout, BM 15, 12, 11, 17, 16, 04, 13, 05, 06, 07, 08, 10)",
-    description: "โถงเครื่องตัดและซีลขึ้นรูปถุงบรรจุภัณฑ์อัตโนมัติ (Stand-up Pouch, Zipper Bag, Retort Pouch, Quad Seal) เรียงแถวขนาน 14 สายการผลิต"
+    specs: "13 สายการผลิต 5-Stage Pouch Lines (BM 14, 15, 12, 11, 17, 16, 04, 13, 05, 06, 07, 08, 10) + เครื่องตัดฝา Spout",
+    description: "โถงเครื่องตัดและซีลขึ้นรูปถุงบรรจุภัณฑ์อัตโนมัติ 13 สายการผลิต พร้อมเครื่องตัดฝา Spout จัดวางตามผัง Hall 2 (Unwind ด้านใต้ · Outfeed ด้านเหนือ)"
   },
   {
     id: "spout_1sp_group",
@@ -44,11 +44,11 @@ window.Starflex3D.Data.Machines.converting = [
     category: "converting",
     hall: "hall_2",
     type: "spout_array",
-    bounds: [748, 942, 982, 986],
+    bounds: [710, 852, 988, 902],
     height: 2.5,
     orientation: "EW",
-    specs: "7 เครื่องติดฝาเกลียว/จุกหลอด (1SP-01 .. 1SP-07)",
-    description: "กลุ่มเครื่องซีลติดฝาจุก (Spout Pouch Machines) สำหรับซองบรรจุของเหลว เครื่องดื่ม และผลิตภัณฑ์ดูแลร่างกาย"
+    specs: "7 เครื่องติดฝาเกลียว/จุกหลอด (แถวบน 1SP-02, 1SP-01 · แถวล่าง 1SP-03 ถึง 1SP-07)",
+    description: "กลุ่มเครื่องซีลติดฝาจุก (Spout Pouch Machines) จัดวาง 2 แถวตามผัง Hall 2 สำหรับซองบรรจุของเหลว เครื่องดื่ม และผลิตภัณฑ์ดูแลร่างกาย"
   },
   {
     id: "sm_slitter_hall2",
@@ -57,10 +57,10 @@ window.Starflex3D.Data.Machines.converting = [
     category: "converting",
     hall: "hall_2",
     type: "slitter_array",
-    bounds: [736, 868, 1046, 1056],
+    bounds: [680, 910, 1055, 1038],
     height: 2.6,
     orientation: "EW",
-    specs: "เครื่องตัดซอยฟิล์มความเร็วสูง 14 เครื่อง + BM-09",
-    description: "กลุ่มเครื่องตัดซอยม้วนฟิล์ม (High-Speed Slitter Rewinders: SM 01, 2SM 17, SM 15, SM 06, 1SM 19, 1SM 20, SM 11, SM 12, SM 07, SM 08, SH 01, SM 13, 2RW 18) และเครื่องทำถุง BM 09"
+    specs: "13 แท่น VENUS III Duplex Slitter (SM 01..12, 2RW-18, SM 08, SH 01, SM 07, SM13) + BM 09 แนวนอน",
+    description: "กลุ่มเครื่องตัดซอยม้วนฟิล์มความเร็วสูง VENUS III (แถวหลัก SM 01, 2SM 17, SM 15, SM 06, 1SM 19, 1SM 20, SM 11, SM 12 + 2RW 18 + กลุ่มขวา SM 08, SH 01, SM 07, SM13) พร้อมสาย BM 09 วางแนวนอนมุมซ้ายล่าง"
   }
 ];

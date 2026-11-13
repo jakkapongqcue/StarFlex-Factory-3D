@@ -58,8 +58,8 @@ window.Starflex3D.Data.Machines.printing = [
     bounds: [406, 485, 554, 535],
     height: 4.5,
     orientation: "EW",
-    specs: "High-Speed Gravure Press · พร้อมชุด Burner",
-    description: "เครื่องพิมพ์กราเวียร์ Beiren PT-04 ติดตั้งคู่ขนานกับ Xinda PT-03 พร้อมชุดจ่ายหมึกอัตโนมัติใกล้เคียง"
+    specs: "Beiren 9-Color Rotogravure Press · Teal Guard & Orange Mesh Turret",
+    description: "เครื่องพิมพ์กราเวียร์ 9 สี Beiren PT-04 โครงสร้างสีเทาตัดแถบราวนิรภัยสีน้ำเงินอมเขียว (Teal) พร้อมหน้าจอ LED สีแดง ตู้ควบคุม HMI ประจำแท่นและโต๊ะคอนโซลเอียง ประตูตะแกรงนิรภัยสีส้ม และชุดรับม้วนฟิล์มโลหะเปิดโล่ง"
   },
   {
     id: "ink_dispensing",
