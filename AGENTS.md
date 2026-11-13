@@ -13,8 +13,8 @@ Welcome to the **StarFlex-FactoryLayout3D** project. This file is the primary or
   - `window.Starflex3D.Coords` (`src/core/coordinates.js`: `pt`, `rect`, `addEdges`)
   - `window.Starflex3D.Materials` (`src/core/materials.js`)
   - `window.Starflex3D.Scene` (`src/core/scene-manager.js`)
-  - `window.Starflex3D.Builders` (`src/builders/` — `Site`, `Architecture`, `FrontFacade`, `Machines`, `Flows`)
-  - `window.Starflex3D.Data` (`src/data/` — `buildings`, `machines`, `flows`, `tour`)
+  - `window.Starflex3D.Builders` (`src/builders/` — `Site`, `Architecture`, `FrontFacade`, `Machines`)
+  - `window.Starflex3D.Data` (`src/data/` — `buildings`, `machines`, `tour`)
   - `window.Starflex3D.UI` (`src/ui/` — `toolbar`, `drawer`, `inspector`, `labels`, `tour`)
 
 > **Crucial Rule**: When creating any new `.js` file, wrap it in `window.Starflex3D = window.Starflex3D || {};` and register a `<script src="...">` tag in `index.html` in dependency order.

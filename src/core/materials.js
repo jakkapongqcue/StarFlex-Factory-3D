@@ -24,16 +24,16 @@ window.Starflex3D.Materials = {
         color: 0xf1f5f9,
         roughness: 0.7,
         metalness: 0.08,
-        transparent: true,
-        opacity: 0.92,
+        transparent: false,
+        opacity: 1.0,
         ...clipProps
       }),
       wallCutawayFront: new THREE.MeshStandardMaterial({
         color: 0xdce4ee,
         roughness: 0.55,
         metalness: 0.12,
-        transparent: true,
-        opacity: 0.0,
+        transparent: false,
+        opacity: 1.0,
         ...clipProps
       }),
 
@@ -56,8 +56,8 @@ window.Starflex3D.Materials = {
         color: 0xf1f5f9,
         roughness: 0.45,
         metalness: 0.2,
-        transparent: true,
-        opacity: 0.0,
+        transparent: false,
+        opacity: 1.0,
         side: THREE.DoubleSide,
         ...clipProps
       }),
@@ -65,8 +65,8 @@ window.Starflex3D.Materials = {
         color: 0x1e3a5f,
         roughness: 0.25,
         metalness: 0.65,
-        transparent: true,
-        opacity: 0.0,
+        transparent: false,
+        opacity: 1.0,
         ...clipProps
       }),
 

@@ -42,7 +42,7 @@ window.Starflex3D.Builders.NorthYard = window.Starflex3D.Builders.NorthYard || {
 
     const sign = createSignboardMesh(3.6, 0.72, "14 · โรงกลั่นตัวทำละลาย", "SOLVENT DISTILLATION", "#0284c7");
     sign.position.set(0, 3.05, southWallZ + 0.08);
-    bldgGroup.add(sign);
+    (bldgGroup.userData.southWallObj || bldgGroup).add(sign);
   }
 
   // 2. Zone 15: โรงผสม Solvent + ห้องน้ำฝั่งเหนือ (Solvent Mixing & North Restroom)
@@ -71,7 +71,7 @@ window.Starflex3D.Builders.NorthYard = window.Starflex3D.Builders.NorthYard || {
 
     const sign = createSignboardMesh(4.4, 0.78, "15 · โรงผสม SOLVENT", "SOLVENT MIXING ROOM", "#0284c7");
     sign.position.set(0, 3.25, southWallZ + 0.08);
-    bldgGroup.add(sign);
+    (bldgGroup.userData.southWallObj || bldgGroup).add(sign);
 
     // Attached North Restroom ("ห้องน้ำ" directly north of 15 in blueprint)
     const wcW = r.w * 0.88;

@@ -14,16 +14,17 @@
     isXray: false,               // Translucent see-through structure (มองทะลุกำแพงและหลังคา)
     structureMode: "cutaway",    // legacy string support
     floorMode: "clean",          // 'clean' | 'blueprint_soft' | 'blueprint_full' | 'overlay' | 'satellite'
-    showLabels: true,
-    showFlows: false,
+    showLabels: false,
     selectedCategory: "all",
     selectedItemId: null,
     tourIndex: 0,
+    isTourPlaying: false,
+    tourElapsedMs: 0,
+    tourLastTick: 0,
     camPresetIdx: 0,
     textures: {},
     itemMeshes: new Map(),
     labelElements: [],
-    flowParticles: [],
     cameraTargetLerp: null,
     cameraPosLerp: null,
     cameraFlight: null
@@ -79,7 +80,6 @@
         setTimeout(() => {
           updateLoadingProgress(90, "กำลังโหลดเครื่องจักร ท่อลำเลียง และระบบควบคุม...");
           App.Builders.Machines.build(scene, mats, state);
-          App.Builders.Flows.build(scene, state);
 
           // 4. Initialize UI Modules
           App.UI.Labels.init(state);
@@ -90,6 +90,9 @@
           if (compCountEl) {
             compCountEl.textContent = `ส่วนประกอบ (${App.Data.items.length})`;
           }
+
+          // Ensure initial Cut-away / roof / material state matches toolbar cleanly
+          App.UI.Toolbar.applyStructureModes(state, mats);
 
           hideLoadingScreen();
         }, 30);
@@ -102,7 +105,6 @@
     toggleComponentsDrawer: () => App.UI.Drawer.toggle(),
     setAppMode: mode => App.UI.Tour.setAppMode(state, mode),
     toggleLabels: () => App.UI.Labels.toggle(state),
-    toggleFlows: () => App.UI.Toolbar.toggleFlows(state),
     toggleCutaway: () => App.UI.Toolbar.toggleCutaway(state, mats),
     toggleXray: () => App.UI.Toolbar.toggleXray(state, mats),
     cycleStructureMode: () => App.UI.Toolbar.cycleStructureMode(state, mats),
@@ -115,6 +117,7 @@
     clearSelection: () => App.UI.Inspector.clearSelection(state),
     prevTourStep: () => App.UI.Tour.prevStep(state),
     nextTourStep: () => App.UI.Tour.nextStep(state),
+    toggleTourPlay: () => App.UI.Tour.togglePlay(state),
     toggleCutawayPopover: () => App.UI.Toolbar.toggleCutawayPopover(),
     updateClipSlider: val => App.UI.Toolbar.updateClipSlider(state, val),
     updateRoofOpacity: val => App.UI.Toolbar.updateRoofOpacity(state, mats, val),
@@ -136,9 +139,11 @@
   // 6. Main Render & Animation Loop
   function renderFrame() {
     App.SceneManager.updateCameraFlight(state);
-    App.Builders.Flows.updateParticles(state);
     if (App.Builders.Converting && App.Builders.Converting.updateAnimations) {
       App.Builders.Converting.updateAnimations();
+    }
+    if (App.UI.Tour && App.UI.Tour.tick) {
+      App.UI.Tour.tick(state);
     }
     state.controls.update();
     App.UI.Toolbar.updateDynamicCutaway(state);

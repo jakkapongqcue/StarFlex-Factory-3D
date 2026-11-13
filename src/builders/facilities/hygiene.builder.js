@@ -12,6 +12,103 @@ window.Starflex3D.Builders.Facilities = window.Starflex3D.Builders.Facilities ||
 (function () {
   const { addEdges } = window.Starflex3D.Coords;
 
+  let cachedBoothMats = null;
+  function getBoothMaterials() {
+    if (cachedBoothMats) return cachedBoothMats;
+    cachedBoothMats = {
+      stainlessMat: new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 0.85, roughness: 0.2 }),
+      blueFrameMat: new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.5, roughness: 0.3 }),
+      visionGlassMat: new THREE.MeshPhysicalMaterial({
+        color: 0x38bdf8,
+        roughness: 0.1,
+        metalness: 0.2,
+        transparent: true,
+        opacity: 0.55
+      }),
+      nozzleMat: new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.95, roughness: 0.1 }),
+      fanGrilleMat: new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 }),
+      stickyMat: new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.3 }),
+      beaconMat: new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x16a34a, emissiveIntensity: 0.9 })
+    };
+    return cachedBoothMats;
+  }
+
+  /**
+   * Build a stainless steel 32-nozzle Air Shower booth with East/West vision-glass doors,
+   * HEPA top blower, sticky floor mat, and status beacon.
+   * Local axes: X = walk-through depth (d), Z = booth width (w), Y = height (h).
+   */
+  function createAirShowerBooth(opts = {}) {
+    const asW = opts.w || 1.8;
+    const asD = opts.d || 1.8;
+    const asH = opts.h || 2.65;
+    const m = getBoothMaterials();
+
+    const boothGroup = new THREE.Group();
+
+    // Stainless structural chamber walls + 32 jet nozzles (16 per side)
+    [-asW * 0.45, asW * 0.45].forEach(sz => {
+      const asSideWall = new THREE.Mesh(new THREE.BoxGeometry(asD, asH, 0.16), m.stainlessMat);
+      asSideWall.position.set(0, asH * 0.5, sz);
+      asSideWall.castShadow = true;
+      asSideWall.receiveShadow = true;
+      addEdges(asSideWall, 0x64748b, 0.8);
+      boothGroup.add(asSideWall);
+
+      for (let nx = -asD * 0.35; nx <= asD * 0.35; nx += 0.28) {
+        for (let ny = 0.75; ny <= 2.2; ny += 0.45) {
+          const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.06, 8), m.nozzleMat);
+          nozzle.rotation.x = Math.PI / 2;
+          nozzle.position.set(nx, ny, sz + (sz > 0 ? -0.09 : 0.09));
+          boothGroup.add(nozzle);
+        }
+      }
+    });
+
+    // Top HEPA Fan / Blower Casing
+    const asBlowerTop = new THREE.Mesh(new THREE.BoxGeometry(asD + 0.1, 0.38, asW), m.stainlessMat);
+    asBlowerTop.position.set(0, asH + 0.19, 0);
+    asBlowerTop.castShadow = true;
+    addEdges(asBlowerTop, 0x475569, 0.8);
+    boothGroup.add(asBlowerTop);
+
+    // Fan circular intake grilles on top
+    [-asD * 0.24, asD * 0.24].forEach(fx => {
+      const fanGrille = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.06, 16), m.fanGrilleMat);
+      fanGrille.position.set(fx, asH + 0.41, 0);
+      boothGroup.add(fanGrille);
+    });
+
+    // Anti-dust sticky mat inside
+    const asFloorMat = new THREE.Mesh(new THREE.PlaneGeometry(asD * 0.75, asW * 0.75), m.stickyMat);
+    asFloorMat.rotation.x = -Math.PI / 2;
+    asFloorMat.position.y = 0.035;
+    boothGroup.add(asFloorMat);
+
+    // East (+X) and West (-X) interlocked vision-glass doors
+    [asD * 0.5, -asD * 0.5].forEach(doorX => {
+      const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(0.12, asH, asW * 0.8), m.blueFrameMat);
+      doorFrame.position.set(doorX, asH * 0.5, 0);
+      addEdges(doorFrame, 0x38bdf8, 0.8);
+
+      const doorLeaf = new THREE.Mesh(new THREE.BoxGeometry(0.04, asH - 0.15, asW * 0.72), m.visionGlassMat);
+      doorLeaf.position.set(doorX, asH * 0.5, 0);
+      addEdges(doorLeaf, 0xffffff, 0.9);
+
+      boothGroup.add(doorFrame, doorLeaf);
+    });
+
+    // Status Beacon(s)
+    const beaconXs = opts.beaconBoth ? [asD * 0.5 - 0.1, -asD * 0.5 + 0.1] : [asD * 0.5 - 0.1];
+    beaconXs.forEach(bx => {
+      const beacon = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.22, 10), m.beaconMat);
+      beacon.position.set(bx, asH + 0.35, 0);
+      boothGroup.add(beacon);
+    });
+
+    return boothGroup;
+  }
+
   function buildHygieneRoom(walkGroup, floorD, mats) {
     const hygW = 10.0; // Spans from Corridor 6 west edge (px: 1056) to Locker room east wall (px: 1156)
     const hygD = 8.0;  // Length along Z (py: 320..400)
@@ -246,83 +343,9 @@ window.Starflex3D.Builders.Facilities = window.Starflex3D.Builders.Facilities ||
     hygGroup.add(wWallTop);
 
     // --- AIR SHOWER BOOTH CABIN ---
-    const airShowerGroup = new THREE.Group();
+    const airShowerGroup = createAirShowerBooth({ w: asW, d: asD, h: asH });
     airShowerGroup.position.set(westWallX, 0, asCenterZ);
     hygGroup.add(airShowerGroup);
-
-    // Stainless structural chamber walls
-    [-asW * 0.45, asW * 0.45].forEach(sz => {
-      const asSideWall = new THREE.Mesh(new THREE.BoxGeometry(asD, asH, 0.16), stainlessMat);
-      asSideWall.position.set(0, asH * 0.5, sz);
-      addEdges(asSideWall, 0x64748b, 0.8);
-      airShowerGroup.add(asSideWall);
-
-      // Jet nozzles array (16 high-velocity circular nozzles on each side, total 32 nozzles)
-      for (let nx = -asD * 0.35; nx <= asD * 0.35; nx += 0.28) {
-        for (let ny = 0.75; ny <= 2.2; ny += 0.45) {
-          const nozzle = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.035, 0.035, 0.06, 8),
-            new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.95, roughness: 0.1 })
-          );
-          nozzle.rotation.x = Math.PI / 2;
-          nozzle.position.set(nx, ny, sz + (sz > 0 ? -0.09 : 0.09));
-          airShowerGroup.add(nozzle);
-        }
-      }
-    });
-
-    // Air Shower Top HEPA Fan / Blower Casing
-    const asBlowerTop = new THREE.Mesh(new THREE.BoxGeometry(asD + 0.1, 0.38, asW), stainlessMat);
-    asBlowerTop.position.set(0, asH + 0.19, 0);
-    addEdges(asBlowerTop, 0x475569, 0.8);
-    airShowerGroup.add(asBlowerTop);
-
-    // Fan circular intake grilles on top
-    [-asD * 0.24, asD * 0.24].forEach(fx => {
-      const fanGrille = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.24, 0.24, 0.06, 16),
-        new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 })
-      );
-      fanGrille.position.set(fx, asH + 0.41, 0);
-      airShowerGroup.add(fanGrille);
-    });
-
-    // Anti-dust sticky mat inside
-    const asFloorMat = new THREE.Mesh(
-      new THREE.PlaneGeometry(asD * 0.75, asW * 0.75),
-      new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.3 })
-    );
-    asFloorMat.rotation.x = -Math.PI / 2;
-    asFloorMat.position.y = 0.035;
-    airShowerGroup.add(asFloorMat);
-
-    // Inner Door (East door, entering from hygiene room)
-    const inDoorX = asD * 0.5;
-    const inDoorFrame = new THREE.Mesh(new THREE.BoxGeometry(0.12, asH, asW * 0.8), blueFrameMat);
-    inDoorFrame.position.set(inDoorX, asH * 0.5, 0);
-    addEdges(inDoorFrame, 0x38bdf8, 0.8);
-    const inDoorLeaf = new THREE.Mesh(new THREE.BoxGeometry(0.04, asH - 0.15, asW * 0.72), visionGlassMat);
-    inDoorLeaf.position.set(inDoorX, asH * 0.5, 0);
-    addEdges(inDoorLeaf, 0xffffff, 0.9);
-    airShowerGroup.add(inDoorFrame, inDoorLeaf);
-
-    // Outer Door (West door, exiting directly into Hall 2 production line)
-    const outDoorX = -asD * 0.5;
-    const outDoorFrame = new THREE.Mesh(new THREE.BoxGeometry(0.12, asH, asW * 0.8), blueFrameMat);
-    outDoorFrame.position.set(outDoorX, asH * 0.5, 0);
-    addEdges(outDoorFrame, 0x38bdf8, 0.8);
-    const outDoorLeaf = new THREE.Mesh(new THREE.BoxGeometry(0.04, asH - 0.15, asW * 0.72), visionGlassMat);
-    outDoorLeaf.position.set(outDoorX, asH * 0.5, 0);
-    addEdges(outDoorLeaf, 0xffffff, 0.9);
-    airShowerGroup.add(outDoorFrame, outDoorLeaf);
-
-    // Air Shower Status Beacon
-    const asBeacon = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.08, 0.08, 0.22, 10),
-      new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x16a34a, emissiveIntensity: 0.9 })
-    );
-    asBeacon.position.set(inDoorX - 0.1, asH + 0.35, 0);
-    airShowerGroup.add(asBeacon);
 
     // 7. North Wall (-Z = -4.0m): Regular Exit Door
     const northWallZ = -hygD * 0.5 + 0.07;
@@ -374,5 +397,48 @@ window.Starflex3D.Builders.Facilities = window.Starflex3D.Builders.Facilities ||
     hygGroup.add(nStickyMat);
   }
 
+  /**
+   * Standalone Walk-Through Air Shower Unit (e.g. Hall 2 production entrances through West wall).
+   */
+  function buildAirShowerUnit(group, r, H, mats) {
+    const boothW = r.d || 1.8;
+    const boothD = r.w || 1.8;
+    const boothH = Math.min(H || 2.65, 2.65);
+    const m = getBoothMaterials();
+
+    const booth = createAirShowerBooth({ w: boothW, d: boothD, h: boothH, beaconBoth: true });
+    group.add(booth);
+
+    // Stainless steel floor threshold sill bridging wall opening
+    const sill = new THREE.Mesh(new THREE.BoxGeometry(boothD + 0.04, 0.03, boothW - 0.02), m.stainlessMat);
+    sill.position.y = 0.015;
+    sill.receiveShadow = true;
+    addEdges(sill, 0x64748b, 0.6);
+    group.add(sill);
+
+    // Corridor-side (-X) anti-dust sticky welcome mat outside West entrance door
+    const entryMat = new THREE.Mesh(new THREE.PlaneGeometry(0.75, boothW * 0.78), m.stickyMat);
+    entryMat.rotation.x = -Math.PI / 2;
+    entryMat.position.set(-boothD * 0.5 - 0.45, 0.025, 0);
+    group.add(entryMat);
+
+    // Dual-sided "AIR SHOWER" headers on top blower housing (West & East)
+    const createSign = window.Starflex3D.Builders.Common && window.Starflex3D.Builders.Common.createSignboardMesh;
+    if (typeof createSign === "function") {
+      const signW = Math.min(1.4, boothW * 0.78);
+      const signH = 0.30;
+      const westSign = createSign("AIR SHOWER", "ห้องเป่าลมสะอาด", signW, signH, "#0f172a", "#38bdf8", "#0284c7");
+      westSign.rotation.y = -Math.PI / 2;
+      westSign.position.set(-(boothD + 0.1) * 0.5 - 0.04, boothH + 0.19, 0);
+      group.add(westSign);
+
+      const eastSign = createSign("AIR SHOWER", "CLEANROOM ENTRY", signW, signH, "#0f172a", "#38bdf8", "#0284c7");
+      eastSign.rotation.y = Math.PI / 2;
+      eastSign.position.set((boothD + 0.1) * 0.5 + 0.04, boothH + 0.19, 0);
+      group.add(eastSign);
+    }
+  }
+
   window.Starflex3D.Builders.Facilities.buildHygieneRoom = buildHygieneRoom;
+  window.Starflex3D.Builders.Facilities.buildAirShowerUnit = buildAirShowerUnit;
 })();

@@ -8,51 +8,134 @@ window.Starflex3D.Data = window.Starflex3D.Data || {};
 
 window.Starflex3D.Data.tourSteps = [
   {
+    tag: "OVERVIEW",
     title: "ภาพรวมโรงงาน บมจ. สตาร์เฟล็กซ์ (Starflex PCL)",
-    subtitle: "โครงสร้างจริง 4 อาคารหลัก · มุมมองผ่าตัดขวาง 3 มิติ (Cutaway View)",
-    description: "โมเดล 3 มิติจำลองตามผังโรงงานจริง (Starflex Plant Layout) ประกอบด้วยอาคารฝั่งตะวันตก (หลังคาโซลาร์เซลล์ 4 ช่วง), อาคารคลังสินค้าชั้นวางสูงตรงกลางพร้อมท่าเทียบรถบรรทุก, อาคารผลิตฝั่งตะวันออกที่มีสันหลังคายกสูง (Monitor Roof) และอาคารสำนักงานหน้า 2 ชั้น",
+    description: "โมเดล 3 มิติจำลองตามผังโรงงานจริง ครบทั้ง 4 อาคารผลิตหลัก โซนคลังเคมีและวัตถุดิบด้านหลัง อาคารสำนักงานใหญ่ 2 ชั้น และท่าโหลดสินค้า",
+    flowChips: [
+      "คลังวัตถุดิบ & สารเคมี (North Yard)",
+      "เป่าฟิล์ม 1BF-01 & พิมพ์กราเวียร์",
+      "เคลือบประกบหลายชั้น → บ่มกาว",
+      "ทำถุง ตัดซอย → คลัง & ส่งออก"
+    ],
     targetPx: [1050, 760],
     camOffset: [0, 115, 135],
     highlightId: null
   },
   {
-    title: "ขั้นตอนที่ 1: หอเป่าฟิล์ม 1BF-01 (Blow Film Extrusion)",
-    subtitle: "อาคาร 4 (ทิศตะวันออกเฉียงเหนือ) · รหัส 02 BLOW FILM 1BF-01",
-    description: "เริ่มต้นจากการหลอมเม็ดพลาสติกเรซินแล้วเป่าขึ้นเป็นบอลลูนฟิล์มแนวตั้งบนหอสูง (1BF-01) พร้อมห้องเครื่อง Chiller/Blower (01) และเครื่องกรอม้วน Rewinder (03) เพื่อผลิตฟิล์มชั้นในคุณภาพสูง",
-    targetPx: [1825, 385],
-    camOffset: [32, 38, 48],
+    tag: "NORTH YARD · RAW MATERIALS & CHEMICALS",
+    title: "คลังวัตถุดิบ โซนเคมี และสถานี LPG (North Yard)",
+    description: "พื้นที่จัดเก็บและเตรียมสารเคมีภายนอกทางทิศเหนือ ประกอบด้วยคลังวัตถุดิบ (โซน 5), คลังเคมี 1–2 (โซน 20), โรงกลั่น/โรงผสม Solvent (โซน 14–15) และสถานีถังก๊าซ LPG",
+    flowChips: [
+      "คลังวัตถุดิบ (โซน 5) → เม็ดเรซิน",
+      "โรงผสม & กลั่น Solvent (โซน 14–15)",
+      "สถานี LPG (โซน 13) → Deluge"
+    ],
+    targetPx: [650, 135],
+    camOffset: [-18, 46, 58],
+    highlightId: "raw_material_wh_5"
+  },
+  {
+    tag: "BLOWN FILM EXTRUSION",
+    title: "หอเป่าฟิล์ม 3 ชั้น 1BF-01 และ Rewinder (Hall 4)",
+    description: "เริ่มต้นผลิตฟิล์มชั้นในด้วยหอเป่าฟิล์มความสูงพิเศษ 1BF-01 หลอมเม็ดพลาสติกเป่าขึ้นเป็นบอลลูนแนวตั้ง เชื่อมต่อระบบหล่อเย็น Chiller และเครื่องกรอม้วน 03 Rewinder",
+    flowChips: [
+      "เม็ดพลาสติกเรซิน → หลอมเป่าแนวตั้ง",
+      "1BF-01 → 03 Rewinder (VENUS III)",
+      "ชั้นวางม้วนฟิล์มขาว"
+    ],
+    targetPx: [1835, 395],
+    camOffset: [30, 36, 46],
     highlightId: "blow_film_1bf01"
   },
   {
-    title: "ขั้นตอนที่ 2: งานพิมพ์กราเวียร์ความละเอียดสูง (Gravure Printing)",
-    subtitle: "อาคาร 1 & 2 (Xinda PT-03, Beiren PT-04, Caida PT-06/07)",
-    description: "ฟิล์มถูกส่งเข้าสู่เครื่องพิมพ์กราเวียร์ 8–10 สี (เช่น Xinda PT-03, Beiren, และ Caida PT-07) โดยเชื่อมต่อกับคลังลูกกลิ้งแม่พิมพ์แนวตั้ง (Cylinder Storage) ระบบจ่ายหมึกอัตโนมัติ และสถานีเตรียมแม่พิมพ์",
-    targetPx: [460, 520],
-    camOffset: [-35, 42, 52],
-    highlightId: "xinda_pt03"
+    tag: "GRAVURE PRINTING",
+    title: "สายเครื่องพิมพ์กราเวียร์ 9 สี และห้องผสมหมึก (Hall 1)",
+    description: "พิมพ์ลวดลายบนม้วนฟิล์มด้วยเครื่องพิมพ์กราเวียร์ความเร็วสูง (Beiren PT-04, Xinda PT-03, Beiren 2PG-05) พร้อมชุดจ่ายผสมหมึกอัตโนมัติและคลังลูกกลิ้งแม่พิมพ์แนวตั้ง",
+    flowChips: [
+      "คลังแม่พิมพ์ (CYL-STORE)",
+      "Ink Dispenser → PT-04 / PT-03",
+      "ม้วนฟิล์มพิมพ์ลาย → WIP Rack"
+    ],
+    targetPx: [400, 480],
+    camOffset: [-34, 38, 48],
+    highlightId: "beiren_pt04"
   },
   {
-    title: "ขั้นตอนที่ 3: เคลือบประกบฟิล์มหลายชั้น & บ่มกาว (Extrusion & Lamination)",
-    subtitle: "อาคาร 1 & 4 (Tandem Extrusion ET-02, Bobst 1LB-09, Fuji Kikai 2LB-06)",
-    description: "การนำฟิล์มพิมพ์แล้วมาเคลือบประกบกับชั้นฟอยล์หรือฟิล์มกั้นออกซิเจนด้วยเครื่อง Tandem Extrusion (ET-02), เครื่องเคลือบไร้ตัวทำละลาย (SL-01, 1LL-07) และเครื่อง Bobst / Fuji Kikai ก่อนนำเข้าห้องอบบ่มกาว (Oven Room)",
-    targetPx: [390, 870],
-    camOffset: [-32, 38, 48],
-    highlightId: "tandem_extrusion_et02"
+    tag: "LAMINATION & EXTRUSION",
+    title: "เคลือบประกบฟิล์มหลายชั้น Bobst & Beiren (Hall 1)",
+    description: "เคลือบประกบฟิล์มพิมพ์เข้ากับชั้นฟอยล์หรือฟิล์มกั้นออกซิเจนด้วยเครื่อง Tandem Extrusion (ET-02), Bobst NOVALAM/VISIONLAM (LB-10, 1LB-09) และ Beiren SLII400 (SB-04)",
+    flowChips: [
+      "WIP Laminate Rack → ป้อนฟิล์ม",
+      "Bobst LB-10 / 1LB-09 · Beiren SB-04",
+      "คลังแขวนม้วน WH-PRD"
+    ],
+    targetPx: [380, 770],
+    camOffset: [-32, 36, 46],
+    highlightId: "bobst_lb10"
   },
   {
-    title: "ขั้นตอนที่ 4: ตัดซอย ขึ้นรูปถุงอัตโนมัติ และติดฝาจุก (Bag Making & Spout)",
-    subtitle: "อาคาร 2 (BM 04–17, เครื่องติดฝา Spout 1SP-01..07, Slitter SM)",
-    description: "ม้วนฟิล์มที่บ่มกาวเสร็จสมบูรณ์จะถูกตัดซอยด้วยเครื่อง Slitter (SM) และป้อนเข้าสู่โถงเครื่องทำถุงอัตโนมัติ 14 สาย (BM 04–17) และเครื่องซีลติดฝาจุก (1SP-01..07) เพื่อขึ้นรูปเป็นบรรจุภัณฑ์พร้อมใช้งาน",
-    targetPx: [880, 880],
-    camOffset: [10, 40, 50],
+    tag: "BAG MAKING & SPOUT",
+    title: "โถงขึ้นรูปถุงอัตโนมัติ BM 04–17 และ Spout (Hall 2)",
+    description: "ม้วนฟิล์มที่บ่มกาวสมบูรณ์แล้วเข้าสู่โถงเครื่องขึ้นรูปถุง 13 สายการผลิต (BM 04–17), เครื่องตัดฝา Spout และแถวเครื่องติดฝาจุกอัตโนมัติ (1SP-01..07)",
+    flowChips: [
+      "Unwind & Festoon → V-Plow Forming",
+      "แท่นซีล 4 สถานี → Outfeed Conveyor",
+      "1SP-01..07 ติดฝาจุกอัตโนมัติ"
+    ],
+    targetPx: [865, 825],
+    camOffset: [0, 36, 46],
     highlightId: "bm_lines_group"
   },
   {
-    title: "ขั้นตอนที่ 5: คลังสินค้าชั้นวางสูงและจุดโหลดขึ้นรถบรรทุก (High-Bay Warehouse)",
-    subtitle: "อาคาร 2 & 3 (Finish Good Area, High-Bay Racks & Loading Dock)",
-    description: "สินค้าสำเร็จรูปที่ผ่านการตรวจสอบจากห้องแล็ป QA จะถูกลำเลียงเข้าสู่พื้นที่ Finish Good Area และคลังชั้นวางพาเลทสูง (High-Bay Racks) ก่อนลำเลียงผ่านทางลาดสีฟ้า (ทางขึ้นลง) สู่รถบรรทุกขนส่งบริเวณ Loading Dock",
-    targetPx: [1250, 620],
-    camOffset: [25, 48, 62],
+    tag: "SLITTING & REWINDING",
+    title: "โซนเครื่องตัดซอย VENUS III และ BM 09 (Hall 2)",
+    description: "ตัดซอยและกรอม้วนฟิล์มตามหน้ากว้างที่กำหนดด้วยเครื่อง High-Speed Duplex Slitter Rewinders (SM 01–20, 2RW 18, SH 01) พร้อมสายงาน BM 09 แนวนอนและพาเลทพักม้วน",
+    flowChips: [
+      "Master Unwind → ใบมีดตัดซอย",
+      "แกน Rewind คู่ (Shaft 1 & 2)",
+      "พาเลทม้วนฟิล์ม 3 ชั้น"
+    ],
+    targetPx: [865, 965],
+    camOffset: [0, 30, 38],
+    highlightId: "sm_slitter_hall2"
+  },
+  {
+    tag: "WAREHOUSE & FINISH GOOD",
+    title: "คลังสินค้าหลักและพื้นที่ Finish Good (Hall 2 & 3)",
+    description: "สินค้าที่ผ่านการตรวจคุณภาพจัดเก็บเข้าสู่พื้นที่ Finish Good (FG-AREA), คลังสินค้าหลัก 5 แถว (WH-MAIN) และคลังพาเลทสูง High-Bay Racks ใน Hall 3",
+    flowChips: [
+      "แพ็กสินค้า → Finish Good Area",
+      "WH-MAIN (5 แถว) → High-Bay 5.8 ม.",
+      "เตรียมจ่ายขึ้นรถขนส่ง"
+    ],
+    targetPx: [1060, 520],
+    camOffset: [18, 52, 62],
     highlightId: "highbay_racks_south"
+  },
+  {
+    tag: "LOADING DOCK & LOGISTICS",
+    title: "ท่าโหลดสินค้าและลานขนส่ง (Loading Dock)",
+    description: "ท่าโหลดชานชาลายกพื้นขาว (+1.25 ม.) พร้อมประตูม้วนอุตสาหกรรม ประตู High-Speed กันสาดโครงเหล็ก รถโฟร์คลิฟท์ไฟฟ้า และรถบรรทุกตู้คอนเทนเนอร์ Starflex",
+    flowChips: [
+      "โฟร์คลิฟท์ลำเลียงพาเลท",
+      "ชานชาลา +1.25 ม. → ตู้คอนเทนเนอร์",
+      "ป้อม รปภ. → ประตูขาออก"
+    ],
+    targetPx: [1230, 920],
+    camOffset: [22, 34, 48],
+    highlightId: "loading_dock_trucks"
+  },
+  {
+    tag: "OFFICE HQ & CLEANROOM HYGIENE",
+    title: "อาคารสำนักงานใหญ่ 2 ชั้น และห้องสุขอนามัย (HQ & Cleanroom)",
+    description: "ด้านหน้าเป็นอาคารสำนักงานใหญ่ 2 ชั้น ซุ้มเสาหิน และสนามหญ้า 3 เสาธง เชื่อมต่อทางเดินพนักงานสู่ห้องเปลี่ยนชุดคลีนรูม 2 โซน และห้อง Air Shower ก่อนเข้าสายผลิต",
+    flowChips: [
+      "Office HQ 2 ชั้น & อาคาร 4 กระจกฟ้า",
+      "ห้องเปลี่ยนชุดโซนสีน้ำเงิน / เหลือง",
+      "อ่างล้างมือตัว L → Air Shower"
+    ],
+    targetPx: [960, 1020],
+    camOffset: [-18, 42, 64],
+    highlightId: "admin_vip_office"
   }
 ];

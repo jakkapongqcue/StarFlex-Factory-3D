@@ -75,22 +75,15 @@
   <!-- TOP-RIGHT: Floating Action Icons -->
   <div class="top-right-bar">
     <!-- 1. Labels Toggle -->
-    <button id="btn-labels" class="tool-btn active" data-tooltip="แสดง/ซ่อนป้ายชื่อเครื่องจักร" onclick="StarflexActions.toggleLabels()">
+    <button id="btn-labels" class="tool-btn" data-tooltip="แสดง/ซ่อนป้ายชื่อเครื่องจักร" onclick="StarflexActions.toggleLabels()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
         <line x1="7" y1="7" x2="7.01" y2="7"/>
       </svg>
     </button>
 
-    <!-- 2. Animated Process Flow Toggle -->
-    <button id="btn-flows" class="tool-btn" data-tooltip="แสดง/ซ่อนเส้นสายการผลิต 3D" onclick="StarflexActions.toggleFlows()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M2 12h4l3-9 4 18 3-9h6"/>
-      </svg>
-    </button>
-
-    <!-- 3. Cut-away Mode (มองมุมไหน กำแพงหายมุมนั้น) -->
-    <button id="btn-cutaway" class="tool-btn active" data-tooltip="สลับโหมด Cut-away (มองมุมไหน กำแพงหายมุมนั้น)" onclick="StarflexActions.toggleCutaway()">
+    <!-- 2. Cut-away Mode (อ้างอิงมุมกล้องและจุด Focus) -->
+    <button id="btn-cutaway" class="tool-btn active" data-tooltip="สลับโหมด Cut-away อ้างอิงกล้อง (ซ่อนกำแพงที่บังจุด Focus อัตโนมัติ)" onclick="StarflexActions.toggleCutaway()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="6" cy="6" r="3"/>
         <circle cx="6" cy="18" r="3"/>
@@ -100,7 +93,7 @@
       </svg>
     </button>
 
-    <!-- 4. X-Ray Mode (มองทะลุกำแพงและหลังคา) -->
+    <!-- 3. X-Ray Mode (มองทะลุกำแพงและหลังคา) -->
     <button id="btn-xray" class="tool-btn" data-tooltip="สลับโหมด X-ray (มองทะลุกำแพงและหลังคา)" onclick="StarflexActions.toggleXray()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polygon points="12 2 2 7 12 12 22 7 12 2"/>
@@ -109,7 +102,7 @@
       </svg>
     </button>
 
-    <!-- 5. Floor Blueprint Overlay -->
+    <!-- 4. Floor Blueprint Overlay -->
     <button id="btn-floor-map" class="tool-btn active" data-tooltip="สลับการแสดงผังแบบแปลนโรงงาน (Blueprint)" onclick="StarflexActions.cycleFloorOverlay()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -118,7 +111,7 @@
       </svg>
     </button>
 
-    <!-- 6. Top-Down / Isometric View Toggle -->
+    <!-- 5. Top-Down / Isometric View Toggle -->
     <button id="btn-cam-view" class="tool-btn" data-tooltip="สลับมุมมอง 3D Isometric / มุมสูง Top View" onclick="StarflexActions.cycleCameraPreset()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
@@ -127,7 +120,7 @@
       </svg>
     </button>
 
-    <!-- 7. Fullscreen -->
+    <!-- 6. Fullscreen -->
     <button class="tool-btn" data-tooltip="เต็มหน้าจอ" onclick="StarflexActions.toggleFullscreen()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="15 3 21 3 21 9"/>
@@ -137,7 +130,7 @@
       </svg>
     </button>
 
-    <!-- 8. Reset Camera -->
+    <!-- 7. Reset Camera -->
     <button class="tool-btn" data-tooltip="รีเซ็ตมุมกล้องเริ่มต้น" onclick="StarflexActions.resetCamera()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
@@ -195,14 +188,30 @@
 
   <!-- GUIDED TOUR CARD ("ทัวร์สายการผลิต") -->
   <div id="tour-card" class="tour-card hidden">
-    <div id="tour-step-num" class="tour-step-indicator">ขั้นตอนที่ 1 / 6</div>
+    <div id="tour-progress-bar" class="tour-progress-bar" aria-label="ความคืบหน้าทัวร์"></div>
+
+    <div class="tour-meta-row">
+      <span id="tour-step-badge" class="tour-step-badge">1/10</span>
+      <span id="tour-tag" class="tour-tag">OVERVIEW</span>
+    </div>
+
     <h3 id="tour-title">หัวข้อทัวร์</h3>
-    <div id="tour-sub" class="tour-sub">คำอธิบายย่อย</div>
     <p id="tour-desc">เนื้อหา...</p>
-    <div class="tour-controls">
-      <button class="tour-btn" onclick="StarflexActions.prevTourStep()">← ก่อนหน้า</button>
-      <span id="tour-dots" style="font-size:12px; color:#64748b; font-weight:600;">1 / 6</span>
-      <button class="tour-btn primary" onclick="StarflexActions.nextTourStep()">ถัดไป →</button>
+
+    <div class="tour-footer">
+      <div id="tour-chips" class="tour-chips"></div>
+      <div class="tour-controls">
+        <button id="btn-tour-prev" class="tour-nav-btn" title="ขั้นตอนก่อนหน้า" onclick="StarflexActions.prevTourStep()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button id="btn-tour-play" class="tour-play-btn" onclick="StarflexActions.toggleTourPlay()">
+          <span id="tour-play-icon">▶</span>
+          <span id="tour-play-label">เล่นอัตโนมัติ</span>
+        </button>
+        <button id="btn-tour-next" class="tour-nav-btn" title="ขั้นตอนถัดไป" onclick="StarflexActions.nextTourStep()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -230,7 +239,7 @@
 
     <button class="status-bar-btn" onclick="StarflexActions.cycleStructureMode()" title="คลิกเพื่อสลับระหว่างโหมด Cut-away และ X-ray">
       <span class="pulse-dot"></span>
-      <span id="status-mode-text">✂️ โหมด Cut-away (มองมุมไหน กำแพงหายมุมนั้น) · Dynamic 360°</span>
+      <span id="status-mode-text">✂️ โหมด Cut-away อ้างอิงมุมกล้อง (กำแพงหน้าจุด Focus หายอัตโนมัติ 360°)</span>
       <strong style="margin-left:6px; color:#1e40af; font-size:11px;">สลับโหมด ⇄</strong>
     </button>
   </div>
@@ -255,7 +264,6 @@
   <script src="src/data/machines/warehouse.data.js"></script>
   <script src="src/data/machines/facilities.data.js"></script>
   <script src="src/data/machines.data.js"></script>
-  <script src="src/data/flows.data.js"></script>
   <script src="src/data/tour.data.js"></script>
 
   <!-- 3. Core 3D Engine Modules -->
@@ -311,6 +319,7 @@
   <script src="src/builders/machines/laminating/extrusion-oven.model.js"></script>
   <script src="src/builders/machines/laminating.builder.js"></script>
   <script src="src/builders/machines/converting/bag-making.model.js"></script>
+  <script src="src/builders/machines/converting/spout.model.js"></script>
   <script src="src/builders/machines/converting/slitter.model.js"></script>
   <script src="src/builders/machines/converting.builder.js"></script>
   <script src="src/builders/machines/warehouse.builder.js"></script>
@@ -318,7 +327,6 @@
   <script src="src/builders/machines/resin-film-storage.builder.js"></script>
   <script src="src/builders/machines/cylinder-storage.builder.js"></script>
   <script src="src/builders/machines.builder.js"></script>
-  <script src="src/builders/flows.builder.js"></script>
 
   <!-- 5. Interactive UI Controllers -->
   <script src="src/ui/labels.ui.js"></script>

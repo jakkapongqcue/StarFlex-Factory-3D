@@ -7,13 +7,108 @@
 window.Starflex3D = window.Starflex3D || {};
 window.Starflex3D.UI = window.Starflex3D.UI || {};
 
+(function () {
+  /**
+   * 3D camera-to-focus sightline corridor test for a vertical wall segment.
+   * Returns true only when the wall sits between camera C and focus target T
+   * within the viewing corridor AND reaches high enough to block view onto T.
+   */
+  function isSegmentBlockingSight(seg, cx, cy, cz, tx, ty, tz, fx, fz, rx, rz, lenXZ, vy) {
+    const sA = (seg.x1 - cx) * fx + (seg.z1 - cz) * fz;
+    const sB = (seg.x2 - cx) * fx + (seg.z2 - cz) * fz;
+    const sMin = 0.5;
+    const sMax = lenXZ - 0.35;
+    if (sMax <= sMin) return false;
+    if ((sA <= sMin && sB <= sMin) || (sA >= sMax && sB >= sMax)) return false;
+
+    let t0 = 0;
+    let t1 = 1;
+    const ds = sB - sA;
+    if (Math.abs(ds) > 1e-6) {
+      let a = (sMin - sA) / ds;
+      let b = (sMax - sA) / ds;
+      if (ds < 0) {
+        const tmp = a;
+        a = b;
+        b = tmp;
+      }
+      if (a > t0) t0 = a;
+      if (b < t1) t1 = b;
+      if (t0 > t1) return false;
+    }
+
+    const uA = (seg.x1 - cx) * rx + (seg.z1 - cz) * rz;
+    const uB = (seg.x2 - cx) * rx + (seg.z2 - cz) * rz;
+    const du = uB - uA;
+    const u0 = uA + t0 * du;
+    const u1 = uA + t1 * du;
+    const s0 = sA + t0 * ds;
+    const s1 = sA + t1 * ds;
+
+    let sHit;
+    let absU;
+    if (u0 * u1 <= 0) {
+      absU = 0;
+      const frac = Math.abs(u1 - u0) > 1e-6 ? Math.max(0, Math.min(1, -u0 / (u1 - u0))) : 0.5;
+      sHit = s0 + frac * (s1 - s0);
+    } else if (Math.abs(u0) < Math.abs(u1)) {
+      absU = Math.abs(u0);
+      sHit = s0;
+    } else {
+      absU = Math.abs(u1);
+      sHit = s1;
+    }
+
+    const corridorHalfW =
+      seg.role === "low_partition" ? 4.2 : Math.min(18.0, Math.max(7.5, lenXZ * 0.22));
+    if (absU > corridorHalfW) return false;
+
+    const tRay = Math.max(0, Math.min(1, sHit / lenXZ));
+    const yRay = cy + tRay * vy;
+    const clearDrop = seg.role === "low_partition" ? 1.15 : 4.2;
+    return seg.maxY > yRay - clearDrop;
+  }
+
+  /**
+   * Checks whether a foreground facade building (e.g. Office HQ, Building 4)
+   * sits between a South camera and a North-focused interior machine at low camera angle.
+   */
+  function isObstacleBlockingSight(obs, cx, cy, cz, tx, ty, tz, lenXZ, vy) {
+    if (cz <= obs.maxZ || tz >= obs.minZ || lenXZ < 1.0) return false;
+    const dzTotal = tz - cz;
+    if (Math.abs(dzTotal) < 1e-4) return false;
+    const tHit = (obs.cz - cz) / dzTotal;
+    if (tHit <= 0.02 || tHit >= 0.98) return false;
+    const hitX = cx + (tx - cx) * tHit;
+    if (hitX < obs.minX - 6.0 || hitX > obs.maxX + 6.0) return false;
+    const yRay = cy + vy * tHit;
+    return obs.maxY > yRay - 3.5;
+  }
+
+  function syncNorthYardMaterials(isXray) {
+    const nyCommon =
+      window.Starflex3D.Builders &&
+      window.Starflex3D.Builders.NorthYard &&
+      window.Starflex3D.Builders.NorthYard.Common;
+    if (!nyCommon || !nyCommon.mats) return;
+    const { wallMat, roofMat } = nyCommon.mats;
+    if (wallMat) {
+      wallMat.transparent = isXray;
+      wallMat.opacity = isXray ? 0.28 : 1.0;
+      wallMat.needsUpdate = true;
+    }
+    if (roofMat) {
+      roofMat.transparent = isXray;
+      roofMat.opacity = isXray ? 0.24 : 1.0;
+      roofMat.needsUpdate = true;
+    }
+  }
+
 window.Starflex3D.UI.Toolbar = {
   /**
    * Cut-away and X-Ray Modes can work TOGETHER (พร้อมกัน) or INDEPENDENTLY (แยกกัน):
-   * 1. Cut-away (state.isCutaway): Dynamic 360° cut-away (มองมุมไหน กำแพงหายมุมนั้น)
+   * 1. Cut-away (state.isCutaway): Camera-focus dynamic cut-away (กำแพงหน้ากล้อง/บังจุด Focus หายอัตโนมัติ)
    * 2. X-ray (state.isXray): Translucent see-through structure (มองทะลุกำแพงและหลังคา)
-   *
-   * Both active simultaneously: Dynamic wall vanishing on camera-facing side + translucent see-through opposite walls & roofs!
    */
   applyStructureModes(state, mats) {
     if (state.isCutaway === undefined) state.isCutaway = true;
@@ -43,7 +138,6 @@ window.Starflex3D.UI.Toolbar = {
 
     // 2. Adjust material opacities and transparency based on X-Ray mode
     if (isXray) {
-      // Translucent see-through walls & roofs
       mats.wallSolid.transparent = true;
       mats.wallSolid.opacity = 0.26;
       mats.wallSolid.needsUpdate = true;
@@ -66,7 +160,6 @@ window.Starflex3D.UI.Toolbar = {
 
       if (sliderRoof) sliderRoof.value = 40;
     } else {
-      // Solid opaque walls & roofs
       mats.wallSolid.transparent = false;
       mats.wallSolid.opacity = 1.0;
       mats.wallSolid.needsUpdate = true;
@@ -89,31 +182,52 @@ window.Starflex3D.UI.Toolbar = {
 
       if (sliderRoof) sliderRoof.value = isCutaway ? 0 : 95;
     }
+    syncNorthYardMaterials(isXray);
 
     // 3. Structural element visibility
+    if (wallsNorth) wallsNorth.visible = true;
+    if (wallsSouth) wallsSouth.visible = true;
+    if (wallsWest) wallsWest.visible = true;
+    if (wallsEast) wallsEast.visible = true;
     if (partitionWallsGroup) partitionWallsGroup.visible = true;
     if (roofTrussGroup) roofTrussGroup.visible = true;
     if (state.frontFacadeGroup) state.frontFacadeGroup.visible = true;
 
+    const showRoofs = !isCutaway || isXray;
+    if (roofShellGroup) roofShellGroup.visible = showRoofs;
+    if (Array.isArray(state.cutawayRoofs)) {
+      state.cutawayRoofs.forEach(rObj => {
+        rObj.visible = showRoofs;
+      });
+    }
+
     if (isCutaway) {
-      // Cut-away enabled: evaluate camera angle in real time to hide camera-facing exterior wall
-      if (roofShellGroup) roofShellGroup.visible = isXray; // In Cutaway + Xray, show translucent roof; in pure Cutaway, open roof
       this.updateDynamicCutaway(state);
     } else {
-      // Cut-away disabled: restore all exterior walls
-      if (wallsNorth) wallsNorth.visible = true;
-      if (wallsSouth) wallsSouth.visible = true;
-      if (wallsWest) wallsWest.visible = true;
-      if (wallsEast) wallsEast.visible = true;
-      if (roofShellGroup) roofShellGroup.visible = true;
+      // Cut-away disabled: restore every wall segment, obstacle & roof slice to solid view
+      if (Array.isArray(state.cutawaySegments)) {
+        state.cutawaySegments.forEach(seg => {
+          seg.obj.visible = true;
+        });
+      }
+      if (Array.isArray(state.cutawayObstacles)) {
+        state.cutawayObstacles.forEach(obs => {
+          obs.obj.visible = true;
+        });
+      }
+      if (Array.isArray(state.northCutSlices)) {
+        state.northCutSlices.forEach(slice => {
+          slice.obj.visible = true;
+        });
+      }
     }
 
     // 4. Update status display text
     if (statusText) {
       if (isCutaway && isXray) {
-        statusText.textContent = "✂️⚡ โหมด Cut-away + X-ray (กำแพงหายตามมุมกล้อง + มองทะลุโปร่งแสง)";
+        statusText.textContent = "✂️⚡ โหมด Cut-away + X-ray (กำแพงหน้ากล้องหายอัตโนมัติ + มองทะลุโปร่งแสง)";
       } else if (isCutaway && !isXray) {
-        statusText.textContent = "✂️ โหมด Cut-away (มองมุมไหน กำแพงหายมุมนั้น) · Dynamic 360°";
+        statusText.textContent = "✂️ โหมด Cut-away อ้างอิงมุมกล้อง (กำแพงหน้าจุด Focus หายอัตโนมัติ 360°)";
       } else if (!isCutaway && isXray) {
         statusText.textContent = "⚡ โหมด X-ray (มองทะลุกำแพงและหลังคา) · โครงสร้างโปร่งแสง 3D";
       } else {
@@ -149,45 +263,86 @@ window.Starflex3D.UI.Toolbar = {
   },
 
   /**
-   * Dynamic Wall Cut-away (มองมุมไหน กำแพงหายมุมนั้น):
-   * Evaluates camera angle relative to factory center in real-time.
-   * Any exterior wall facing towards the camera is automatically hidden.
+   * Dynamic Camera-Focus Cut-away:
+   * Evaluates every exterior wall & internal partition segment relative to
+   * camera.position -> controls.target. Walls facing the camera or obstructing
+   * the camera-to-focus sightline disappear cleanly, while walls behind the focus stay solid.
    */
   updateDynamicCutaway(state) {
     if (!state.isCutaway) return;
     if (!state.camera || !state.archGroups) return;
 
     const cam = state.camera;
+    const cx = cam.position.x;
+    const cy = cam.position.y;
+    const cz = cam.position.z;
+
+    const hasTarget = state.controls && state.controls.target;
+    const tx = hasTarget ? state.controls.target.x : 5;
+    const ty = hasTarget ? state.controls.target.y : 2;
+    const tz = hasTarget ? state.controls.target.z : 4;
+
+    const dx = tx - cx;
+    const dy = ty - cy;
+    const dz = tz - cz;
+    const lenXZ = Math.hypot(dx, dz);
+    const dist3D = Math.hypot(dx, dy, dz);
+
+    // Preserve perimeter wall framing in nearly vertical top-down plan view
+    const isTopDown = lenXZ < 8.0 || (cy - ty) / (dist3D || 1) > 0.92;
+    const fx = lenXZ > 1e-4 ? dx / lenXZ : 0;
+    const fz = lenXZ > 1e-4 ? dz / lenXZ : -1;
+    const rx = -fz;
+    const rz = fx;
+
+    const segments = state.cutawaySegments;
+    if (Array.isArray(segments) && segments.length > 0) {
+      for (let i = 0; i < segments.length; i++) {
+        const seg = segments[i];
+        if (isTopDown) {
+          seg.obj.visible = true;
+          continue;
+        }
+        if (seg.role === "exterior") {
+          const vx = cx - seg.cx;
+          const vz = cz - seg.cz;
+          const vLen = Math.hypot(vx, vz) || 1;
+          const facingCam = (seg.nx * vx + seg.nz * vz) / vLen > 0.1;
+          const blocking = isSegmentBlockingSight(seg, cx, cy, cz, tx, ty, tz, fx, fz, rx, rz, lenXZ, dy);
+          seg.obj.visible = !(facingCam || blocking);
+        } else {
+          seg.obj.visible = !isSegmentBlockingSight(seg, cx, cy, cz, tx, ty, tz, fx, fz, rx, rz, lenXZ, dy);
+        }
+      }
+
+      if (Array.isArray(state.northCutSlices)) {
+        for (let i = 0; i < state.northCutSlices.length; i++) {
+          const sl = state.northCutSlices[i];
+          const hideSlice = cz < sl.cz + 6.0 || (dist3D < 75.0 && tz < sl.z1 + 16.0);
+          sl.obj.visible = !hideSlice;
+        }
+      }
+
+      if (Array.isArray(state.cutawayObstacles)) {
+        for (let i = 0; i < state.cutawayObstacles.length; i++) {
+          const obs = state.cutawayObstacles[i];
+          obs.obj.visible = isTopDown
+            ? true
+            : !isObstacleBlockingSight(obs, cx, cy, cz, tx, ty, tz, lenXZ, dy);
+        }
+      }
+      return;
+    }
+
+    // Legacy fallback if cutawaySegments was not populated
     const { wallsNorth, wallsSouth, wallsWest, wallsEast } = state.archGroups;
-    if (!wallsNorth || !wallsSouth || !wallsWest || !wallsEast) return;
-
-    // Factory center in 3D coordinates
-    const target =
-      state.controls && state.controls.target
-        ? state.controls.target
-        : new THREE.Vector3(5, 2, 4);
-
-    const dx = cam.position.x - target.x;
-    const dz = cam.position.z - target.z;
-    const len = Math.hypot(dx, dz);
-    if (len < 0.001) return;
-
-    const dirX = dx / len;
-    const dirZ = dz / len;
-
-    // Angular threshold with small margin so corner views hide both adjacent walls
+    if (!wallsNorth || !wallsSouth || !wallsWest || !wallsEast || lenXZ < 0.001) return;
     const threshold = 0.16;
-
-    // South front walls (facing +Z): hide when camera is to the South
+    const dirX = -fx;
+    const dirZ = -fz;
     wallsSouth.visible = dirZ <= threshold;
-
-    // North back walls (facing -Z): hide when camera is to the North
     wallsNorth.visible = dirZ >= -threshold;
-
-    // West walls (facing -X): hide when camera is to the West
     wallsWest.visible = dirX >= -threshold;
-
-    // East walls (facing +X): hide when camera is to the East
     wallsEast.visible = dirX <= threshold;
   },
 
@@ -220,39 +375,23 @@ window.Starflex3D.UI.Toolbar = {
 
   updateRoofOpacity(state, mats, val) {
     const op = parseFloat(val) / 100;
-    const { frontWallsGroup, roofShellGroup } = state.archGroups;
-    if (op <= 0.02) {
-      roofShellGroup.visible = false;
-      frontWallsGroup.visible = false;
-    } else if (op >= 0.9) {
-      roofShellGroup.visible = true;
-      frontWallsGroup.visible = true;
-      mats.roofSheet.transparent = false;
-      mats.roofSheet.opacity = 1.0;
-      mats.roofSheet.needsUpdate = true;
-
-      mats.solarPanel.transparent = false;
-      mats.solarPanel.opacity = 1.0;
-      mats.solarPanel.needsUpdate = true;
-
-      mats.wallCutawayFront.transparent = false;
-      mats.wallCutawayFront.opacity = 1.0;
-      mats.wallCutawayFront.needsUpdate = true;
-    } else {
-      roofShellGroup.visible = true;
-      frontWallsGroup.visible = true;
-      mats.roofSheet.transparent = true;
-      mats.roofSheet.opacity = op;
-      mats.roofSheet.needsUpdate = true;
-
-      mats.solarPanel.transparent = true;
-      mats.solarPanel.opacity = op;
-      mats.solarPanel.needsUpdate = true;
-
-      mats.wallCutawayFront.transparent = true;
-      mats.wallCutawayFront.opacity = op;
-      mats.wallCutawayFront.needsUpdate = true;
+    const { roofShellGroup } = state.archGroups;
+    const showRoofs = op > 0.02;
+    if (roofShellGroup) roofShellGroup.visible = showRoofs;
+    if (Array.isArray(state.cutawayRoofs)) {
+      state.cutawayRoofs.forEach(rObj => {
+        rObj.visible = showRoofs;
+      });
     }
+    if (!showRoofs) return;
+
+    const isSolid = op >= 0.9;
+    [mats.roofSheet, mats.solarPanel].forEach(mat => {
+      if (!mat) return;
+      mat.transparent = !isSolid;
+      mat.opacity = isSolid ? 1.0 : op;
+      mat.needsUpdate = true;
+    });
   },
 
   updateBlueprintOpacity(state, val) {
@@ -302,12 +441,6 @@ window.Starflex3D.UI.Toolbar = {
       document.getElementById("slider-bp").value = 88;
       statusText.textContent = "แสดงผังโรงงานจริง 100% (Starflex Plant Layout.jpeg)";
     }
-  },
-
-  toggleFlows(state) {
-    state.showFlows = !state.showFlows;
-    if (state.flowGroup) state.flowGroup.visible = state.showFlows;
-    document.getElementById("btn-flows").classList.toggle("active", state.showFlows);
   },
 
   toggleCutawayPopover() {
@@ -365,3 +498,4 @@ window.Starflex3D.UI.Toolbar = {
     }
   }
 };
+})();

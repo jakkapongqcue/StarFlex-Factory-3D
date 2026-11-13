@@ -51,19 +51,60 @@ window.Starflex3D.Builders.NorthYard = window.Starflex3D.Builders.NorthYard || {
       bldgGroup.add(c);
     });
 
-    // 2. Dark Base Skirt & Main Walls
+    // 2. Dark Base Skirt & Per-Side Cutaway Wall Panels (N, S, E, W)
     const baseMesh = new THREE.Mesh(new THREE.BoxGeometry(w * 0.98, 0.55, d * 0.98), baseMat);
     baseMesh.position.set(0, 0.28 + 0.275, zOffset);
     addEdges(baseMesh, 0x1e293b, 0.6);
     bldgGroup.add(baseMesh);
 
-    const mainWallH = eaveH - 0.55;
-    const wallsMesh = new THREE.Mesh(new THREE.BoxGeometry(w * 0.96, mainWallH, d * 0.96), wallMat);
-    wallsMesh.position.set(0, 0.55 + mainWallH * 0.5, zOffset);
-    addEdges(wallsMesh, 0x94a3b8, 0.6);
-    bldgGroup.add(wallsMesh);
+    const innerW = w * 0.96;
+    const innerD = d * 0.96;
+    const mainWallH = Math.max(0.4, eaveH - 0.55);
+    const wallY = 0.55 + mainWallH * 0.5;
+    const wallT = 0.16;
 
-    // 3. West & East Gable Tympanums
+    const northWallGrp = new THREE.Group();
+    const southWallGrp = new THREE.Group();
+    const westWallGrp = new THREE.Group();
+    const eastWallGrp = new THREE.Group();
+    const roofGrp = new THREE.Group();
+    bldgGroup.add(northWallGrp, southWallGrp, westWallGrp, eastWallGrp, roofGrp);
+
+    const nMesh = new THREE.Mesh(new THREE.BoxGeometry(innerW, mainWallH, wallT), wallMat);
+    nMesh.position.set(0, wallY, zOffset - innerD * 0.5 + wallT * 0.5);
+    addEdges(nMesh, 0x94a3b8, 0.6);
+    northWallGrp.add(nMesh);
+
+    const sMesh = new THREE.Mesh(new THREE.BoxGeometry(innerW, mainWallH, wallT), wallMat);
+    sMesh.position.set(0, wallY, zOffset + innerD * 0.5 - wallT * 0.5);
+    addEdges(sMesh, 0x94a3b8, 0.6);
+    southWallGrp.add(sMesh);
+
+    const sideD = Math.max(0.2, innerD - wallT * 2 - 0.02);
+    const wMesh = new THREE.Mesh(new THREE.BoxGeometry(wallT, mainWallH, sideD), wallMat);
+    wMesh.position.set(-innerW * 0.5 + wallT * 0.5, wallY, zOffset);
+    addEdges(wMesh, 0x94a3b8, 0.6);
+    westWallGrp.add(wMesh);
+
+    const eMesh = new THREE.Mesh(new THREE.BoxGeometry(wallT, mainWallH, sideD), wallMat);
+    eMesh.position.set(innerW * 0.5 - wallT * 0.5, wallY, zOffset);
+    addEdges(eMesh, 0x94a3b8, 0.6);
+    eastWallGrp.add(eMesh);
+
+    // Expose attach targets & register local cutaway geometry
+    bldgGroup.userData.southWallObj = southWallGrp;
+    bldgGroup.userData.northWallObj = northWallGrp;
+    bldgGroup.userData.roofObj = roofGrp;
+    bldgGroup.userData.cutawayMeta = bldgGroup.userData.cutawayMeta || { walls: [], roofs: [] };
+    bldgGroup.userData.cutawayMeta.walls.push(
+      { obj: northWallGrp, x1: -innerW * 0.5, z1: zOffset - innerD * 0.5, x2: innerW * 0.5, z2: zOffset - innerD * 0.5, nx: 0, nz: -1, minY: 0.55, maxY: eaveH },
+      { obj: southWallGrp, x1: -innerW * 0.5, z1: zOffset + innerD * 0.5, x2: innerW * 0.5, z2: zOffset + innerD * 0.5, nx: 0, nz: 1, minY: 0.55, maxY: eaveH },
+      { obj: westWallGrp, x1: -innerW * 0.5, z1: zOffset - innerD * 0.5, x2: -innerW * 0.5, z2: zOffset + innerD * 0.5, nx: -1, nz: 0, minY: 0.55, maxY: eaveH },
+      { obj: eastWallGrp, x1: innerW * 0.5, z1: zOffset - innerD * 0.5, x2: innerW * 0.5, z2: zOffset + innerD * 0.5, nx: 1, nz: 0, minY: 0.55, maxY: eaveH }
+    );
+    bldgGroup.userData.cutawayMeta.roofs.push(roofGrp);
+
+    // 3. West & East Gable Tympanums (move cleanly with roofGrp in cutaway)
     const gableX = halfW * 0.96;
     [-gableX + 0.07, gableX - 0.07].forEach(gx => {
       const tympanumShape = new THREE.Shape();
@@ -76,12 +117,12 @@ window.Starflex3D.Builders.NorthYard = window.Starflex3D.Builders.NorthYard || {
       tympanumGeo.rotateY(Math.PI / 2);
       const tympanum = new THREE.Mesh(tympanumGeo, wallMat);
       tympanum.position.set(gx + (gx > 0 ? -0.07 : 0.07), 0, zOffset);
-      bldgGroup.add(tympanum);
+      roofGrp.add(tympanum);
 
       const louver = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.55, Math.min(1.8, d * 0.35)), darkSteelMat);
       louver.position.set(gx + (gx > 0 ? 0.04 : -0.04), (eaveH + ridgeH) * 0.5 - 0.08, zOffset);
       addEdges(louver, 0x64748b, 0.6);
-      bldgGroup.add(louver);
+      roofGrp.add(louver);
     });
 
     // 4. Two Sloped Gable Roof Planes
@@ -97,45 +138,47 @@ window.Starflex3D.Builders.NorthYard = window.Starflex3D.Builders.NorthYard || {
     northSlope.position.set(0, (eaveH + ridgeH) * 0.5 + 0.06, zOffset - runZ * 0.5);
     northSlope.rotation.x = -slopeAngle;
     addEdges(northSlope, 0x1e293b, 0.65);
-    bldgGroup.add(northSlope);
+    roofGrp.add(northSlope);
 
     const southSlope = new THREE.Mesh(new THREE.BoxGeometry(roofLenX, 0.14, slopeD), roofMat);
     southSlope.position.set(0, (eaveH + ridgeH) * 0.5 + 0.06, zOffset + runZ * 0.5);
     southSlope.rotation.x = slopeAngle;
     addEdges(southSlope, 0x1e293b, 0.65);
-    bldgGroup.add(southSlope);
+    roofGrp.add(southSlope);
 
     const ridgeCap = new THREE.Mesh(new THREE.BoxGeometry(roofLenX, 0.14, 0.48), darkSteelMat);
     ridgeCap.position.set(0, ridgeH + 0.07, zOffset);
-    bldgGroup.add(ridgeCap);
+    roofGrp.add(ridgeCap);
   }
 
   // Helper: Add South Roller Shutter Door with Yellow Safety Frame & Canopy
   function addSouthShutterDoor(bldgGroup, dx, southWallZ, doorW = 2.8, doorH = 2.8) {
+    const target = (bldgGroup.userData && bldgGroup.userData.southWallObj) || bldgGroup;
     const door = new THREE.Mesh(new THREE.BoxGeometry(doorW, doorH, 0.15), shutterMat);
     door.position.set(dx, doorH * 0.5 + 0.28, southWallZ + 0.05);
     addEdges(door, 0x0369a1, 0.7);
-    bldgGroup.add(door);
+    target.add(door);
 
     const trim = new THREE.Mesh(new THREE.BoxGeometry(doorW + 0.28, doorH + 0.2, 0.18), yellowMat);
     trim.position.set(dx, (doorH + 0.2) * 0.5 + 0.2, southWallZ + 0.06);
     addEdges(trim, 0xb45309, 0.6);
-    bldgGroup.add(trim);
+    target.add(trim);
 
     const canopy = new THREE.Mesh(new THREE.BoxGeometry(doorW + 0.7, 0.12, 1.4), darkSteelMat);
     canopy.position.set(dx, doorH + 0.55, southWallZ + 0.7);
     addEdges(canopy, 0x0f172a, 0.7);
-    bldgGroup.add(canopy);
+    target.add(canopy);
   }
 
   // Helper: Add Roof Ventilator Turbines along X
   function addRoofVentilators(bldgGroup, xPositions, ridgeH, zOffset = 0) {
+    const target = (bldgGroup.userData && bldgGroup.userData.roofObj) || bldgGroup;
     xPositions.forEach(vx => {
       const ventBase = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.34, 0.42, 10), darkSteelMat);
       ventBase.position.set(vx, ridgeH + 0.28, zOffset);
       const ventBall = new THREE.Mesh(new THREE.SphereGeometry(0.35, 10, 8), stainlessMat);
       ventBall.position.set(vx, ridgeH + 0.52, zOffset);
-      bldgGroup.add(ventBase, ventBall);
+      target.add(ventBase, ventBall);
     });
   }
 

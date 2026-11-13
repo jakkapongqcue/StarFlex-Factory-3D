@@ -36,7 +36,7 @@ window.Starflex3D.Builders.NorthYard = window.Starflex3D.Builders.NorthYard || {
       "#15803d"
     );
     sign.position.set(0, 3.65, southWallZ + 0.08);
-    bldgGroup.add(sign);
+    (bldgGroup.userData.southWallObj || bldgGroup).add(sign);
 
     // Interior Selective Pallet Racks with Raw Material Rolls & Cartons
     const rackRows = [-r.d * 0.26, 0, r.d * 0.22];

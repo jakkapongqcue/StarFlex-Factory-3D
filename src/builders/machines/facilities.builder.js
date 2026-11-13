@@ -40,10 +40,17 @@ window.Starflex3D.Builders.Facilities = window.Starflex3D.Builders.Facilities ||
     }
   }
 
+  function buildAirShowerUnit(...args) {
+    if (typeof Fac.buildAirShowerUnit === "function" && Fac.buildAirShowerUnit !== buildAirShowerUnit) {
+      return Fac.buildAirShowerUnit(...args);
+    }
+  }
+
   // Preserve existing namespace functions if already assigned by modular sub-builders,
   // or export the coordinator wrappers as fallback.
   Fac.buildLockerRoom = Fac.buildLockerRoom || buildLockerRoom;
   Fac.buildStairsAndRestrooms = Fac.buildStairsAndRestrooms || buildStairsAndRestrooms;
   Fac.buildProductionWalkway = Fac.buildProductionWalkway || buildProductionWalkway;
   Fac.buildHall1SouthOffice = Fac.buildHall1SouthOffice || buildHall1SouthOffice;
+  Fac.buildAirShowerUnit = Fac.buildAirShowerUnit || buildAirShowerUnit;
 })();

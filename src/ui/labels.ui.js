@@ -49,7 +49,7 @@ window.Starflex3D.UI.Labels = {
 
   updateProjection(state) {
     const container = document.getElementById("labels-container");
-    if (!state.showLabels) {
+    if (!state.showLabels || state.mode === "tour") {
       container.style.display = "none";
       return;
     }

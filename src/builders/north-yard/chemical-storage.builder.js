@@ -36,17 +36,51 @@ window.Starflex3D.Builders.NorthYard = window.Starflex3D.Builders.NorthYard || {
       buildGabledShellEW(bldgGroup, r.w, mainD, eaveH, ridgeH, mainZ);
       addRoofVentilators(bldgGroup, [-r.w * 0.32, 0, r.w * 0.32], ridgeH, mainZ);
 
-      // North Waste Sorting Shed Annex ("โรงคัดแยกขยะ")
+      // North Waste Sorting Shed Annex ("โรงคัดแยกขยะ") with per-side cutaway walls & roof
       const shedH = 3.5;
+      const shedInnerW = r.w * 0.96;
+      const shedInnerD = wasteD * 0.96;
+      const shedWallT = 0.16;
       const shedFloor = new THREE.Mesh(new THREE.BoxGeometry(r.w * 0.98, 0.26, wasteD), nyMats.floorSlabMat);
       shedFloor.position.set(0, 0.13, wasteZ);
-      const shedWall = new THREE.Mesh(new THREE.BoxGeometry(r.w * 0.96, shedH, wasteD * 0.96), nyMats.wallMat);
-      shedWall.position.set(0, shedH * 0.5, wasteZ);
-      addEdges(shedWall, 0x94a3b8, 0.6);
+
+      const shedNorthGrp = new THREE.Group();
+      const shedWestGrp = new THREE.Group();
+      const shedEastGrp = new THREE.Group();
+      const shedRoofGrp = new THREE.Group();
+
+      const shedNWall = new THREE.Mesh(new THREE.BoxGeometry(shedInnerW, shedH - 0.26, shedWallT), nyMats.wallMat);
+      shedNWall.position.set(0, 0.26 + (shedH - 0.26) * 0.5, wasteZ - shedInnerD * 0.5 + shedWallT * 0.5);
+      addEdges(shedNWall, 0x94a3b8, 0.6);
+      shedNorthGrp.add(shedNWall);
+
+      const shedWWall = new THREE.Mesh(new THREE.BoxGeometry(shedWallT, shedH - 0.26, shedInnerD - 0.2), nyMats.wallMat);
+      shedWWall.position.set(-shedInnerW * 0.5 + shedWallT * 0.5, 0.26 + (shedH - 0.26) * 0.5, wasteZ);
+      addEdges(shedWWall, 0x94a3b8, 0.6);
+      shedWestGrp.add(shedWWall);
+
+      const shedEWall = new THREE.Mesh(new THREE.BoxGeometry(shedWallT, shedH - 0.26, shedInnerD - 0.2), nyMats.wallMat);
+      shedEWall.position.set(shedInnerW * 0.5 - shedWallT * 0.5, 0.26 + (shedH - 0.26) * 0.5, wasteZ);
+      addEdges(shedEWall, 0x94a3b8, 0.6);
+      shedEastGrp.add(shedEWall);
+
       const shedRoof = new THREE.Mesh(new THREE.BoxGeometry(r.w + 0.5, 0.14, wasteD + 0.4), nyMats.roofMat);
       shedRoof.position.set(0, shedH + 0.07, wasteZ);
       addEdges(shedRoof, 0x1e293b, 0.65);
-      bldgGroup.add(shedFloor, shedWall, shedRoof);
+      shedRoofGrp.add(shedRoof);
+
+      const wasteSign = createSignboardMesh(4.6, 0.75, "20 · โรงคัดแยกขยะ", "WASTE SORTING & RECYCLE", "#15803d");
+      wasteSign.rotation.y = Math.PI;
+      wasteSign.position.set(0, shedH - 0.45, -halfD - 0.06);
+      shedNorthGrp.add(wasteSign);
+
+      bldgGroup.add(shedFloor, shedNorthGrp, shedWestGrp, shedEastGrp, shedRoofGrp);
+      bldgGroup.userData.cutawayMeta.walls.push(
+        { obj: shedNorthGrp, x1: -shedInnerW * 0.5, z1: wasteZ - shedInnerD * 0.5, x2: shedInnerW * 0.5, z2: wasteZ - shedInnerD * 0.5, nx: 0, nz: -1, minY: 0.26, maxY: shedH },
+        { obj: shedWestGrp, x1: -shedInnerW * 0.5, z1: wasteZ - shedInnerD * 0.5, x2: -shedInnerW * 0.5, z2: wasteZ + shedInnerD * 0.5, nx: -1, nz: 0, minY: 0.26, maxY: shedH },
+        { obj: shedEastGrp, x1: shedInnerW * 0.5, z1: wasteZ - shedInnerD * 0.5, x2: shedInnerW * 0.5, z2: wasteZ + shedInnerD * 0.5, nx: 1, nz: 0, minY: 0.26, maxY: shedH }
+      );
+      bldgGroup.userData.cutawayMeta.roofs.push(shedRoofGrp);
 
       // Color-coded Waste & Recycle Bins along North Waste Sorting Bay
       const binColors = [0x1d4ed8, 0xfacc15, 0x16a34a, 0xdc2626, 0x1d4ed8, 0xfacc15];
@@ -60,11 +94,6 @@ window.Starflex3D.Builders.NorthYard = window.Starflex3D.Builders.NorthYard || {
         addEdges(bin, 0x0f172a, 0.5);
         bldgGroup.add(bin);
       });
-
-      const wasteSign = createSignboardMesh(4.6, 0.75, "20 · โรงคัดแยกขยะ", "WASTE SORTING & RECYCLE", "#15803d");
-      wasteSign.rotation.y = Math.PI;
-      wasteSign.position.set(0, shedH - 0.45, -halfD - 0.06);
-      bldgGroup.add(wasteSign);
 
       // South Doors & Signboard on Main Chemical Section
       const southWallZ = halfD * 0.96;
@@ -80,7 +109,7 @@ window.Starflex3D.Builders.NorthYard = window.Starflex3D.Builders.NorthYard || {
         "#dc2626"
       );
       sign.position.set(0, 3.55, southWallZ + 0.08);
-      bldgGroup.add(sign);
+      (bldgGroup.userData.southWallObj || bldgGroup).add(sign);
     } else {
       // Zone 20B: Long East-West Chemical Storage 2 behind Hall 2
       buildGabledShellEW(bldgGroup, r.w, r.d, eaveH, ridgeH, 0);
@@ -99,7 +128,7 @@ window.Starflex3D.Builders.NorthYard = window.Starflex3D.Builders.NorthYard || {
         "#dc2626"
       );
       sign.position.set(0, 3.55, southWallZ + 0.08);
-      bldgGroup.add(sign);
+      (bldgGroup.userData.southWallObj || bldgGroup).add(sign);
     }
 
     // Populate Interior with 200L Chemical Drums & 1,000L IBC Totes

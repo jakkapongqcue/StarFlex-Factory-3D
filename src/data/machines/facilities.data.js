@@ -171,6 +171,32 @@ window.Starflex3D.Data.Machines.facilities = [
     specs: "ทางเดินหลักพื้นสีเทา · ห้องสุขอนามัยโปร่งใสเปิดมุมมองภายใน · อ่างล้างมือรูปตัว L ทางขวา · ประตู Air Shower ทิศตะวันตก · ประตูธรรมดาทิศเหนือ",
     description: "เส้นทางเดินหลักสำหรับพนักงานเข้าสู่พื้นที่การผลิต (Safety Walkway) พื้นสีเทามาตรฐาน โดยพื้นยกสูงระดับเดียวกับชานชาลา (+1.25m) ปลายทางก่อนเข้าไลน์ผลิตจะต้องผ่านห้องสุขอนามัย (Hygiene Room) ขนาดกว้าง 10.0 ม. ขยายไปทางทิศตะวันออกเสมอกำแพงห้องเปลี่ยนชุด (Locker Room) ออกแบบให้มองเห็นโครงสร้างภายในได้อย่างชัดเจน ภายในมีอ่างล้างมือฆ่าเชื้อสแตนเลสรูปตัว L ทางขวามือ พร้อมประตูออก 2 ด้าน: ทิศตะวันตกเป็นตู้ Air Shower เป่าลมไล่ฝุ่นเข้าสู่ไลน์ผลิต และทิศเหนือเป็นประตูธรรมดาออกสู่โถงทางเดิน"
   },
+  {
+    id: "hall2_airshower_north",
+    code: "AIR-H2-N",
+    name: "ห้องลม Air Shower ทางเข้า Hall 2 (เหนือ - ฝั่งโซน BM / 1SP)",
+    category: "office_utility",
+    hall: "hall_2",
+    type: "air_shower",
+    bounds: [674, 854, 692, 872],
+    height: 3.1,
+    orientation: "EW",
+    specs: "ตู้ Air Shower สแตนเลส · 32 หัวเป่า HEPA · ประตูกระจก Interlock เข้า-ออก · แผ่นดักฝุ่นหน้าทางเข้า",
+    description: "ประตูทางเข้าผ่านห้องลม (Air Shower) ทางฝั่งเหนือ เชื่อมจากทางเดินฝั่งตะวันตก (Hall 1 Corridor) ตัดทะลุผนังสู่ไลน์ผลิตโซน Spout / Bag Making โดยมีกำแพงกั้นแบ่งช่องทางเดินเป็นสัดส่วน"
+  },
+  {
+    id: "hall2_airshower_south",
+    code: "AIR-H2-S",
+    name: "ห้องลม Air Shower ทางเข้า Hall 2 (ใต้ - ฝั่งโซน Slitter / SM)",
+    category: "office_utility",
+    hall: "hall_2",
+    type: "air_shower",
+    bounds: [674, 899, 692, 917],
+    height: 3.1,
+    orientation: "EW",
+    specs: "ตู้ Air Shower สแตนเลส · 32 หัวเป่า HEPA · ประตูกระจก Interlock เข้า-ออก · แผ่นดักฝุ่นหน้าทางเข้า",
+    description: "ประตูทางเข้าผ่านห้องลม (Air Shower) ทางฝั่งใต้ เชื่อมจากทางเดินฝั่งตะวันตก (Hall 1 Corridor) ตัดทะลุผนังเข้าสู่ไลน์ผลิตโซน Slitter (SM) และโซน Spout แถวล่าง"
+  },
 
   // --- Hall 4 East Facade & MDB ---
   {

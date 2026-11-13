@@ -44,11 +44,24 @@ window.Starflex3D.Data.Machines.converting = [
     category: "converting",
     hall: "hall_2",
     type: "spout_array",
-    bounds: [710, 852, 988, 902],
-    height: 2.5,
+    bounds: [702, 852, 992, 916],
+    height: 2.6,
     orientation: "EW",
-    specs: "7 เครื่องติดฝาเกลียว/จุกหลอด (แถวบน 1SP-02, 1SP-01 · แถวล่าง 1SP-03 ถึง 1SP-07)",
-    description: "กลุ่มเครื่องซีลติดฝาจุก (Spout Pouch Machines) จัดวาง 2 แถวตามผัง Hall 2 สำหรับซองบรรจุของเหลว เครื่องดื่ม และผลิตภัณฑ์ดูแลร่างกาย"
+    specs: "7 เครื่องติดฝาเกลียวอัลตราโซนิก ST_SPOUT (แถวบน 1SP-02, 1SP-01 · แถวล่าง 1SP-03 ถึง 1SP-07) + สายพานออกกล่องและพาเลท",
+    description: "กลุ่มเครื่องซีลติดฝาจุกอัลตราโซนิกอัตโนมัติ (Ultrasonic Spout Inserter & Welder) จัดวาง 2 แถวตามผัง Hall 2 พร้อมชามสั่นป้อนฝา ชุดหัวเชื่อมอัลตราโซนิก และสายพานลำเลียงลงกล่องสินค้า"
+  },
+  {
+    id: "spout_south_group",
+    code: "1SP 08–09",
+    name: "เครื่องติดฝาจุกอัตโนมัติ โซนใต้ (Spout Insertion 1SP-08 & 1SP-09)",
+    category: "converting",
+    hall: "hall_2",
+    type: "spout_array_south",
+    bounds: [684, 1054, 804, 1086],
+    height: 2.6,
+    orientation: "EW",
+    specs: "2 เครื่องติดฝาเกลียวอัลตราโซนิก ST_SPOUT (1SP-08, 1SP-09) · วางด้านใต้มุมตะวันตกของ Hall 2 ใต้แนว BM 09",
+    description: "เครื่องซีลติดฝาจุกอัลตราโซนิกอัตโนมัติเพิ่มใหม่ 2 เครื่อง (1SP-08 และ 1SP-09) จัดวางคู่ขนานบริเวณมุมทิศตะวันตกเฉียงใต้ของ Hall 2 ใต้แนวเครื่องขึ้นรูปถุง BM 09"
   },
   {
     id: "sm_slitter_hall2",

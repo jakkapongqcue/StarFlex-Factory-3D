@@ -32,13 +32,13 @@ window.Starflex3D.UI.Inspector = {
           obj = obj.parent;
         }
         if (obj && obj.userData && obj.userData.item) {
-          this.selectItem(state, obj.userData.item.id, true);
+          this.selectItem(state, obj.userData.item.id, true, state.mode !== "tour");
         }
       }
     });
   },
 
-  selectItem(state, itemId, flyTo = true) {
+  selectItem(state, itemId, flyTo = true, openCard = true) {
     const group = state.itemMeshes.get(itemId);
     if (!group) return;
 
@@ -69,7 +69,7 @@ window.Starflex3D.UI.Inspector = {
     document.getElementById("detail-size").textContent = `${rect.w.toFixed(1)} × ${rect.d.toFixed(1)} ม.`;
     document.getElementById("detail-height").textContent = `${(item.height || 4.0).toFixed(1)} ม.`;
 
-    card.classList.remove("hidden");
+    card.classList.toggle("hidden", !openCard);
     window.Starflex3D.UI.Drawer.renderList(state);
 
     if (flyTo) {

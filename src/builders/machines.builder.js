@@ -22,7 +22,7 @@ window.Starflex3D.Builders.Machines = (function () {
     if (typeof resetAnimations === "function") resetAnimations();
     const { buildPalletRacks } = window.Starflex3D.Builders.Warehouse;
     const { buildLoadingDockTrucks } = window.Starflex3D.Builders.LoadingDock;
-    const { buildLockerRoom, buildStairsAndRestrooms, buildProductionWalkway, buildHall1SouthOffice } = window.Starflex3D.Builders.Facilities;
+    const { buildLockerRoom, buildStairsAndRestrooms, buildProductionWalkway, buildHall1SouthOffice, buildAirShowerUnit } = window.Starflex3D.Builders.Facilities;
     const { buildFilmRollRacks, buildResinStorage } = window.Starflex3D.Builders.ResinFilmStorage;
     const {
       buildChemicalWarehouse,
@@ -35,6 +35,9 @@ window.Starflex3D.Builders.Machines = (function () {
 
     const itemsGroup = new THREE.Group();
     itemsGroup.name = "MachinesAndZones";
+
+    state.cutawaySegments = state.cutawaySegments || [];
+    state.cutawayRoofs = state.cutawayRoofs || [];
 
     // Factory Interior Floor is elevated at +1.25m (equal to loading dock level)
     const factoryElevation = 1.25;
@@ -99,6 +102,7 @@ window.Starflex3D.Builders.Machines = (function () {
           buildBagMakingArray(group, r, mats, accentMat);
           break;
         case "spout_array":
+        case "spout_array_south":
         case "slitter_array":
         case "slitter_group":
         case "inspection_group":
@@ -123,6 +127,9 @@ window.Starflex3D.Builders.Machines = (function () {
           break;
         case "hall1_south_office":
           buildHall1SouthOffice(group, item, r, H, mats);
+          break;
+        case "air_shower":
+          buildAirShowerUnit(group, r, H, mats);
           break;
         case "highbay_racks":
         case "rack_zone":
@@ -172,6 +179,37 @@ window.Starflex3D.Builders.Machines = (function () {
       group.add(inner);
       itemsGroup.add(group);
       state.itemMeshes.set(item.id, group);
+
+      // Register any modular cutaway shells/roofs (e.g. North Yard enclosed chemical/material sheds)
+      group.traverse(child => {
+        const meta = child.userData && child.userData.cutawayMeta;
+        if (!meta) return;
+        if (Array.isArray(meta.walls)) {
+          meta.walls.forEach(w => {
+            const x1 = r.x + w.x1;
+            const z1 = r.z + w.z1;
+            const x2 = r.x + w.x2;
+            const z2 = r.z + w.z2;
+            state.cutawaySegments.push({
+              obj: w.obj,
+              role: "exterior",
+              x1,
+              z1,
+              x2,
+              z2,
+              cx: (x1 + x2) * 0.5,
+              cz: (z1 + z2) * 0.5,
+              nx: w.nx,
+              nz: w.nz,
+              minY: itemY + (w.minY || 0),
+              maxY: itemY + (w.maxY || 4)
+            });
+          });
+        }
+        if (Array.isArray(meta.roofs)) {
+          meta.roofs.forEach(roofObj => state.cutawayRoofs.push(roofObj));
+        }
+      });
     });
 
     scene.add(itemsGroup);

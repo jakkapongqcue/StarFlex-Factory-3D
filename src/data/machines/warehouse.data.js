@@ -57,7 +57,7 @@ window.Starflex3D.Data.Machines.warehouse = [
     category: "warehouse",
     hall: "hall_2",
     type: "rack_zone",
-    bounds: [676, 556, 1002, 732],
+    bounds: [674, 556, 964, 732],
     height: 5.5,
     orientation: "NS",
     specs: "6 แถวชั้นวางคู่ + โซนพาเลทสินค้าสำเร็จรูปพร้อมส่ง",

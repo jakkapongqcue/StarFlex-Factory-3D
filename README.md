@@ -31,7 +31,6 @@ StarFlex-FactoryLayout3D/
     ├── data/
     │   ├── buildings.data.js         # ข้อมูลโครงสร้างอาคารหลักทั้ง 4 โถง, อาคารสำนักงานหน้า 2 ชั้น, ห้องปั๊ม และป้อม รปภ.
     │   ├── machines.data.js          # พิกัดและรายละเอียดเครื่องจักร/คลังสินค้าทั้งหมด 42 รายการ
-    │   ├── flows.data.js             # เส้นทางการไหลของสายการผลิต (3D Process Flows)
     │   └── tour.data.js              # ขั้นตอนการนำชมสายการผลิต (Guided Tour Steps)
     ├── core/
     │   ├── coordinates.js            # ฟังก์ชันแปลงพิกัด 2D Pixel (2340×1590) เป็น 3D World Space (เมตร)
@@ -41,8 +40,7 @@ StarFlex-FactoryLayout3D/
     │   ├── site.builder.js           # สร้างตารางพื้น, เส้นขอบเขตโรงงาน, แผ่นพื้นคอนกรีต, ทางลาดสีฟ้า, กันสาด และต้นไม้
     │   ├── architecture.builder.js   # สร้างผนังแบบมองทะลุ (Cutaway), เสา H-Beam, โครงหลังคาโค้ง (Curved Arch Roof) & โซลาร์เซลล์ และเครนเหนือศีรษะ
     │   ├── front-facade.builder.js   # สร้างสถาปัตยกรรมหน้าบริษัทตามสถานที่จริง (สำนักงานหลังคาโค้ง+ซุ้มปั้นหยาเสาหิน, อาคารขวาผนังกระจกสีฟ้า+เสา V-Column, รั้วโคมไฟทอง, ป้าย STARFLEX สีน้ำเงิน, เสาธง 3 ต้น, ตู้ ATM ttb และป้อม รปภ. หลังคาปั้นหยา)
-    │   ├── machines.builder.js       # สร้างโมเดล 3D เครื่องจักรแยกตามประเภท (Gravure, Blow Film, Extrusion, Laminator, BM, Racks)
-    │   └── flows.builder.js          # สร้างท่อลำเลียงและแอนิเมชันลูกบอลวิ่งตามสายการผลิต
+    │   └── machines.builder.js       # สร้างโมเดล 3D เครื่องจักรแยกตามประเภท (Gravure, Blow Film, Extrusion, Laminator, BM, Racks)
     ├── ui/
     │   ├── labels.ui.js              # ป้ายชื่อเครื่องจักรลอยตัวใน 3D
     │   ├── drawer.ui.js              # แผงรายการ "ส่วนประกอบ" ระบบค้นหา และตัวกรองหมวดหมู่
