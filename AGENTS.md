@@ -78,7 +78,7 @@ Conversion:
 | **Printing Machines (9-Color Presses & Ink)** | `src/builders/machines/printing/*.model.js` | `gravure-press.model.js`, `beiren-pt04.model.js`, `ink-dispenser.model.js` (coordinated by `printing.builder.js`) |
 | **Laminating Machines (Bobst & Beiren)** | `src/builders/machines/laminating/*.model.js` | `bobst-lb10.model.js`, `bobst-lb09.model.js`, `beiren-sb04.model.js`, `extrusion-oven.model.js` (coordinated by `laminating.builder.js`) |
 | **Bag Making & Converting Lines** | `src/builders/machines/converting/*.model.js` | `bag-making.model.js`, `slitter.model.js` (coordinated by `converting.builder.js`) |
-| **Hall 1 Production Warehouse (WH-PRD)** | `src/data/machines/warehouse.data.js` | `[230, 885, 536, 965]`, 3 Pallet Rack Rows EW with 2.0m Aisles & 2.4m Center Crosswalk, 6.5m Corridor |
+| **Hall 1 Production Warehouse (WH-3)** | `src/data/machines/warehouse.data.js` | `[230, 885, 536, 965]`, 3 Pallet Rack Rows EW with 2.0m Aisles & 2.4m Center Crosswalk, 6.5m Corridor |
 | **Main Warehouse (WH-MAIN Racks)** | `src/builders/machines/warehouse.builder.js` | `[674, 348, 1005, 542]`, 5 Rack Rows, 12 Bays |
 | **Factory Outer Walls & Solar Roofs** | `src/builders/architecture.builder.js` | Outer Walls, Solar Panels, Gabled Roofs, Cutaway |
 | **Ground Pavements, Roads & Plinths** | `src/builders/site.builder.js` | `courtyardRects`, `factoryInteriorSections`, Grid |

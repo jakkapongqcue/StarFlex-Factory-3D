@@ -111,7 +111,7 @@ window.Starflex3D.Data.Machines.facilities = [
     category: "office_utility",
     hall: "office_front",
     type: "hq_office",
-    bounds: [674, 1020, 1018, 1190],
+    bounds: [674, 1098, 1018, 1190],
     height: 7.8,
     orientation: "EW",
     specs: "หลังคาโค้งติดโลโก้ STARFLEX · ซุ้มปั้นหยาเสาหิน · สนามหญ้า & เสาธง 3 ต้น",

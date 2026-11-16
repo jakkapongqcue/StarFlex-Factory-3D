@@ -19,6 +19,7 @@ window.Starflex3D.Builders.FrontFacade = {
     state.frontFacadeGroup = frontGroup;
 
     const fMats = window.Starflex3D.Builders.Facade.Common.getMaterials(mats);
+    if (state) state.facadeMaterials = fMats;
 
     // 1. Green Front Lawn & 3 Flagpoles
     if (window.Starflex3D.Builders.Facade.Landscape) {
@@ -26,23 +27,30 @@ window.Starflex3D.Builders.FrontFacade = {
     }
 
     const { rect } = window.Starflex3D.Coords;
-    state.cutawayObstacles = state.cutawayObstacles || [];
+    if (state) {
+      state.cutawayObstacles = state.cutawayObstacles || [];
+      state.cutawaySegments = state.cutawaySegments || [];
+      state.cutawayRoofs = state.cutawayRoofs || [];
+    }
 
     // 2. Building 2 Front Office & Hipped-Roof Porte-Cochere
     if (window.Starflex3D.Builders.Facade.Office) {
-      const officeGrp = window.Starflex3D.Builders.Facade.Office.build(fMats);
+      const officeGrp = window.Starflex3D.Builders.Facade.Office.build(fMats, state, mats);
       frontGroup.add(officeGrp);
       const offR = rect([674, 1098, 1018, 1255]);
-      state.cutawayObstacles.push({
-        obj: officeGrp,
-        minX: offR.x1,
-        maxX: offR.x2,
-        minZ: offR.z1,
-        maxZ: offR.z2,
-        cx: offR.x,
-        cz: offR.z,
-        maxY: 10.0
-      });
+      if (state) {
+        state.cutawayObstacles.push({
+          obj: officeGrp,
+          minX: offR.x1,
+          maxX: offR.x2,
+          minZ: offR.z1,
+          maxZ: offR.z2,
+          cx: offR.x,
+          cz: offR.z,
+          maxY: 10.0,
+          cutawayMaxY: 3.8
+        });
+      }
     }
 
     // 3. Continuous L-Shaped Canopy (Office Nook & Hall 2 Walkway)

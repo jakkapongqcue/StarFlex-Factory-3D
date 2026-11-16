@@ -61,11 +61,13 @@ window.Starflex3D.UI = window.Starflex3D.UI || {};
 
     const corridorHalfW =
       seg.role === "low_partition" ? 4.2 : Math.min(18.0, Math.max(7.5, lenXZ * 0.22));
-    if (absU > corridorHalfW) return false;
-
     const tRay = Math.max(0, Math.min(1, sHit / lenXZ));
+    const coneHalfW = Math.max(0.6, corridorHalfW * Math.min(1.0, (1.0 - tRay) * 2.2));
+    if (absU > coneHalfW) return false;
+
     const yRay = cy + tRay * vy;
-    const clearDrop = seg.role === "low_partition" ? 1.15 : 4.2;
+    const segH = Math.max(0.5, (seg.maxY || 4) - (seg.minY || 0));
+    const clearDrop = seg.role === "low_partition" ? 1.15 : Math.min(4.2, segH * 0.42);
     return seg.maxY > yRay - clearDrop;
   }
 
@@ -73,7 +75,7 @@ window.Starflex3D.UI = window.Starflex3D.UI || {};
    * Checks whether a foreground facade building (e.g. Office HQ, Building 4)
    * sits between a South camera and a North-focused interior machine at low camera angle.
    */
-  function isObstacleBlockingSight(obs, cx, cy, cz, tx, ty, tz, lenXZ, vy) {
+  function isObstacleBlockingSight(obs, cx, cy, cz, tx, ty, tz, lenXZ, vy, isCutawayOpen) {
     if (cz <= obs.maxZ || tz >= obs.minZ || lenXZ < 1.0) return false;
     const dzTotal = tz - cz;
     if (Math.abs(dzTotal) < 1e-4) return false;
@@ -81,8 +83,17 @@ window.Starflex3D.UI = window.Starflex3D.UI || {};
     if (tHit <= 0.02 || tHit >= 0.98) return false;
     const hitX = cx + (tx - cx) * tHit;
     if (hitX < obs.minX - 6.0 || hitX > obs.maxX + 6.0) return false;
+    const effMaxY = isCutawayOpen && obs.cutawayMaxY ? obs.cutawayMaxY : obs.maxY;
+    const clearMargin = isCutawayOpen && obs.cutawayMaxY ? 1.8 : 3.5;
     const yRay = cy + vy * tHit;
-    return obs.maxY > yRay - 3.5;
+    return effMaxY > yRay - clearMargin;
+  }
+
+  function setXrayOpacity(mat, isXray, xrayOpacity) {
+    if (!mat) return;
+    mat.transparent = isXray;
+    mat.opacity = isXray ? xrayOpacity : 1.0;
+    mat.needsUpdate = true;
   }
 
   function syncNorthYardMaterials(isXray) {
@@ -91,17 +102,15 @@ window.Starflex3D.UI = window.Starflex3D.UI || {};
       window.Starflex3D.Builders.NorthYard &&
       window.Starflex3D.Builders.NorthYard.Common;
     if (!nyCommon || !nyCommon.mats) return;
-    const { wallMat, roofMat } = nyCommon.mats;
-    if (wallMat) {
-      wallMat.transparent = isXray;
-      wallMat.opacity = isXray ? 0.28 : 1.0;
-      wallMat.needsUpdate = true;
-    }
-    if (roofMat) {
-      roofMat.transparent = isXray;
-      roofMat.opacity = isXray ? 0.24 : 1.0;
-      roofMat.needsUpdate = true;
-    }
+    setXrayOpacity(nyCommon.mats.wallMat, isXray, 0.28);
+    setXrayOpacity(nyCommon.mats.roofMat, isXray, 0.24);
+  }
+
+  function syncFacadeMaterials(state, isXray) {
+    const fMats = state && state.facadeMaterials;
+    if (!fMats) return;
+    setXrayOpacity(fMats.greyBlueWall, isXray, 0.26);
+    setXrayOpacity(fMats.guardRoofTile, isXray, 0.22);
   }
 
 window.Starflex3D.UI.Toolbar = {
@@ -183,6 +192,7 @@ window.Starflex3D.UI.Toolbar = {
       if (sliderRoof) sliderRoof.value = isCutaway ? 0 : 95;
     }
     syncNorthYardMaterials(isXray);
+    syncFacadeMaterials(state, isXray);
 
     // 3. Structural element visibility
     if (wallsNorth) wallsNorth.visible = true;
@@ -324,11 +334,12 @@ window.Starflex3D.UI.Toolbar = {
       }
 
       if (Array.isArray(state.cutawayObstacles)) {
+        const isCutawayOpen = Boolean(state.isCutaway && !state.isXray);
         for (let i = 0; i < state.cutawayObstacles.length; i++) {
           const obs = state.cutawayObstacles[i];
           obs.obj.visible = isTopDown
             ? true
-            : !isObstacleBlockingSight(obs, cx, cy, cz, tx, ty, tz, lenXZ, dy);
+            : !isObstacleBlockingSight(obs, cx, cy, cz, tx, ty, tz, lenXZ, dy, isCutawayOpen);
         }
       }
       return;

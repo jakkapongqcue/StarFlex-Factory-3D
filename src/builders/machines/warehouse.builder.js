@@ -135,7 +135,7 @@ window.Starflex3D.Builders.Warehouse = (function () {
     const item = typeof itemOrType === "object" ? itemOrType : { type: itemOrType };
     const itemType = item.type;
     const isEW = item.orientation === "EW" || itemType === "warehouse_racks" || itemType === "warehouse_zone";
-    const isWHPRD = item.code === "WH-PRD" || item.id === "wh_prd_hall1";
+    const isWH3 = item.code === "WH-3" || item.code === "WH-PRD" || item.id === "wh_prd_hall1";
 
     if (itemType === "hanging_rack" || item.code === "WIP-RACK") {
       buildWIPHangingRack(group, r, H, mats);
@@ -146,9 +146,9 @@ window.Starflex3D.Builders.Warehouse = (function () {
     const bluePostMat = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.4, metalness: 0.3 });
     const wireFrameMat = new THREE.MeshBasicMaterial({ color: 0x2563eb, wireframe: true, transparent: true, opacity: 0.35 });
 
-    if (isWHPRD) {
+    if (isWH3) {
       // ------------------------------------------------------------------------
-      // WH-PRD: Simplified Hanging Film Roll Racks (3 Rows × 4 Tiers, Solid Colors)
+      // WH-3: Simplified Hanging Film Roll Racks (3 Rows × 4 Tiers, Solid Colors)
       // ------------------------------------------------------------------------
       const wm = getWIPRollMaterials();
       const numRows = 3;

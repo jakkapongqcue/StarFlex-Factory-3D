@@ -67,7 +67,7 @@ window.Starflex3D.Data.tourSteps = [
     flowChips: [
       "WIP Laminate Rack → ป้อนฟิล์ม",
       "Bobst LB-10 / 1LB-09 · Beiren SB-04",
-      "คลังแขวนม้วน WH-PRD"
+      "คลังแขวนม้วน WH-3"
     ],
     targetPx: [380, 770],
     camOffset: [-32, 36, 46],
