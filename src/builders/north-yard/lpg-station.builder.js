@@ -2,7 +2,7 @@
 // Module: src/builders/north-yard/lpg-station.builder.js
 // Procedural 3D Builder for Zone 13: สถานีถังก๊าซ LPG (LPG Bulk Tank Station).
 // Features: 2 White bullet tanks, saddle supports, fire-water deluge pipe system,
-// 3-sided reinforced fire blast wall, bollards and hazchem signboards.
+// 3-sided reinforced fire blast wall, and safety bollards.
 // ============================================================================
 
 window.Starflex3D = window.Starflex3D || {};
@@ -11,7 +11,6 @@ window.Starflex3D.Builders.NorthYard = window.Starflex3D.Builders.NorthYard || {
 
 (function () {
   const { addEdges } = window.Starflex3D.Coords;
-  const { createSignboardMesh } = window.Starflex3D.Builders.Common || window.Starflex3D.Builders.MachineCommon || {};
   const NYCommon = window.Starflex3D.Builders.NorthYard.Common;
 
   function buildLPGStation(group, r, H) {
@@ -122,17 +121,6 @@ window.Starflex3D.Builders.NorthYard = window.Starflex3D.Builders.NorthYard || {
       delugeBranch.position.set(tx, delugeY, 0);
       bldgGroup.add(delugeBranch);
     });
-
-    // 5. Signboard on North Blast Wall
-    const sign = createSignboardMesh(
-      5.4,
-      0.85,
-      "13 · สถานีถังก๊าซ LPG (ไวไฟอันตราย)",
-      "LPG BULK STORAGE STATION - NO SMOKING",
-      "#dc2626"
-    );
-    sign.position.set(0, wallH + 0.45, -halfD * 0.92);
-    bldgGroup.add(sign);
   }
 
   window.Starflex3D.Builders.NorthYard.buildLPGStation = buildLPGStation;
