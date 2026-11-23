@@ -17,6 +17,7 @@ window.Starflex3D.UI.Labels = {
     state.labelElements = [];
 
     items.forEach(item => {
+      if (item.type === "air_shower") return;
       const cat = categories[item.category] || categories.office_utility;
       const r = rect(item.bounds);
       const el = document.createElement("div");

@@ -421,22 +421,6 @@ window.Starflex3D.Builders.Facilities = window.Starflex3D.Builders.Facilities ||
     entryMat.rotation.x = -Math.PI / 2;
     entryMat.position.set(-boothD * 0.5 - 0.45, 0.025, 0);
     group.add(entryMat);
-
-    // Dual-sided "AIR SHOWER" headers on top blower housing (West & East)
-    const createSign = window.Starflex3D.Builders.Common && window.Starflex3D.Builders.Common.createSignboardMesh;
-    if (typeof createSign === "function") {
-      const signW = Math.min(1.4, boothW * 0.78);
-      const signH = 0.30;
-      const westSign = createSign("AIR SHOWER", "ห้องเป่าลมสะอาด", signW, signH, "#0f172a", "#38bdf8", "#0284c7");
-      westSign.rotation.y = -Math.PI / 2;
-      westSign.position.set(-(boothD + 0.1) * 0.5 - 0.04, boothH + 0.19, 0);
-      group.add(westSign);
-
-      const eastSign = createSign("AIR SHOWER", "CLEANROOM ENTRY", signW, signH, "#0f172a", "#38bdf8", "#0284c7");
-      eastSign.rotation.y = Math.PI / 2;
-      eastSign.position.set((boothD + 0.1) * 0.5 + 0.04, boothH + 0.19, 0);
-      group.add(eastSign);
-    }
   }
 
   window.Starflex3D.Builders.Facilities.buildHygieneRoom = buildHygieneRoom;

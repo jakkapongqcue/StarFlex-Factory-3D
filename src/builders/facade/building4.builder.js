@@ -19,56 +19,60 @@ window.Starflex3D.Builders.Facade.Building4 = {
     const eastFrontR = rect([1395, 1085, 1895, 1230]);
     const eastH = 8.4;
 
-    // 1. Solid Inner Backing Core (blocks see-through into Hall 4)
+    // 1. Solid Inner Backing Core (inset inside glass shell so no coplanar overlap)
     const solidInnerCore = new THREE.Mesh(
-      new THREE.BoxGeometry(eastFrontR.w - 0.3, eastH - 0.1, eastFrontR.d - 0.3),
+      new THREE.BoxGeometry(eastFrontR.w - 0.6, eastH - 0.28, eastFrontR.d - 0.45),
       new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.2 })
     );
-    solidInnerCore.position.set(eastFrontR.x, eastH * 0.5, eastFrontR.z - 0.08);
+    solidInnerCore.position.set(eastFrontR.x + 0.08, (eastH - 0.28) * 0.5 + 0.08, eastFrontR.z - 0.08);
     group.add(solidInnerCore);
 
-    // Solid Roof Deck Slab over the entire 2-story annex
+    // Solid Roof Deck Slab over the entire 2-story annex (sits cleanly at y = 8.38..8.68m)
     const annexRoofCap = new THREE.Mesh(
-      new THREE.BoxGeometry(eastFrontR.w + 0.4, 0.35, eastFrontR.d + 1.2),
+      new THREE.BoxGeometry(eastFrontR.w + 0.4, 0.30, eastFrontR.d + 1.2),
       fMats.charcoalFascia
     );
-    annexRoofCap.position.set(eastFrontR.x, eastH + 0.15, eastFrontR.z);
+    annexRoofCap.position.set(eastFrontR.x, eastH + 0.13, eastFrontR.z);
     group.add(annexRoofCap);
 
-    // 2-Story Reflective Blue Glass Curtain Wall Shell
+    // 2-Story Reflective Blue Glass Curtain Wall Shell (inset on West & East inside blueFin / Hall 4 wall)
+    const glassH = eastH - 0.12;
     const glassBox = new THREE.Mesh(
-      new THREE.BoxGeometry(eastFrontR.w, eastH, eastFrontR.d),
+      new THREE.BoxGeometry(eastFrontR.w - 0.4, glassH, eastFrontR.d),
       fMats.reflectiveGlass
     );
-    glassBox.position.set(eastFrontR.x, eastH * 0.5, eastFrontR.z);
+    glassBox.position.set(eastFrontR.x, glassH * 0.5 + 0.04, eastFrontR.z);
     addEdges(glassBox, 0x1e293b, 0.75);
     group.add(glassBox);
 
-    // 2. Royal-Blue Feature Wall Fin on West Corner of Building 4
+    // 2. Royal-Blue Feature Wall Fin on West Corner (steps proud -0.25m West of concrete slab & glassBox)
     const blueFinR = rect([1395, 1085, 1432, 1234]);
+    const finH = eastH - 0.06;
     const blueFin = new THREE.Mesh(
-      new THREE.BoxGeometry(blueFinR.w, eastH + 0.1, blueFinR.d),
+      new THREE.BoxGeometry(blueFinR.w + 0.25, finH, blueFinR.d + 0.3),
       fMats.blueBrand
     );
-    blueFin.position.set(blueFinR.x, eastH * 0.5, blueFinR.z);
+    blueFin.position.set(blueFinR.x - 0.125, finH * 0.5 + 0.02, blueFinR.z + 0.05);
     addEdges(blueFin, 0x93c5fd, 0.6);
     group.add(blueFin);
 
-    // 3. Bold Dark-Charcoal Stepped Cantilevered Roof Fascia
+    // 3. Bold Dark-Charcoal Stepped Cantilevered Roof Fascia (strictly non-overlapping in X & Y)
+    const mainFasciaW = eastFrontR.w * 0.74;
     const mainFascia = new THREE.Mesh(
-      new THREE.BoxGeometry(eastFrontR.w * 0.76, 1.15, eastFrontR.d + 2.8),
+      new THREE.BoxGeometry(mainFasciaW, 0.82, eastFrontR.d + 2.8),
       fMats.charcoalFascia
     );
-    mainFascia.position.set(eastFrontR.x - eastFrontR.w * 0.1, eastH + 0.55, eastFrontR.z + 0.6);
+    mainFascia.position.set(eastFrontR.x1 + mainFasciaW * 0.5 - 0.2, eastH + 0.70, eastFrontR.z + 0.6);
     addEdges(mainFascia, 0x71717a, 0.7);
     group.add(mainFascia);
 
-    // Right lower stepped fascia wing
+    // Right lower stepped fascia wing (starts 0.04m East of mainFascia, clear of annexRoofCap)
+    const rightFasciaW = eastFrontR.w * 0.275;
     const rightFascia = new THREE.Mesh(
-      new THREE.BoxGeometry(eastFrontR.w * 0.28, 0.95, eastFrontR.d + 2.0),
+      new THREE.BoxGeometry(rightFasciaW, 0.72, eastFrontR.d + 2.0),
       fMats.charcoalFascia
     );
-    rightFascia.position.set(eastFrontR.x + eastFrontR.w * 0.38, eastH - 0.35, eastFrontR.z + 0.3);
+    rightFascia.position.set(eastFrontR.x1 + mainFasciaW + rightFasciaW * 0.5 - 0.14, eastH - 0.02, eastFrontR.z + 0.3);
     addEdges(rightFascia, 0x71717a, 0.7);
     group.add(rightFascia);
 

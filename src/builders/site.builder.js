@@ -67,8 +67,8 @@ window.Starflex3D.Builders.Site = {
       [200, 247, 1062, 1098],  // Hall 1 & Hall 2 main factory slab
       [1062, 247, 1498, 815],  // Hall 3 High-Bay Warehouse interior floor (Dock at 815+ handled by LoadingDock builder)
       [1498, 247, 1895, 1148], // Hall 4 East Plant (Blow Film, Printing, Lamination)
-      [1395, 765, 1498, 1230], // Hall 4 West Ramp Corridor
-      [1395, 1148, 1705, 1235],// Hall 4 South Shipping Bay
+      [1395, 765, 1498, 1235], // Hall 4 West Ramp Corridor (non-overlapping with South Shipping Bay)
+      [1498, 1148, 1705, 1235],// Hall 4 South Shipping Bay
       [1895, 490, 1950, 545]   // East MDB Room
     ];
 

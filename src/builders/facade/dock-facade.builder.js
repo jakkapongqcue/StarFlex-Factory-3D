@@ -191,7 +191,7 @@ window.Starflex3D.Builders.Facade.DockFacade = {
 
     [1090, 1125].forEach(py => {
       const ap = pt(1395, py);
-      dockFacadeGroup.add(createACUnit(rightWallX - 0.32, 6.3, ap.z, -Math.PI / 2, fMats));
+      dockFacadeGroup.add(createACUnit(ap.x - 0.45, 6.3, ap.z, -Math.PI / 2, fMats));
     });
 
 
